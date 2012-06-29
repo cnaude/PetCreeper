@@ -1,0 +1,50 @@
+#Item IDs for bait for various monsters.
+#You can't tame Skeletons and Ghasts, because they'll still shoot you.
+#If you want to disable taming a certain mob, delete it or set the code
+#to 0.
+
+#Seed
+Chicken: 295
+#Wheat
+Cow: 296
+#Flint
+Creeper: 318
+#Gold block
+Giant: 41
+#Porkchop (Cannibals!)
+Pig: 319
+#Cooked Porkchop (O_O)
+PigZombie: 319
+#Sugarcane
+Sheep: 338
+#Slimeball
+#NOTE: Slime disabled until further notice
+#Slime: 341
+#String
+Spider: 287
+CaveSpider: 287
+#Fish
+Squid: 349
+#Feather
+Zombie: 288
+#Iron Ingot
+Golem: 265
+#Ender Pearl
+Enderman: 368
+#Iron Ingot
+VillagerGolem: 265
+Blaze: 369
+Silverfish: 280
+Villager: 38
+
+#Other options
+Provokable: true
+Ridable: true
+#If this is true, punching the creature with the bait will tame it, without hurting
+#it. You can still use the right click method too. NOTE: This is inherently
+#incompatible with Provokable: true.
+AttackTame: false
+#Distance from player that the pet will stop following
+#and wander around a bit. Set it too low, and usually-hostile mob will hurt
+#you.
+IdleDistance: 5
