@@ -1,12 +1,168 @@
 name: PetCreeper
 main: me.cnaude.plugin.PetCreeper.PetMain
-version: 0.6a
+version: 0.7
 
 commands:
     pet:
         description: Teleport your pet to you
         usage: /pet
-        permission: petcreeper.pet
     petfree:
         description: Free your pet
         usage: /petfree
+permissions:
+  petcreeper.pet:
+    description: Allows players to use /pet command.
+    default: false
+  petcreeper.tame.Creeper:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Skeleton:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Spider:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Giant:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Zombie:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Slime:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Ghast:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.PigZombie:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Enderman:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.CaveSpider:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Silverfish:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Blaze:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.LavaSlime:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.EnderDragon:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Pig:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Sheep:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Cow:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Chicken:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Squid:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Wolf:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.MushroomCow:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.SnowMan:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.Villager:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.VillagerGolem:
+    description: Allows players to tame this creature.
+    default: false
+  petcreeper.tame.All:
+    description: Allows players to tame any creature.
+    default: false
+  petcreeper.tame.control:
+    description: Allows players to control a pet while riding.
+    default: false
+  petcreeper.ride.Creeper:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Skeleton:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Spider:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Giant:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Zombie:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Slime:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Ghast:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.PigZombie:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Enderman:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.CaveSpider:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Silverfish:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Blaze:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.LavaSlime:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.EnderDragon:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Pig:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Sheep:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Cow:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Chicken:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Squid:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Wolf:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.MushroomCow:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.SnowMan:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.Villager:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.VillagerGolem:
+    description: Allows players to ride this creature.
+    default: false
+  petcreeper.ride.All:
+    description: Allows players to ride any creature.
+    default: false    

@@ -22,7 +22,7 @@ public final class PetConfig {
 
     public void load() {
         baitMap.put("Chicken", Material.getMaterial(config.getInt("Chicken", 295)));
-        baitMap.put("Cow", Material.getMaterial(config.getInt("Cow", 296)));
+        baitMap.put("Cow", Material.getMaterial(config.getInt("Cow", 295)));
         baitMap.put("Creeper", Material.getMaterial(config.getInt("Creeper", 318)));
         baitMap.put("Giant", Material.getMaterial(config.getInt("Giant", 41)));
         baitMap.put("Pig", Material.getMaterial(config.getInt("Pig", 319)));
@@ -39,6 +39,8 @@ public final class PetConfig {
         baitMap.put("Villager", Material.getMaterial(config.getInt("Villager", 38)));
         baitMap.put("Silverfish", Material.getMaterial(config.getInt("Silverfish", 280)));
         baitMap.put("Blaze", Material.getMaterial(config.getInt("Blaze", 369)));
+        baitMap.put("Ghast", Material.getMaterial(config.getInt("Ghast", 370)));
+        baitMap.put("Slime", Material.getMaterial(config.getInt("Slime", 341)));
 
 
         provokable = config.getBoolean("Provokable", true);

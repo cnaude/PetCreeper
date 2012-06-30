@@ -1,13 +1,18 @@
 package me.cnaude.plugin.PetCreeper;
 
+import net.minecraft.server.Navigation;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,9 +43,14 @@ public class PetPlayerListener implements Listener {
         }
         Creature c = this.plugin.getPetOf(p);
         if (c != null) {
-            Location pos = p.getLocation().clone();
-            pos.setY(pos.getY() + 1.0D);
-            c.teleport(pos);
+            if (c.getWorld().equals(p.getWorld())) {
+                Location pos = p.getLocation().clone();
+                pos.setY(pos.getY() + 1.0D);
+                c.teleport(pos);
+            } else {
+                disconnect(p);
+                this.plugin.petSpawn(p);
+            }
         }
     }
 
@@ -50,31 +60,8 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player p = event.getPlayer();
-        for (int i = 0; i < this.plugin.petList.size(); i++) {
-            Pet pet = (Pet) this.plugin.petList.get(i);
-            if (!pet.player.equals(p.getName())) {
-                continue;
-            }
-            this.plugin.petList.remove(i);
-            Creature c = this.plugin.spawnPetOf(p, pet.type);
-            c.setHealth(pet.hp);
-            if (pet.type == EntityType.SHEEP) {
-                Sheep s = (Sheep) c;
-                if (pet.sheared) {
-                    s.setSheared(true);
-                }
-                s.setColor(DyeColor.getByData(pet.color));
-            } else if (pet.type == EntityType.PIG) {
-                Pig pig = (Pig) c;
-                if (pet.saddled) {
-                    pig.setSaddle(true);
-                }
-            }
-            p.sendMessage(ChatColor.GREEN + "Your pet " + this.plugin.getPetNameOf(p) + " greets you.");
-            break;
-        }
-    }
+        this.plugin.petSpawn(event.getPlayer());
+    }        
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
@@ -87,6 +74,15 @@ public class PetPlayerListener implements Listener {
         Player p = event.getPlayer();
         disconnect(p);
     }
+    
+    @EventHandler
+    public void onEntityDamageEvent(EntityDamageEvent event) {
+        if (event.getCause().equals(DamageCause.SUFFOCATION)) {
+            if (event.getEntity().isInsideVehicle()) {
+                event.setCancelled(true);
+            }
+        }
+    }   
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
@@ -108,7 +104,8 @@ public class PetPlayerListener implements Listener {
                         }
                         c.setPassenger(p);
                     } else {
-                        if (!this.plugin.isPermitted(p, "ride. " + c.getType().getName())) {
+                        if (!p.hasPermission("petcreeper.ride. " + c.getType().getName())
+                                && !p.hasPermission("petcreeper.ride.All")) {
                             p.sendMessage(ChatColor.RED + "You don't have permission to ride that creature.");
                             return;
                         }
@@ -125,9 +122,9 @@ public class PetPlayerListener implements Listener {
                 }
 
             } else {
-                if (((c instanceof Wolf)) || ((c instanceof Skeleton)) || ((c instanceof Ghast)) || ((c instanceof Slime))) {
+                if (((c instanceof Wolf)) || ((c instanceof Slime))) {
                     return;
-                }
+                }                
                 ItemStack bait = p.getItemInHand();
                 int amt = bait.getAmount();
                 if ((bait.getType() == PetConfig.getBait(c)) && (amt > 0)) {
@@ -136,8 +133,8 @@ public class PetPlayerListener implements Listener {
                         return;
                     }
 
-                    if (!this.plugin.isPermitted(p, "tame. " + c.getType().getName())) {
-                        p.sendMessage(ChatColor.RED + "You don't have permission to tame that creature.");
+                    if (!p.hasPermission("petcreeper.tame." + c.getType().getName()) && !p.hasPermission("petcreeper.tame.All")) {
+                        p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + c.getType().getName() + ".");
                         return;
                     }
 
@@ -162,6 +159,29 @@ public class PetPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         teleport(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        if (!p.hasPermission("petcreeper.control")) {            
+            return;
+        }
+        Action action = event.getAction();
+//        ItemStack item = p.getItemInHand();
+        if (action == Action.LEFT_CLICK_AIR) {
+            Block targetBlock = p.getTargetBlock(null, 100);
+            Location blockLoc = targetBlock.getLocation();
+            if (p.isInsideVehicle()) {
+                Entity e = p.getVehicle();
+                if (e.getType().isAlive()) {
+                    //System.out.println("Vehicle is a pet! Target: " + blockLoc.toString());
+                    Navigation n = ((CraftLivingEntity) e).getHandle().al();
+                    n.a(blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), 0.25f);
+                }
+            }
+
+        }
     }
 }
 

@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PetMain extends JavaPlugin {
@@ -25,7 +26,7 @@ public class PetMain extends JavaPlugin {
     private File dataFolder;
     PetMainLoop mainLoop;
     private PetConfig config;
-
+    
     @Override
     public void onEnable() {
         loadConfig();
@@ -63,11 +64,11 @@ public class PetMain extends JavaPlugin {
             }
         }
 
-        PluginDescriptionFile pdfFile = getDescription();
-        System.out.println("[" + pdfFile.getName() + "]" + " version " + pdfFile.getVersion() + " is enabled!");
-
         mainLoop = new PetMainLoop(this);
-
+        
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            petSpawn(p);
+        }
     }
     
     void loadConfig() {
@@ -98,22 +99,20 @@ public class PetMain extends JavaPlugin {
 
         File petFile = new File(this.dataFolder, "pets.txt");
         try {
-            BufferedWriter in = new BufferedWriter(new FileWriter(petFile, false));
+            BufferedWriter out = new BufferedWriter(new FileWriter(petFile));
             for (Pet pet : this.petList) {
-                in.write(pet.player + "\t" + pet.type.getName() + "\t" + pet.hp);
+                out.write(pet.player + "\t" + pet.type.getName() + "\t" + pet.hp);
                 if (pet.type == EntityType.SHEEP) {
-                    in.write("\t" + pet.sheared + "\t" + pet.color);
+                    out.write("\t" + pet.sheared + "\t" + pet.color);
                 } else if (pet.type == EntityType.PIG) {
-                    in.write("\t" + pet.saddled);
+                    out.write("\t" + pet.saddled);
                 }
-                in.write("\n");
+                out.write("\n");
             }
-            in.close();
+            out.close();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-
-        PluginDescriptionFile pdf = getDescription();
-        System.out.println(pdf.getName() + " version " + pdf.getVersion() + " is disabled.");
     }
 
     @Override
@@ -123,8 +122,15 @@ public class PetMain extends JavaPlugin {
         }
         Player p = (Player) sender;
 
+        if (p.isInsideVehicle()) {
+            if (p.getVehicle().getType().isAlive()) {
+                p.sendMessage(ChatColor.RED + "You can't use /pet when riding this " + p.getVehicle().getType().getName() + ".");
+                return true;
+            }
+        }
+        
         if (commandLabel.equalsIgnoreCase("pet")) {
-            if (!isPermitted(p, "pet")) {
+            if (!p.hasPermission("petcreeper.pet")) {
                 p.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
                 return true;
             }
@@ -149,10 +155,32 @@ public class PetMain extends JavaPlugin {
         return false;
     }
 
-    public boolean isPermitted(Player p, String permission) {
-        return p.hasPermission("petcreeper." + permission);        
+    public void petSpawn(Player p) {                
+        for (int i = 0; i < this.petList.size(); i++) {
+            Pet pet = (Pet) this.petList.get(i);
+            if (!pet.player.equals(p.getName())) {
+                continue;
+            }
+            this.petList.remove(i);
+            Creature c = this.spawnPetOf(p, pet.type);
+            c.setHealth(pet.hp);
+            if (pet.type == EntityType.SHEEP) {
+                Sheep s = (Sheep) c;
+                if (pet.sheared) {
+                    s.setSheared(true);
+                }
+                s.setColor(DyeColor.getByData(pet.color));
+            } else if (pet.type == EntityType.PIG) {
+                Pig pig = (Pig) c;
+                if (pet.saddled) {
+                    pig.setSaddle(true);
+                }
+            }
+            p.sendMessage(ChatColor.GREEN + "Your pet " + this.getPetNameOf(p) + " greets you.");
+            break;
+        }
     }
-
+    
     public Creature spawnPetOf(Player p, EntityType type) {
         Creature c = getPetOf(p);
         if (c != null) {
@@ -169,18 +197,51 @@ public class PetMain extends JavaPlugin {
         tamePetOf(p, c);
         return c;
     }
-
-    public void teleportPetOf(Player p) {
-        Location pos = p.getLocation().clone();
-        pos.setY(pos.getY() + 1.0D);
-        getPetOf(p).teleport(pos);
+    
+    public void despawnPetOf(Player p) {
+        if (this.isPetOwner(p)) {
+            Creature c = this.getPetOf(p);
+            if ((c instanceof Sheep)) {
+                Sheep s = (Sheep) c;
+                this.petList.add(new Pet(p.getName(), s.getHealth(), s.isSheared(), s.getColor().getData()));
+            } else if ((c instanceof Pig)) {
+                Pig pig = (Pig) c;
+                this.petList.add(new Pet(p.getName(), pig.getHealth(), pig.hasSaddle()));
+            } else {
+                this.petList.add(new Pet(p.getName(), this.getPetTypeOf(p), c.getHealth()));
+            }
+            this.untamePetOf(p);
+            c.remove();
+        }
     }
 
+    public void teleportPetOf(Player p) {
+        Creature c = getPetOf(p);
+                    if (c.getWorld().equals(p.getWorld())) {
+                Location pos = p.getLocation().clone();
+                pos.setY(pos.getY() + 1.0D);
+                c.teleport(pos);
+            } else {
+                this.despawnPetOf(p);
+                this.petSpawn(p);
+            }
+    }
+
+    
+    
     public void tamePetOf(Player p, Creature pet) {
         untamePetOf(p);
+        Location loc = pet.getLocation();
         if (pet != null) {
-            this.pets.put(p, pet);
-            this.petTypes.put(p, pet.getType());
+            if (pet.getType().equals(EntityType.CREEPER)) {
+                pet.remove();
+                Creature c = (Creature)p.getWorld().spawnCreature(loc, EntityType.CREEPER);
+                this.pets.put(p, c);
+                this.petTypes.put(p, c.getType());
+            } else {
+                this.pets.put(p, pet);
+                this.petTypes.put(p, pet.getType());
+            }
         }
     }
 

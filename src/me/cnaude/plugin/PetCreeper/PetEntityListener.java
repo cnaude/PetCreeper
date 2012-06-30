@@ -1,6 +1,8 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.entity.CraftArrow;
+import org.bukkit.craftbukkit.entity.CraftFireball;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,10 +25,14 @@ public class PetEntityListener implements Listener {
             Creature c = (Creature) e;
             if (this.plugin.isPet(c)) {
                 Player p = this.plugin.getMasterOf(c);
-                if ((!this.plugin.isFollowed(p)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
-                    event.setTarget(null);
-                } else {
-                    event.setTarget(p);
+                if (p.getWorld().equals(c.getWorld())) {
+                    if ((!this.plugin.isFollowed(p)) 
+                            || (c.getPassenger() != null) 
+                            || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
+                        event.setTarget(null);
+                    } else {
+                        event.setTarget(p);
+                    }
                 }
             }
         }
@@ -54,6 +60,31 @@ public class PetEntityListener implements Listener {
                 //System.out.println("Cancelling bow"
                 //        + ": " + event.getEntityType().getName());
                 event.getEntity().remove();
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onEntityCombustEvent(EntityCombustEvent event) {
+        if (event.getEntityType().isAlive()) {
+            if (!event.getEntity().getType().equals(EntityType.PLAYER)) {
+                Creature c = (Creature) event.getEntity();
+                if (this.plugin.isPet(c)) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityTeleportEvent(EntityTeleportEvent event) {
+        if (event.getEntityType().isAlive()) {
+            Creature c = (Creature) event.getEntity();
+            if (this.plugin.isPet(c)) {
+                if (c.getPassenger() instanceof Entity) {
+                    //System.out.println("Cancelling teleport due to passenger!");
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -89,17 +120,14 @@ public class PetEntityListener implements Listener {
                 if ((attacker != null) && ((attacker instanceof Player))) {
                     Player p = (Player) attacker;
 
-                    if ((c.getType().equals(EntityType.WOLF))
-                            || (c.getType().equals(EntityType.SKELETON))
-                            || (c.getType().equals(EntityType.GHAST))
-                            || (c.getType().equals(EntityType.SLIME))) {
-                        //return;
+                    if (((c instanceof Wolf)) || ((c instanceof Slime))) {
+                        return;
                     }
 
                     ItemStack bait = p.getItemInHand();
                     int amt = bait.getAmount();
                     if ((bait.getType().equals(PetConfig.getBait(c))) && (amt > 0)) {
-                        if (!this.plugin.isPermitted(p, "tame. " + c.getType().getName())) {
+                        if (!p.hasPermission("petcreeper.tame." + c.getType().getName()) && !p.hasPermission("petcreeper.tame.All")) {
                             p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + c.getType().getName() + ".");
                             return;
                         }
@@ -117,8 +145,31 @@ public class PetEntityListener implements Listener {
                         this.plugin.tamePetOf(p, c);
 
                         p.sendMessage(ChatColor.GREEN + "You tamed the " + this.plugin.getPetNameOf(p) + "!");
+                        c.setTarget(null);
                         event.setCancelled(true);
                     }
+                }
+            }
+        } else if (e instanceof Player) {
+            if (event.getDamager().getType().isAlive()) {
+                Creature c = (Creature) event.getDamager();
+                if (this.plugin.getMasterOf(c) == e) {
+                    event.setCancelled(true);
+                }
+            } 
+        }
+    }
+
+    @EventHandler
+    public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
+        Projectile p = event.getEntity();
+        if (p.getShooter().getType().isAlive()) {
+            if (p.getShooter().getType().equals(EntityType.SKELETON)
+                    || p.getShooter().getType().equals(EntityType.BLAZE)) {
+                Creature c = (Creature) p.getShooter();
+                if (this.plugin.isPet(c)) {
+                    //System.out.println("Cancelling projectile from " + c.getType().getName());
+                    event.setCancelled(true);
                 }
             }
         }

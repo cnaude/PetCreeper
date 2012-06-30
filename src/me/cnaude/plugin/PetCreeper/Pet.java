@@ -2,7 +2,7 @@ package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.entity.EntityType;
 
-class Pet {
+public class Pet {
 
     public String player;
     public EntityType type;
