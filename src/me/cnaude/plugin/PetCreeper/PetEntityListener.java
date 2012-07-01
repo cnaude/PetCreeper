@@ -64,7 +64,7 @@ public class PetEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityCombustEvent(EntityCombustEvent event) {
-        if (event.getEntityType().isAlive()) {
+        if (event.getEntity() instanceof Creature) {
             if (!event.getEntity().getType().equals(EntityType.PLAYER)) {
                 Creature c = (Creature) event.getEntity();
                 if (this.plugin.isPet(c)) {
