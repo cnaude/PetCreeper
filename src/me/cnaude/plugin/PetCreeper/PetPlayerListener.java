@@ -61,7 +61,7 @@ public class PetPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         this.plugin.petSpawn(event.getPlayer());
-    }        
+    }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
@@ -74,7 +74,7 @@ public class PetPlayerListener implements Listener {
         Player p = event.getPlayer();
         disconnect(p);
     }
-    
+
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
         if (event.getCause().equals(DamageCause.SUFFOCATION)) {
@@ -82,7 +82,7 @@ public class PetPlayerListener implements Listener {
                 event.setCancelled(true);
             }
         }
-    }   
+    }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
@@ -122,9 +122,9 @@ public class PetPlayerListener implements Listener {
                 }
 
             } else {
-                if (((c instanceof Wolf)) || ((c instanceof Slime))) {
+                if ((c instanceof Wolf) || (c instanceof Ocelot)) {
                     return;
-                }                
+                }
                 ItemStack bait = p.getItemInHand();
                 int amt = bait.getAmount();
                 if ((bait.getType() == PetConfig.getBait(c)) && (amt > 0)) {
@@ -164,7 +164,7 @@ public class PetPlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        if (!p.hasPermission("petcreeper.control")) {            
+        if (!p.hasPermission("petcreeper.control")) {
             return;
         }
         Action action = event.getAction();

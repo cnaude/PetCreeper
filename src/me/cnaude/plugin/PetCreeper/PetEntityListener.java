@@ -1,8 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.entity.CraftArrow;
-import org.bukkit.craftbukkit.entity.CraftFireball;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -91,9 +89,8 @@ public class PetEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        //System.out.println("Damaged: "+event.getEntityType().getName());
         Entity e = event.getEntity();
-        if ((e instanceof Creature)) {
+        if (e instanceof Creature) {
             Creature c = (Creature) e;
 
             if (this.plugin.isPet(c)) {
@@ -120,7 +117,7 @@ public class PetEntityListener implements Listener {
                 if ((attacker != null) && ((attacker instanceof Player))) {
                     Player p = (Player) attacker;
 
-                    if (((c instanceof Wolf)) || ((c instanceof Slime))) {
+                    if ((c instanceof Wolf) || (c instanceof Ocelot)) {
                         return;
                     }
 
@@ -151,7 +148,7 @@ public class PetEntityListener implements Listener {
                 }
             }
         } else if (e instanceof Player) {
-            if (event.getDamager().getType().isAlive()) {
+            if (event.getDamager() instanceof Creature) {
                 Creature c = (Creature) event.getDamager();
                 if (this.plugin.getMasterOf(c) == e) {
                     event.setCancelled(true);

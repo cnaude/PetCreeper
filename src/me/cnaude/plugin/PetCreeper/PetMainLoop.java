@@ -5,7 +5,6 @@ import java.util.TimerTask;
 import net.minecraft.server.Navigation;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -33,10 +32,7 @@ public class PetMainLoop {
                             || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
                         c.setTarget(null);
                     } else {
-                            c.setTarget((LivingEntity) p);
-                 
-                        
-                        
+                            c.setTarget((LivingEntity) p);                                                                 
                             Navigation n = ((CraftLivingEntity) c).getHandle().al();
                             n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
                         
