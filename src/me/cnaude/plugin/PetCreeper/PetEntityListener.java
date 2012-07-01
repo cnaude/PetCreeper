@@ -160,7 +160,7 @@ public class PetEntityListener implements Listener {
     @EventHandler
     public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
         Projectile p = event.getEntity();
-        if (p.getShooter().getType().isAlive()) {
+        if (p.getShooter() instanceof Creature) {
             if (p.getShooter().getType().equals(EntityType.SKELETON)
                     || p.getShooter().getType().equals(EntityType.BLAZE)) {
                 Creature c = (Creature) p.getShooter();
