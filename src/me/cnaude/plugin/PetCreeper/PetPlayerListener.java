@@ -38,18 +38,17 @@ public class PetPlayerListener implements Listener {
     }
 
     private void teleport(Player p) {
-        if (!this.plugin.isFollowed(p)) {
-            return;
-        }
-        Creature c = this.plugin.getPetOf(p);
-        if (c != null) {
-            if (c.getWorld().equals(p.getWorld())) {
-                Location pos = p.getLocation().clone();
-                pos.setY(pos.getY() + 1.0D);
-                c.teleport(pos);
-            } else {
-                disconnect(p);
-                this.plugin.petSpawn(p);
+        if (this.plugin.isFollowed(p)) {
+            Creature c = this.plugin.getPetOf(p);
+            if (c != null) {
+                if (c.getWorld().equals(p.getWorld())) {
+                    Location pos = p.getLocation().clone();
+                    pos.setY(pos.getY() + 1.0D);
+                    c.teleport(pos);
+                } else {
+                    disconnect(p);
+                    this.plugin.petSpawn(p);
+                }
             }
         }
     }

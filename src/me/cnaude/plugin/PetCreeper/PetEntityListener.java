@@ -90,6 +90,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity e = event.getEntity();
+        Entity d = event.getDamager();
         if (e instanceof Creature) {
             Creature c = (Creature) e;
 
@@ -147,13 +148,12 @@ public class PetEntityListener implements Listener {
                     }
                 }
             }
-        } else if (e instanceof Player) {
-            if (event.getDamager() instanceof Creature) {
-                Creature c = (Creature) event.getDamager();
-                if (this.plugin.getMasterOf(c) == e) {
-                    event.setCancelled(true);
-                }
-            } 
+        } else if ((e instanceof Player) && (d instanceof Creature)) {
+            Creature c = (Creature) d;
+            Player p = (Player) e;
+            if (this.plugin.getMasterOf(c).equals(p)) {
+                event.setCancelled(true);
+            }
         }
     }
 
