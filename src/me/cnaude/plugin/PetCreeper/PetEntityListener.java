@@ -24,8 +24,8 @@ public class PetEntityListener implements Listener {
             if (this.plugin.isPet(c)) {
                 Player p = this.plugin.getMasterOf(c);
                 if (p.getWorld().equals(c.getWorld())) {
-                    if ((!this.plugin.isFollowed(p)) 
-                            || (c.getPassenger() != null) 
+                    if ((!this.plugin.isFollowed(p))
+                            || (c.getPassenger() != null)
                             || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
                         event.setTarget(null);
                     } else {
@@ -151,8 +151,10 @@ public class PetEntityListener implements Listener {
         } else if ((e instanceof Player) && (d instanceof Creature)) {
             Creature c = (Creature) d;
             Player p = (Player) e;
-            if (this.plugin.getMasterOf(c).equals(p)) {
-                event.setCancelled(true);
+            if (c != null && p != null) {
+                if (this.plugin.getMasterOf(c) == p) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
