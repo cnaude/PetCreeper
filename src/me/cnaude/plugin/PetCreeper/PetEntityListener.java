@@ -160,9 +160,11 @@ public class PetEntityListener implements Listener {
     @EventHandler
     public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
         Projectile p = event.getEntity();
-        if (p.getShooter() instanceof Creature) {
+        if (p.getShooter() instanceof Creature
+                || p.getShooter() instanceof Flying) {
             if (p.getShooter().getType().equals(EntityType.SKELETON)
-                    || p.getShooter().getType().equals(EntityType.BLAZE)) {
+                    || p.getShooter().getType().equals(EntityType.BLAZE)
+                    || p.getShooter().getType().equals(EntityType.GHAST)) {
                 Creature c = (Creature) p.getShooter();
                 if (this.plugin.isPet(c)) {
                     //System.out.println("Cancelling projectile from " + c.getType().getName());
