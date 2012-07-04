@@ -48,3 +48,4 @@ AttackTame: false
 #and wander around a bit. Set it too low, and usually-hostile mob will hurt
 #you.
 IdleDistance: 5
+OpsBypassPerms: false

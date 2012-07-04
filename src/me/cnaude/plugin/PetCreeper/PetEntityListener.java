@@ -125,7 +125,8 @@ public class PetEntityListener implements Listener {
                     ItemStack bait = p.getItemInHand();
                     int amt = bait.getAmount();
                     if ((bait.getType().equals(PetConfig.getBait(c))) && (amt > 0)) {
-                        if (!p.hasPermission("petcreeper.tame." + c.getType().getName()) && !p.hasPermission("petcreeper.tame.All")) {
+                        if (!this.plugin.hasPerm(p, "petcreeper.tame." + c.getType().getName()) 
+                                && !this.plugin.hasPerm(p,"petcreeper.tame.All")) {
                             p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + c.getType().getName() + ".");
                             return;
                         }
@@ -148,6 +149,8 @@ public class PetEntityListener implements Listener {
                     }
                 }
             }
+        } else if (e instanceof Ghast) {
+            System.out.println("This is a ghast!");
         } else if ((e instanceof Player) && (d instanceof Creature)) {
             Creature c = (Creature) d;
             Player p = (Player) e;
@@ -187,8 +190,3 @@ public class PetEntityListener implements Listener {
         }
     }
 }
-
-/* Location:           C:\Users\naudec.BWI\Downloads\PetCreeper\PetCreeper.jar
- * Qualified Name:     mathew.petcreeper.PetEntityListener
- * JD-Core Version:    0.6.0
- */

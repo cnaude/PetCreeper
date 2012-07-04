@@ -46,10 +46,3 @@ public class PetMainLoop {
         timer.cancel();
     }
 }
-
-
-
-/* Location:           C:\Users\naudec.BWI\Downloads\PetCreeper\PetCreeper.jar
- * Qualified Name:     mathew.petcreeper.PetMainLoop
- * JD-Core Version:    0.6.0
- */

@@ -1,7 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
 import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Creature;
@@ -14,6 +13,7 @@ public final class PetConfig {
     public static boolean ridable;
     public static boolean attackTame;
     public static int idleDistance;
+    public static boolean opsBypassPerms;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -48,6 +48,7 @@ public final class PetConfig {
         ridable = config.getBoolean("Ridable", true);
         attackTame = config.getBoolean("AttackTame", false);
         idleDistance = config.getInt("IdleDistance", 5);
+        opsBypassPerms = config.getBoolean("OpsBypassPerms", false);
     }
 
     public static Material getBait(Creature pet) {
