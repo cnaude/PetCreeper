@@ -22,18 +22,25 @@ public class PetPlayerListener implements Listener {
 
     private void disconnect(Player p) {
         if (this.plugin.isPetOwner(p)) {
-            Creature c = this.plugin.getPetOf(p);
-            if ((c instanceof Sheep)) {
-                Sheep s = (Sheep) c;
-                this.plugin.petList.add(new Pet(p.getName(), s.getHealth(), s.isSheared(), s.getColor().getData()));
-            } else if ((c instanceof Pig)) {
-                Pig pig = (Pig) c;
-                this.plugin.petList.add(new Pet(p.getName(), pig.getHealth(), pig.hasSaddle()));
-            } else {
+            if (this.plugin.getPetOf(p) instanceof Creature) {
+                Creature c = this.plugin.getPetOf(p);
+                if ((c instanceof Sheep)) {
+                    Sheep s = (Sheep) c;
+                    this.plugin.petList.add(new Pet(p.getName(), s.getHealth(), s.isSheared(), s.getColor().getData()));
+                } else if ((c instanceof Pig)) {
+                    Pig pig = (Pig) c;
+                    this.plugin.petList.add(new Pet(p.getName(), pig.getHealth(), pig.hasSaddle()));
+                } else {
+                    this.plugin.petList.add(new Pet(p.getName(), this.plugin.getPetTypeOf(p), c.getHealth()));
+                }
+                this.plugin.untamePetOf(p);
+                c.remove();
+            } else if (this.plugin.getSlimePetOf(p) instanceof Slime) {
+                Slime c = this.plugin.getSlimePetOf(p);
                 this.plugin.petList.add(new Pet(p.getName(), this.plugin.getPetTypeOf(p), c.getHealth()));
+                this.plugin.untamePetOf(p);
+                c.remove();
             }
-            this.plugin.untamePetOf(p);
-            c.remove();
         }
     }
 
@@ -87,7 +94,9 @@ public class PetPlayerListener implements Listener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Entity e = event.getRightClicked();
         Player p = event.getPlayer();
-
+        if ((e instanceof Wolf) || (e instanceof Ocelot)) {
+            return;
+        }
         if ((e instanceof Creature)) {
             Creature c = (Creature) e;
             if (this.plugin.isPet(c)) {
@@ -121,9 +130,59 @@ public class PetPlayerListener implements Listener {
                 }
 
             } else {
-                if ((c instanceof Wolf) || (c instanceof Ocelot)) {
-                    return;
+                ItemStack bait = p.getItemInHand();
+                int amt = bait.getAmount();
+                if ((bait.getType() == PetConfig.getBait(c)) && (amt > 0)) {
+                    if (this.plugin.isPetOwner(p)) {
+                        p.sendMessage("You already have a pet!");
+                        return;
+                    }
+
+                    if (!this.plugin.hasPerm(p, "petcreeper.tame." + c.getType().getName()) && !this.plugin.hasPerm(p, "petcreeper.tame.All")) {
+                        p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + c.getType().getName() + ".");
+                        return;
+                    }
+
+                    if (amt == 1) {
+                        p.getInventory().removeItem(new ItemStack[]{bait});
+                    } else {
+                        bait.setAmount(amt - 1);
+                    }
+                    this.plugin.tamePetOf(p, c);
+
+                    p.sendMessage(ChatColor.GREEN + "You tamed the " + this.plugin.getPetNameOf(p) + "!");
                 }
+            }
+        } else if ((e instanceof Slime)) {
+            Slime c = (Slime) e;
+            if (this.plugin.isPet(c)) {
+                String petType = this.plugin.getPetNameOf(p);
+                Player master = this.plugin.getMasterOf(c);
+                if (master == p) {
+                    Entity passenger = c.getPassenger();
+                    if ((!(c instanceof Pig)) && (passenger == p)) {
+                        c.eject();
+                    } else if ((PetConfig.ridable) && (p.getItemInHand().getType() == Material.SADDLE) && (passenger == null)) {
+                        c.setPassenger(p);
+                    } else {
+                        if (!this.plugin.hasPerm(p, "petcreeper.ride. " + c.getType().getName())
+                                && !this.plugin.hasPerm(p, "petcreeper.ride.All")) {
+                            p.sendMessage(ChatColor.RED + "You don't have permission to ride that creature.");
+                            return;
+                        }
+                        if (this.plugin.isFollowed(p)) {
+                            p.sendMessage(ChatColor.GOLD + "Your " + petType + " is now not following you.");
+                            this.plugin.setFollowed(p, false);
+                        } else {
+                            p.sendMessage(ChatColor.GOLD + "Your " + petType + " is now following you.");
+                            this.plugin.setFollowed(p, true);
+                        }
+                    }
+                } else {
+                    p.sendMessage(ChatColor.GOLD + "That " + this.plugin.getPetNameOf(master) + " belongs to " + master.getDisplayName() + ".");
+                }
+
+            } else {
                 ItemStack bait = p.getItemInHand();
                 int amt = bait.getAmount();
                 if ((bait.getType() == PetConfig.getBait(c)) && (amt > 0)) {

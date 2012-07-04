@@ -171,22 +171,29 @@ public class PetMain extends JavaPlugin {
                 continue;
             }
             this.petList.remove(i);
-            Creature c = this.spawnPetOf(p, pet.type);
-            c.setHealth(pet.hp);
-            if (pet.type == EntityType.SHEEP) {
-                Sheep s = (Sheep) c;
-                if (pet.sheared) {
-                    s.setSheared(true);
+            if (getPetOf(p) instanceof Creature) {
+                Creature c = this.spawnPetOf(p, pet.type);
+                c.setHealth(pet.hp);
+                if (pet.type == EntityType.SHEEP) {
+                    Sheep s = (Sheep) c;
+                    if (pet.sheared) {
+                        s.setSheared(true);
+                    }
+                    s.setColor(DyeColor.getByData(pet.color));
+                } else if (pet.type == EntityType.PIG) {
+                    Pig pig = (Pig) c;
+                    if (pet.saddled) {
+                        pig.setSaddle(true);
+                    }
                 }
-                s.setColor(DyeColor.getByData(pet.color));
-            } else if (pet.type == EntityType.PIG) {
-                Pig pig = (Pig) c;
-                if (pet.saddled) {
-                    pig.setSaddle(true);
-                }
+                p.sendMessage(ChatColor.GREEN + "Your pet " + this.getPetNameOf(p) + " greets you.");
+                break;
+            } else if (getPetOf(p) instanceof Slime) {
+                Slime c = this.spawnSlimePetOf(p, pet.type);
+                c.setHealth(pet.hp);
+                p.sendMessage(ChatColor.GREEN + "Your pet " + this.getPetNameOf(p) + " greets you.");
+                break;
             }
-            p.sendMessage(ChatColor.GREEN + "Your pet " + this.getPetNameOf(p) + " greets you.");
-            break;
         }
     }
 
@@ -200,6 +207,23 @@ public class PetMain extends JavaPlugin {
         Location pos = p.getLocation().clone();
         pos.setY(pos.getY() + 1.0D);
         c = (Creature) p.getWorld().spawnCreature(pos, type);
+        if (c == null) {
+            return null;
+        }
+        tamePetOf(p, c);
+        return c;
+    }
+    
+    public Slime spawnSlimePetOf(Player p, EntityType type) {
+        Slime c = getSlimePetOf(p);
+        if (c != null) {
+            c.remove();
+            untamePetOf(p);
+        }
+
+        Location pos = p.getLocation().clone();
+        pos.setY(pos.getY() + 1.0D);
+        c = (Slime) p.getWorld().spawnCreature(pos, type);
         if (c == null) {
             return null;
         }
