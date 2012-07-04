@@ -4,6 +4,7 @@ import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Slime;
 
 public final class PetConfig {
 
@@ -41,7 +42,7 @@ public final class PetConfig {
         baitMap.put("Blaze", Material.getMaterial(config.getInt("Blaze", 369)));
         baitMap.put("Ghast", Material.getMaterial(config.getInt("Ghast", 370)));
         baitMap.put("Slime", Material.getMaterial(config.getInt("Slime", 341)));
-        baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));
+        baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));        
 
 
         provokable = config.getBoolean("Provokable", true);
@@ -52,6 +53,14 @@ public final class PetConfig {
     }
 
     public static Material getBait(Creature pet) {
+        if (baitMap.containsKey(pet.getType().getName())) {
+            return baitMap.get(pet.getType().getName());
+        } else {
+            return Material.AIR;
+        }
+    }
+    
+    public static Material getBait(Slime pet) {
         if (baitMap.containsKey(pet.getType().getName())) {
             return baitMap.get(pet.getType().getName());
         } else {

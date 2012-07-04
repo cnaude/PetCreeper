@@ -21,12 +21,13 @@ public class PetMain extends JavaPlugin {
     private static PetMain instance = null;
     public ArrayList<Pet> petList = new ArrayList();
     private final HashMap<Player, Creature> pets = new HashMap();
+    private final HashMap<Player, Slime> slimePets = new HashMap();
     private final HashMap<Player, Boolean> petFollow = new HashMap();
     private final HashMap<Player, EntityType> petTypes = new HashMap();
     private File dataFolder;
     PetMainLoop mainLoop;
     private PetConfig config;
-    
+
     @Override
     public void onEnable() {
         loadConfig();
@@ -39,7 +40,7 @@ public class PetMain extends JavaPlugin {
         this.dataFolder = new File("plugins/PetCreeper");
         if (!this.dataFolder.exists()) {
             this.dataFolder.mkdirs();
-        }        
+        }
 
         File creeperFile = new File(this.dataFolder, "pets.txt");
         if (creeperFile.exists()) {
@@ -65,18 +66,18 @@ public class PetMain extends JavaPlugin {
         }
 
         mainLoop = new PetMainLoop(this);
-        
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             petSpawn(p);
         }
     }
-    
+
     void loadConfig() {
         getConfig().options().copyDefaults(true);
         saveConfig();
-        config = new PetConfig(this); 
+        config = new PetConfig(this);
     }
-    
+
     public boolean hasPerm(Player p, String s) {
         if ((p.hasPermission(s)) || (p.isOp() && PetConfig.opsBypassPerms)) {
             return true;
@@ -136,9 +137,9 @@ public class PetMain extends JavaPlugin {
                 return true;
             }
         }
-        
+
         if (commandLabel.equalsIgnoreCase("pet")) {
-            if (!p.hasPermission("petcreeper.pet")) {
+            if (!hasPerm(p, "petcreeper.pet")) {
                 p.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
                 return true;
             }
@@ -163,7 +164,7 @@ public class PetMain extends JavaPlugin {
         return false;
     }
 
-    public void petSpawn(Player p) {                
+    public void petSpawn(Player p) {
         for (int i = 0; i < this.petList.size(); i++) {
             Pet pet = (Pet) this.petList.get(i);
             if (!pet.player.equals(p.getName())) {
@@ -188,7 +189,7 @@ public class PetMain extends JavaPlugin {
             break;
         }
     }
-    
+
     public Creature spawnPetOf(Player p, EntityType type) {
         Creature c = getPetOf(p);
         if (c != null) {
@@ -205,7 +206,7 @@ public class PetMain extends JavaPlugin {
         tamePetOf(p, c);
         return c;
     }
-    
+
     public void despawnPetOf(Player p) {
         if (this.isPetOwner(p)) {
             Creature c = this.getPetOf(p);
@@ -224,8 +225,9 @@ public class PetMain extends JavaPlugin {
     }
 
     public void teleportPetOf(Player p) {
-        Creature c = getPetOf(p);
-                    if (c.getWorld().equals(p.getWorld())) {
+        if (getPetOf(p) instanceof Creature) {
+            Creature c = getPetOf(p);
+            if (c.getWorld().equals(p.getWorld())) {
                 Location pos = p.getLocation().clone();
                 pos.setY(pos.getY() + 1.0D);
                 c.teleport(pos);
@@ -233,17 +235,23 @@ public class PetMain extends JavaPlugin {
                 this.despawnPetOf(p);
                 this.petSpawn(p);
             }
+        } else if (getPetOf(p) instanceof Slime) {
+            Slime c = getSlimePetOf(p);
+            
+                this.despawnPetOf(p);
+                this.petSpawn(p);
+            
+        }
     }
 
-    
-    
     public void tamePetOf(Player p, Creature pet) {
         untamePetOf(p);
         Location loc = pet.getLocation();
         if (pet != null) {
             if (pet.getType().equals(EntityType.CREEPER)) {
+                // We reomve the creeper to fix the bloated creeper effect
                 pet.remove();
-                Creature c = (Creature)p.getWorld().spawnCreature(loc, EntityType.CREEPER);
+                Creature c = (Creature) p.getWorld().spawnCreature(loc, EntityType.CREEPER);
                 this.pets.put(p, c);
                 this.petTypes.put(p, c.getType());
             } else {
@@ -253,9 +261,22 @@ public class PetMain extends JavaPlugin {
         }
     }
 
+    public void tamePetOf(Player p, Slime pet) {
+        untamePetOf(p);
+        if (pet != null) {
+            this.slimePets.put(p, pet);
+            this.petTypes.put(p, pet.getType());
+        }
+    }
+
     public void untamePetOf(Player player) {
         if (this.pets.containsKey(player)) {
             this.pets.remove(player);
+            this.petFollow.remove(player);
+            this.petTypes.remove(player);
+        }
+        if (this.slimePets.containsKey(player)) {
+            this.slimePets.remove(player);
             this.petFollow.remove(player);
             this.petTypes.remove(player);
         }
@@ -264,6 +285,14 @@ public class PetMain extends JavaPlugin {
     public Creature getPetOf(Player player) {
         if (this.pets.containsKey(player)) {
             return (Creature) this.pets.get(player);
+        }
+
+        return null;
+    }
+
+    public Slime getSlimePetOf(Player player) {
+        if (this.slimePets.containsKey(player)) {
+            return (Slime) this.slimePets.get(player);
         }
 
         return null;
@@ -282,12 +311,33 @@ public class PetMain extends JavaPlugin {
         return null;
     }
 
+    public Player getMasterOf(Slime pet) {
+        if (this.slimePets.containsValue(pet)) {
+            for (Map.Entry entry : this.slimePets.entrySet()) {
+                if (entry.getValue().equals(pet)) {
+                    return (Player) entry.getKey();
+                }
+            }
+            return null;
+        }
+        return null;
+    }
+
     public boolean isPet(Creature pet) {
         return this.pets.containsValue(pet);
     }
 
+    public boolean isPet(Slime pet) {
+        return this.slimePets.containsValue(pet);
+    }
+
     public boolean isPetOwner(Player p) {
-        return this.pets.containsKey(p);
+        if (this.pets.containsKey(p)
+                || this.slimePets.containsKey(p)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean isFollowed(Player p) {
@@ -319,10 +369,4 @@ public class PetMain extends JavaPlugin {
     public static PetMain get() {
         return instance;
     }
-
 }
-
-/* Location:           C:\Users\naudec.BWI\Downloads\PetCreeper\PetCreeper.jar
- * Qualified Name:     mathew.petcreeper.PetMain
- * JD-Core Version:    0.6.0
- */
