@@ -76,6 +76,14 @@ public class PetMain extends JavaPlugin {
         saveConfig();
         config = new PetConfig(this); 
     }
+    
+    public boolean hasPerm(Player p, String s) {
+        if ((p.hasPermission(s)) || (p.isOp() && PetConfig.opsBypassPerms)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public void onDisable() {

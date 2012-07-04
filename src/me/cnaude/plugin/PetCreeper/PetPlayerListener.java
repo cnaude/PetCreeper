@@ -38,18 +38,17 @@ public class PetPlayerListener implements Listener {
     }
 
     private void teleport(Player p) {
-        if (!this.plugin.isFollowed(p)) {
-            return;
-        }
-        Creature c = this.plugin.getPetOf(p);
-        if (c != null) {
-            if (c.getWorld().equals(p.getWorld())) {
-                Location pos = p.getLocation().clone();
-                pos.setY(pos.getY() + 1.0D);
-                c.teleport(pos);
-            } else {
-                disconnect(p);
-                this.plugin.petSpawn(p);
+        if (this.plugin.isFollowed(p)) {
+            Creature c = this.plugin.getPetOf(p);
+            if (c != null) {
+                if (c.getWorld().equals(p.getWorld())) {
+                    Location pos = p.getLocation().clone();
+                    pos.setY(pos.getY() + 1.0D);
+                    c.teleport(pos);
+                } else {
+                    disconnect(p);
+                    this.plugin.petSpawn(p);
+                }
             }
         }
     }
@@ -104,8 +103,8 @@ public class PetPlayerListener implements Listener {
                         }
                         c.setPassenger(p);
                     } else {
-                        if (!p.hasPermission("petcreeper.ride. " + c.getType().getName())
-                                && !p.hasPermission("petcreeper.ride.All")) {
+                        if (!this.plugin.hasPerm(p, "petcreeper.ride. " + c.getType().getName())
+                                && !this.plugin.hasPerm(p, "petcreeper.ride.All")) {
                             p.sendMessage(ChatColor.RED + "You don't have permission to ride that creature.");
                             return;
                         }
@@ -133,7 +132,7 @@ public class PetPlayerListener implements Listener {
                         return;
                     }
 
-                    if (!p.hasPermission("petcreeper.tame." + c.getType().getName()) && !p.hasPermission("petcreeper.tame.All")) {
+                    if (!this.plugin.hasPerm(p, "petcreeper.tame." + c.getType().getName()) && !this.plugin.hasPerm(p, "petcreeper.tame.All")) {
                         p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + c.getType().getName() + ".");
                         return;
                     }
@@ -164,7 +163,7 @@ public class PetPlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        if (!p.hasPermission("petcreeper.control")) {
+        if (!this.plugin.hasPerm(p, "petcreeper.control")) {
             return;
         }
         Action action = event.getAction();
@@ -184,8 +183,3 @@ public class PetPlayerListener implements Listener {
         }
     }
 }
-
-/* Location:           C:\Users\naudec.BWI\Downloads\PetCreeper\PetCreeper.jar
- * Qualified Name:     mathew.petcreeper.PetPlayerListener
- * JD-Core Version:    0.6.0
- */

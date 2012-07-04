@@ -24,8 +24,8 @@ public class PetEntityListener implements Listener {
             if (this.plugin.isPet(c)) {
                 Player p = this.plugin.getMasterOf(c);
                 if (p.getWorld().equals(c.getWorld())) {
-                    if ((!this.plugin.isFollowed(p)) 
-                            || (c.getPassenger() != null) 
+                    if ((!this.plugin.isFollowed(p))
+                            || (c.getPassenger() != null)
                             || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
                         event.setTarget(null);
                     } else {
@@ -64,7 +64,7 @@ public class PetEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityCombustEvent(EntityCombustEvent event) {
-        if (event.getEntityType().isAlive()) {
+        if (event.getEntity() instanceof Creature) {
             if (!event.getEntity().getType().equals(EntityType.PLAYER)) {
                 Creature c = (Creature) event.getEntity();
                 if (this.plugin.isPet(c)) {
@@ -90,6 +90,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity e = event.getEntity();
+        Entity d = event.getDamager();
         if (e instanceof Creature) {
             Creature c = (Creature) e;
 
@@ -124,7 +125,8 @@ public class PetEntityListener implements Listener {
                     ItemStack bait = p.getItemInHand();
                     int amt = bait.getAmount();
                     if ((bait.getType().equals(PetConfig.getBait(c))) && (amt > 0)) {
-                        if (!p.hasPermission("petcreeper.tame." + c.getType().getName()) && !p.hasPermission("petcreeper.tame.All")) {
+                        if (!this.plugin.hasPerm(p, "petcreeper.tame." + c.getType().getName()) 
+                                && !this.plugin.hasPerm(p,"petcreeper.tame.All")) {
                             p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + c.getType().getName() + ".");
                             return;
                         }
@@ -147,13 +149,16 @@ public class PetEntityListener implements Listener {
                     }
                 }
             }
-        } else if (e instanceof Player) {
-            if (event.getDamager() instanceof Creature) {
-                Creature c = (Creature) event.getDamager();
-                if (this.plugin.getMasterOf(c) == e) {
+        } else if (e instanceof Ghast) {
+            System.out.println("This is a ghast!");
+        } else if ((e instanceof Player) && (d instanceof Creature)) {
+            Creature c = (Creature) d;
+            Player p = (Player) e;
+            if (c != null && p != null) {
+                if (this.plugin.getMasterOf(c) == p) {
                     event.setCancelled(true);
                 }
-            } 
+            }
         }
     }
 
@@ -187,8 +192,3 @@ public class PetEntityListener implements Listener {
         }
     }
 }
-
-/* Location:           C:\Users\naudec.BWI\Downloads\PetCreeper\PetCreeper.jar
- * Qualified Name:     mathew.petcreeper.PetEntityListener
- * JD-Core Version:    0.6.0
- */

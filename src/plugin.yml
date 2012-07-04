@@ -1,6 +1,6 @@
 name: PetCreeper
 main: me.cnaude.plugin.PetCreeper.PetMain
-version: 0.7a-dev
+version: 0.8a
 
 commands:
     pet:

@@ -31,8 +31,3 @@ public class Pet {
         this.saddled = saddled;
     }
 }
-
-/* Location:           C:\Users\naudec.BWI\Downloads\PetCreeper\PetCreeper.jar
- * Qualified Name:     mathew.petcreeper.Pet
- * JD-Core Version:    0.6.0
- */
