@@ -3,35 +3,19 @@
 #If you want to disable taming a certain mob, delete it or set the code
 #to 0.
 
-#Seed
 Chicken: 295
-#Wheat
 Cow: 295
-#Flint
 Creeper: 318
-#Gold block
 Giant: 41
-#Porkchop (Cannibals!)
 Pig: 319
-#Cooked Porkchop (O_O)
 PigZombie: 319
-#Sugarcane
 Sheep: 338
-#Slimeball
-#NOTE: Slime disabled until further notice
-#Slime: 341
-#String
 Spider: 287
 CaveSpider: 287
-#Fish
 Squid: 349
-#Feather
 Zombie: 288
-#Iron Ingot
 Golem: 265
-#Ender Pearl
 Enderman: 368
-#Iron Ingot
 VillagerGolem: 265
 Blaze: 369
 Silverfish: 280
@@ -48,4 +32,5 @@ AttackTame: false
 #and wander around a bit. Set it too low, and usually-hostile mob will hurt
 #you.
 IdleDistance: 5
+# Allow ops to bypass permissions
 OpsBypassPerms: false
