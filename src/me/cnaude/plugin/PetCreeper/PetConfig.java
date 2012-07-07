@@ -3,8 +3,7 @@ package me.cnaude.plugin.PetCreeper;
 import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Slime;
+import org.bukkit.entity.EntityType;
 
 public final class PetConfig {
 
@@ -52,17 +51,9 @@ public final class PetConfig {
         opsBypassPerms = config.getBoolean("OpsBypassPerms", false);
     }
 
-    public static Material getBait(Creature pet) {
-        if (baitMap.containsKey(pet.getType().getName())) {
-            return baitMap.get(pet.getType().getName());
-        } else {
-            return Material.AIR;
-        }
-    }
-    
-    public static Material getBait(Slime pet) {
-        if (baitMap.containsKey(pet.getType().getName())) {
-            return baitMap.get(pet.getType().getName());
+    public static Material getBait(EntityType type) {
+        if (baitMap.containsKey(type.getName())) {
+            return baitMap.get(type.getName());
         } else {
             return Material.AIR;
         }
