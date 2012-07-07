@@ -1,13 +1,13 @@
 package me.cnaude.plugin.PetCreeper;
 
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import net.minecraft.server.Navigation;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
 public class PetMainLoop {
@@ -26,22 +26,19 @@ public class PetMainLoop {
 
         @Override
         public void run() {
-            for (Player p : plugin.getMasterList()) {    
-                if ((plugin.getPetTypeOf(p) != EntityType.SLIME) 
-                        && (plugin.getPetTypeOf(p) != EntityType.GHAST)) {
-                    Creature c = plugin.getPetOf(p);                                               
-                    if (p.getWorld().equals(c.getWorld())) {
-                        if ((!plugin.isFollowed(p))
-                                || (c.getPassenger() != null)
-                                || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
-                            c.setTarget(null);                                
-                        } else {
-                                c.setTarget((LivingEntity) p);                                                                 
-                                Navigation n = ((CraftLivingEntity) c).getHandle().al();
-                                n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                        
-                        }
+            for (Map.Entry<Entity, Player> entry : plugin.petList.entrySet()) {
+                Entity pet = entry.getKey();                
+                Player p = entry.getValue();
+
+                if (p.getWorld().equals(pet.getWorld())) {                                        
+                    if (pet instanceof Creature) {
+                        ((Creature) pet).setTarget(p);
                     }
-                }
+                    Navigation n = ((CraftLivingEntity) pet).getHandle().al();
+                    n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
+                } else {
+                    plugin.teleportPetOf(p);
+                }    
             }
         }
     }

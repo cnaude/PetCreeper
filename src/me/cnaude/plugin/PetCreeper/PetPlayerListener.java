@@ -69,13 +69,13 @@ public class PetPlayerListener implements Listener {
                         if ((et == EntityType.PIG)) {
                             return;
                         }
-                        e.setPassenger(p);
-                    } else {
-                        if (!this.plugin.hasPerm(p, "petcreeper.ride. " + et.getName())
-                                && !this.plugin.hasPerm(p, "petcreeper.ride.All")) {
+                        if (this.plugin.hasPerm(p, "petcreeper.ride. " + et.getName())
+                                || this.plugin.hasPerm(p, "petcreeper.ride.All")) {
+                            e.setPassenger(p);
+                        } else {
                             p.sendMessage(ChatColor.RED + "You don't have permission to ride that creature.");
-                            return;
                         }
+                    } else {
                         if (this.plugin.isFollowed(p)) {
                             p.sendMessage(ChatColor.GOLD + "Your " + et + " is no longer following you.");
                             this.plugin.setFollowed(p, false);
@@ -101,7 +101,7 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        this.plugin.teleportPetOf(event.getPlayer());
+        this.plugin.petSpawn(event.getPlayer());
     }
 
     @EventHandler

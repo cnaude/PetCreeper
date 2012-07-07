@@ -12,6 +12,9 @@ commands:
     petlist:
         description: List your pet type
         usage: /petlist
+    petname:
+        description: Name your pet
+        usage: /petname [name]
 permissions:
   petcreeper.pet:
     description: Allows players to use /pet command.

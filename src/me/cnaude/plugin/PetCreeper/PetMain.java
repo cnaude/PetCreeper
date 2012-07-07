@@ -3,7 +3,6 @@ package me.cnaude.plugin.PetCreeper;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -19,12 +18,8 @@ public class PetMain extends JavaPlugin {
     private final PetPlayerListener playerListener = new PetPlayerListener(this);
     private final PetEntityListener entityListener = new PetEntityListener(this);
     private static PetMain instance = null;    
-    public HashMap<String, Pet> petList = new HashMap();
-    private final HashMap<Player, Creature> pets = new HashMap();
-    private final HashMap<Player, Slime> slimePets = new HashMap();
-    private final HashMap<Player, Ghast> ghastPets = new HashMap();
-    private final HashMap<Player, Boolean> petFollow = new HashMap();
-    private final HashMap<Player, EntityType> petTypes = new HashMap();
+    public HashMap<String, Pet> playersWithPets = new HashMap();
+    public HashMap<Entity, Player> petList = new HashMap();
     private File dataFolder;
     PetMainLoop mainLoop;
     private PetConfig config;
@@ -48,18 +43,44 @@ public class PetMain extends JavaPlugin {
             try {
                 BufferedReader in = new BufferedReader(new FileReader(creeperFile));
                 String line;
+                String player = "";
                 while ((line = in.readLine()) != null) {
                     if (line.equals("\n")) {
                         continue;
                     }
-                    String[] parts = line.split("\t", 5);
-                    String pName = parts[0];
-                    if (EntityType.fromName(parts[1]) == EntityType.SHEEP) {
-                        this.petList.put(pName, new Pet(Integer.parseInt(parts[2]), Boolean.parseBoolean(parts[3]), Byte.parseByte(parts[4])));
-                    } else if (EntityType.fromName(parts[1]) == EntityType.PIG) {
-                        this.petList.put(pName, new Pet(Integer.parseInt(parts[2]), Boolean.parseBoolean(parts[3])));
+                    if (line.contains("\t")) {
+                        String[] parts = line.split("\t", 5);
+                        String pName = parts[0];
+                        if (EntityType.fromName(parts[1]) == EntityType.SHEEP) {
+                            this.playersWithPets.put(pName, new Pet(Integer.parseInt(parts[2]), Boolean.parseBoolean(parts[3]), Byte.parseByte(parts[4])));
+                        } else if (EntityType.fromName(parts[1]) == EntityType.PIG) {
+                            this.playersWithPets.put(pName, new Pet(Integer.parseInt(parts[2]), Boolean.parseBoolean(parts[3])));
+                        } else {
+                            this.playersWithPets.put(pName, new Pet(EntityType.fromName(parts[1]), Integer.parseInt(parts[2])));
+                        }
                     } else {
-                        this.petList.put(pName, new Pet(EntityType.fromName(parts[1]), Integer.parseInt(parts[2])));
+                        String[] parts = line.split(":", 2);
+                        parts[1] = parts[1].replaceAll("^\\s+", "");
+                        parts[1] = parts[1].replaceAll("\\s+$", "");
+                        if (parts[0].toUpperCase().equals("PLAYER")) {                        
+                            player = parts[1];
+                            System.out.println("Loading pet for " + player);
+                            this.playersWithPets.put(player, new Pet());
+                        } else if (parts[0].toUpperCase().equals("PETTYPE")) {
+                            this.playersWithPets.get(player).type = EntityType.fromName(parts[1]);                                                
+                        } else if (parts[0].toUpperCase().equals("PETNAME")) {
+                            this.playersWithPets.get(player).petName = parts[1];
+                        } else if (parts[0].toUpperCase().equals("PETHP")) {
+                            this.playersWithPets.get(player).hp = Integer.parseInt(parts[1]);
+                        } else if (parts[0].toUpperCase().equals("SADDLED")) {
+                            this.playersWithPets.get(player).saddled =  Boolean.parseBoolean(parts[1]);
+                        } else if (parts[0].toUpperCase().equals("SHEARED")) {
+                            this.playersWithPets.get(player).sheared = Boolean.parseBoolean(parts[1]);
+                        } else if (parts[0].toUpperCase().equals("SHEEPCOLOR")) {
+                            this.playersWithPets.get(player).color = Byte.parseByte(parts[1]);
+                        } else if (parts[0].toUpperCase().equals("FOLLOWED")) {
+                            this.playersWithPets.get(player).followed = Boolean.parseBoolean(parts[1]);
+                        }        
                     }
                 }
                 in.close();
@@ -90,54 +111,30 @@ public class PetMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.mainLoop.end();
-
-        for (Map.Entry entry : this.pets.entrySet()) {
-            Player p = (Player) entry.getKey();
-            Creature c = (Creature) entry.getValue();
-
-            if ((c instanceof Sheep)) {
-                Sheep s = (Sheep) c;
-                this.petList.put(p.getName(), new Pet(s.getHealth(), s.isSheared(), s.getColor().getData()));
-            } else if ((c instanceof Pig)) {
-                Pig pig = (Pig) c;
-                this.petList.put(p.getName(), new Pet(pig.getHealth(), pig.hasSaddle()));
-            } else {
-                this.petList.put(p.getName(), new Pet(getPetTypeOf(p), c.getHealth()));
-            }
-            c.remove();
-        }
-        
-        for (Map.Entry entry : this.slimePets.entrySet()) {
-            Player p = (Player) entry.getKey();
-            Slime c = (Slime) entry.getValue();
-            this.petList.put(p.getName(), new Pet(getPetTypeOf(p), c.getHealth()));            
-            c.remove();
-        }
-        
-        for (Map.Entry entry : this.ghastPets.entrySet()) {
-            Player p = (Player) entry.getKey();
-            Ghast c = (Ghast) entry.getValue();
-            this.petList.put(p.getName(), new Pet(getPetTypeOf(p), c.getHealth()));            
-            c.remove();
-        }
-
+        this.mainLoop.end();       
         File petFile = new File(this.dataFolder, "pets.txt");
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(petFile));
-            for (Map.Entry<String, Pet> entry : petList.entrySet()) {
+            for (Map.Entry<String, Pet> entry : playersWithPets.entrySet()) {
                 String player = entry.getKey();
-                Pet pet = entry.getValue();
-                
-                out.write(player + "\t" + pet.type.getName() + "\t" + pet.hp);
+                Pet pet = entry.getValue();                
+                out.write("Player: " + player + "\n");
+                out.write("PetType: " + pet.type.getName() + "\n");
+                out.write("PetHP: " + pet.hp + "\n");                
+                out.write("Followed: " + pet.followed + "\n");                
                 if (pet.type == EntityType.SHEEP) {
-                    out.write("\t" + pet.sheared + "\t" + pet.color);
+                    out.write("Sheared: " + pet.sheared + "\n");
+                    out.write("SheepColor: " + pet.color + "\n");
                 } else if (pet.type == EntityType.PIG) {
-                    out.write("\t" + pet.saddled);
-                }
-                out.write("\n");
+                    out.write("Saddled: " + pet.saddled + "\n");
+                }                
+                out.write("PetName: " + pet.petName + "\n");  
+                playersWithPets.get(player).e.remove();
+                
             }
             out.close();
+            petList.clear();
+            playersWithPets.clear();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -173,7 +170,10 @@ public class PetMain extends JavaPlugin {
         }
         if (commandLabel.equalsIgnoreCase("petlist")) {
             if (isPetOwner(p)) {
-                p.sendMessage(ChatColor.GREEN + "You are the proud owner of a pet " + ChatColor.YELLOW + getPetNameOf(p) + ChatColor.GREEN + ".");
+                p.sendMessage(ChatColor.GREEN + "You are the proud owner of a pet " 
+                        + ChatColor.YELLOW + getPetTypeOf(p).getName() 
+                        + ChatColor.GREEN + " named " + ChatColor.YELLOW 
+                        + getPetNameOf(p) + ChatColor.GREEN + ".");
             } else {
                 p.sendMessage(ChatColor.RED + "You don't own a pet.");
             }
@@ -189,300 +189,203 @@ public class PetMain extends JavaPlugin {
             }
             return true;
         }
+        if (commandLabel.equalsIgnoreCase("petname")) {
+            if (isPetOwner(p)) {                
+                String s = "";
+                for(String i : args) {
+                    s +=  i + " ";
+                }         
+                s = s.substring(0, s.length() - 1);
+                if (!s.isEmpty()) {
+                    playersWithPets.get(p.getName().toString()).petName = s;
+                    p.sendMessage(ChatColor.GREEN + "You named your pet "+ ChatColor.YELLOW + s + ChatColor.GREEN + "!");
+                } else {
+                    p.sendMessage(ChatColor.YELLOW+ "Usage: " + ChatColor.WHITE + "/petname [name]");
+                }                
+            } else {
+                p.sendMessage(ChatColor.RED + "You don't own a pet.");
+            }
+            return true;
+        }
         return false;
     }
 
-    public void petSpawn(Player p) {
-        if (petList.containsKey(p.getName())) {
-            Pet pet = petList.get(p.getName());
-            spawnPetOf(p, pet.type, pet.hp, pet.sheared, pet.saddled, pet.color);    
-            petList.remove(p.getName());
+    public void petSpawn(Player p) {     
+        if (isPetOwner(p)) {
+            Pet pet = playersWithPets.get(p.getName().toString());
+
+            Location pos = p.getLocation().clone();
+            pos.setY(pos.getY() + 1.0D);
+            LivingEntity e = (LivingEntity)p.getWorld().spawnCreature(pos, pet.type);
+            playersWithPets.get(p.getName().toString()).e = e;
+            petList.put(e, p);
+            if (pet.hp > e.getMaxHealth()) {
+                e.setHealth(e.getMaxHealth());
+            } else {
+                e.setHealth(pet.hp);                        
+            }
+            if (pet.type == EntityType.SHEEP) {            
+                ((Sheep)e).setSheared(pet.sheared);
+                ((Sheep)e).setColor(DyeColor.getByData(pet.color));
+            }              
+            if (pet.type == EntityType.PIG) {            
+                ((Pig)e).setSaddle(pet.saddled);
+            } 
+            p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + getPetNameOf(p) + ChatColor.GREEN + " greets you!");
         }
+
     }
 
-    public void spawnPetOf(Player p, EntityType type, int hp, boolean sheared, boolean saddled, byte color) {  
-        if (type == EntityType.SLIME) {
-            Slime c = getSlimePetOf(p);
-            if (c != null) {
-                c.remove();
-                untamePetOf(p);
-            }
-        } else if (type == EntityType.GHAST) {
-            Ghast c = getGhastPetOf(p);
-            if (c != null) {
-                c.remove();
-                untamePetOf(p);
-            }
-        } else {
-            Creature c = getPetOf(p);
-            if (c != null) {
-                c.remove();
-                untamePetOf(p);
-            }
-        }
-        Location pos = p.getLocation().clone();
-        pos.setY(pos.getY() + 1.0D);
-        LivingEntity e =  (LivingEntity)p.getWorld().spawnCreature(pos, type);
-        if (hp > e.getMaxHealth()) {
-            e.setHealth(e.getMaxHealth());
-        } else {
-            e.setHealth(hp);                        
-        }
-        if (type == EntityType.SHEEP) {            
-            ((Sheep)e).setSheared(sheared);
-            ((Sheep)e).setColor(DyeColor.getByData(color));
-        }              
-        if (type == EntityType.PIG) {            
-            ((Pig)e).setSaddle(saddled);
-        } 
-        tamePetOf(p, e, true);
-        }
-
-
     public void despawnPetOf(Player p) {
-        if (this.isPetOwner(p)) {
-            EntityType et = getPetTypeOf(p);
-            if (et == EntityType.SLIME) {
-                Slime c = this.getSlimePetOf(p);
-                this.petList.put(p.getName(), new Pet(et, c.getHealth()));
-                this.untamePetOf(p);
-                c.remove();
-            } else if (et == EntityType.GHAST) {
-                Ghast c = this.getGhastPetOf(p);
-                this.petList.put(p.getName(), new Pet(et, c.getHealth()));
-                this.untamePetOf(p);
-                c.remove();
-            } else {
-                Creature c = this.getPetOf(p);
-                if (et == EntityType.SHEEP) {
-                    Sheep s = (Sheep) c;
-                    this.petList.put(p.getName(), new Pet(s.getHealth(), s.isSheared(), s.getColor().getData()));
-                } else if (et == EntityType.PIG) {
-                    Pig pig = (Pig) c;
-                    this.petList.put(p.getName(), new Pet(pig.getHealth(), pig.hasSaddle()));
-                } else {
-                    this.petList.put(p.getName(), new Pet(et, c.getHealth()));
-                }
-                this.untamePetOf(p);
-                c.remove();
+        if (isPetOwner(p)) {
+            Entity e = getPetOf(p);
+            EntityType et = e.getType();
+            if (et == EntityType.SHEEP) {
+                Sheep s = (Sheep) e;
+                this.playersWithPets.get(p.getName().toString()).sheared = s.isSheared();
+                this.playersWithPets.get(p.getName().toString()).color = s.getColor().getData();
+            } else if (et == EntityType.PIG) {
+                Pig pig = (Pig) e;
+                this.playersWithPets.get(p.getName().toString()).saddled = pig.hasSaddle();
             }
+            this.playersWithPets.get(p.getName().toString()).hp = ((LivingEntity)e).getHealth();
+            e.remove();   
         }
     }
     
     public void teleportPetOf(Player p) {
-        if (this.isPetOwner(p)) {
-            EntityType et = getPetTypeOf(p);
-            if (et == EntityType.SLIME) {
-                Slime c = getSlimePetOf(p);
-                if (c.getWorld().equals(p.getWorld())) {
-                    Location pos = p.getLocation().clone();
-                    pos.setY(pos.getY() + 1.0D);
-                    c.teleport(pos);
-                } else {
-                    this.despawnPetOf(p);
-                    this.petSpawn(p);
-                }    
-            } else if (et == EntityType.GHAST) {
-                Ghast c = getGhastPetOf(p);
-                if (c.getWorld().equals(p.getWorld())) {
-                    Location pos = p.getLocation().clone();
-                    pos.setY(pos.getY() + 1.0D);
-                    c.teleport(pos);
-                } else {
-                    this.despawnPetOf(p);
-                    this.petSpawn(p);
-                }    
+        if (this.isPetOwner(p)) {                        
+            Entity e = getPetOf(p);
+            if (e.getWorld().equals(p.getWorld())) {
+                Location pos = p.getLocation().clone();
+                pos.setY(pos.getY() + 1.0D);
+                e.teleport(pos);
             } else {
-                Creature c = getPetOf(p);
-                if (c.getWorld().equals(p.getWorld())) {
-                    Location pos = p.getLocation().clone();
-                    pos.setY(pos.getY() + 1.0D);
-                    c.teleport(pos);
-                } else {
-                    this.despawnPetOf(p);
-                    this.petSpawn(p);
-                }            
-            }
+                this.despawnPetOf(p);
+                this.petSpawn(p);
+            }                
         }
     }
 
-    public boolean tamePetOf(Player p, Entity pet, boolean spawned) {
-        Location loc = pet.getLocation();
-        EntityType et = pet.getType();                
-        ItemStack bait = p.getItemInHand();
-        int amt = bait.getAmount();
-        boolean tamed = false;
-        
-        if (isPetOwner(p)) {
-            p.sendMessage("You already have a pet!");
-            return false;
-        }
-        
-        if (!hasPerm(p, "petcreeper.tame." + et.getName()) && !hasPerm(p, "petcreeper.tame.All")) {
-            p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + et.getName() + ".");
-            return false;
-        }        
-        
-        untamePetOf(p);
-        
-        if ((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) {                        
-            if (et == EntityType.SLIME) {
-                this.slimePets.put(p, (Slime)pet);
-                this.petTypes.put(p, et);
-                tamed = true;
-            } else if (et == EntityType.GHAST) {
-                this.ghastPets.put(p, (Ghast)pet);
-                this.petTypes.put(p, et);
-                tamed = true;
-            } else if (et == EntityType.CREEPER) {
-                // We reomve the creeper to fix the bloated creeper effect
-                pet.remove();
-                Creature c = (Creature) p.getWorld().spawnCreature(loc, EntityType.CREEPER);
-                this.pets.put(p, c);
-                this.petTypes.put(p, et);
-                tamed = true;
-            } else if (pet instanceof Creature) {
-                this.pets.put(p, (Creature)pet);
-                this.petTypes.put(p, et);
-                tamed = true;
-            } 
+    public boolean tamePetOf(Player p, Entity pet, boolean spawned) {        
+        if (pet instanceof LivingEntity) {
+            EntityType et = pet.getType();                
+            ItemStack bait = p.getItemInHand();
+            int amt = bait.getAmount();
+            int hp = ((LivingEntity)pet).getMaxHealth();
+            boolean tamed = false;
 
-            if (spawned) {
-                p.sendMessage(ChatColor.GREEN + "Your pet " + getPetNameOf(p) + " greets you!");
-            } else {
-                if (tamed) {
-                    if (amt == 1) {
-                        p.getInventory().removeItem(new ItemStack[]{bait});
-                    } else {
-                        bait.setAmount(amt - 1);
-                    }                    
-                    if (pet instanceof Monster) {
-                        ((Monster)pet).setTarget(null);                            
-                    }
-                    p.sendMessage(ChatColor.GREEN + "You tamed the " + getPetNameOf(p) + "!");
-                }   
+            if (isPetOwner(p)) {
+                p.sendMessage("You already have a pet!");
+                return false;
             }
+
+            if (!hasPerm(p, "petcreeper.tame." + et.getName()) && !hasPerm(p, "petcreeper.tame.All")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + et.getName() + ".");
+                return false;
+            }                        
+
+            if ((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) {                                    
+                if (et == EntityType.CREEPER) {                
+                    pet.remove(); 
+                    Entity creeper = p.getWorld().spawnCreature(pet.getLocation(), EntityType.CREEPER);
+                    this.petList.put(creeper, p);                                
+                    this.playersWithPets.put(p.getName(), new Pet(et, hp));
+                    this.playersWithPets.get(p.getName().toString()).e = creeper;
+                    tamed = true;
+                } else {
+                    this.petList.put(pet, p);
+                    if (et == EntityType.SHEEP) {
+                        Sheep s = (Sheep) pet;
+                        this.playersWithPets.put(p.getName(), new Pet(hp, s.isSheared(), s.getColor().getData()));
+                    } else if (et == EntityType.PIG) {
+                        Pig pig = (Pig) pet;
+                        this.playersWithPets.put(p.getName(), new Pet(hp, pig.hasSaddle()));
+                    } else {
+                        this.playersWithPets.put(p.getName(), new Pet(et, hp));
+                    }
+                    this.playersWithPets.get(p.getName().toString()).e = pet;
+                    tamed = true;
+                } 
+
+
+                if (tamed) {
+                    p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + getPetNameOf(p) + ChatColor.GREEN + " greets you!");
+                } else {
+                    if (tamed) {
+                        if (amt == 1) {
+                            p.getInventory().removeItem(new ItemStack[]{bait});
+                        } else {
+                            bait.setAmount(amt - 1);
+                        }                    
+                        if (pet instanceof Monster) {
+                            ((Monster)pet).setTarget(null);                            
+                        }
+                        p.sendMessage(ChatColor.GREEN + "You tamed the " + getPetNameOf(p) + "!");
+                    }   
+                }
+            }
+            return tamed;
+        } else {
+            return false;
         }
-        return tamed;
     }
        
     public void untamePetOf(Player player) {
-        if (this.pets.containsKey(player)) {
-            this.pets.remove(player);
-            this.petFollow.remove(player);
-            this.petTypes.remove(player);
-        }
-        if (this.slimePets.containsKey(player)) {
-            this.slimePets.remove(player);
-            this.petFollow.remove(player);
-            this.petTypes.remove(player);
-        }        
-        if (this.ghastPets.containsKey(player)) {
-            this.ghastPets.remove(player);
-            this.petFollow.remove(player);
-            this.petTypes.remove(player);
+        if (playersWithPets.containsKey(player.getName())) {
+            Entity e = getPetOf(player);
+            petList.remove(e);        
+            playersWithPets.remove(player.getName());
         }
     }
 
-    public Creature getPetOf(Player player) {
-        if (this.pets.containsKey(player)) {
-            return (Creature) this.pets.get(player);
-        }
-        return null;
-    }
-
-    public Slime getSlimePetOf(Player player) {
-        if (this.slimePets.containsKey(player)) {
-            return (Slime) this.slimePets.get(player);
-        }
-        return null;
-    }
-            
-    public Ghast getGhastPetOf(Player player) {
-        if (this.ghastPets.containsKey(player)) {
-            return (Ghast) this.ghastPets.get(player);
+    public Entity getPetOf(Player player) {
+        if (playersWithPets.containsKey(player.getName())) {
+            return playersWithPets.get(player.getName()).e;            
         }
         return null;
     }
 
     public Player getMasterOf(Entity pet) {
-        if (pet.getType() == EntityType.SLIME) {
-            Slime c = (Slime)pet;
-            if (this.slimePets.containsValue(c)) {
-                for (Map.Entry entry : this.slimePets.entrySet()) {
-                    if (entry.getValue().equals(c)) {
-                        return (Player) entry.getKey();
-                    }
-                }            
-            }
-        } else if (pet.getType() == EntityType.GHAST) {
-            Ghast c = (Ghast)pet;
-           if (this.ghastPets.containsValue(c)) {
-                for (Map.Entry entry : this.ghastPets.entrySet()) {
-                    if (entry.getValue().equals(c)) {
-                        return (Player) entry.getKey();
-                    }
-                }         
-            }
-        } else if (pet instanceof Creature) {
-            Creature c = (Creature)pet;
-            if (this.pets.containsValue(c)) {
-                for (Map.Entry entry : this.pets.entrySet()) {
-                    if (entry.getValue().equals(c)) {
-                        return (Player) entry.getKey();
-                    }
-                }                
-            }
-        }
-        return null;
+        return petList.get(pet);
     }
 
     public boolean isPet(Entity pet) {
-        if (pet.getType() == EntityType.SLIME) {            
-            return this.slimePets.containsValue((Slime)pet);
-        } else if (pet.getType() == EntityType.GHAST) {            
-            return this.ghastPets.containsValue((Ghast)pet);
-        } else if (pet instanceof Creature) {
-            return this.pets.containsValue((Creature)pet);
-        } else {
-            return false;
-        }
+        return petList.containsKey(pet);        
     }    
 
     public boolean isPetOwner(Player p) {
-        if (this.pets.containsKey(p)
-                || this.slimePets.containsKey(p)
-                || this.ghastPets.containsKey(p)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (playersWithPets.containsKey(p.getName().toString()));
     }
 
     public boolean isFollowed(Player p) {
-        if (this.petFollow.containsKey(p)) {
-            return ((Boolean) this.petFollow.get(p)).booleanValue();
+        if (playersWithPets.containsKey(p.getName().toString())) {
+            return playersWithPets.get(p.getName().toString()).followed;
         }
-        return true;
+        return false;
     }
 
     public void setFollowed(Player p, boolean f) {
-        this.petFollow.put(p, Boolean.valueOf(f));
+        playersWithPets.get(p.getName().toString()).followed = f;
     }
 
     public EntityType getPetTypeOf(Player p) {
-        if (this.petTypes.containsKey(p)) {
-            return (EntityType) this.petTypes.get(p);
+        if (playersWithPets.containsKey(p.getName().toString())) {
+            return playersWithPets.get(p.getName().toString()).type;
         }
         return null;
     }
 
     public String getPetNameOf(Player p) {
-        return getPetTypeOf(p).getName();
-    }
-
-    public Set<Player> getMasterList() {
-        return this.pets.keySet();
+        String petName = "";
+        if (playersWithPets.containsKey(p.getName().toString())) {
+            if (playersWithPets.get(p.getName().toString()).petName.isEmpty()) {
+                petName = playersWithPets.get(p.getName().toString()).type.getName();
+            } else {
+                petName = playersWithPets.get(p.getName().toString()).petName;
+            }
+        }
+        return petName; 
     }
 
     public static PetMain get() {

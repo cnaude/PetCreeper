@@ -41,7 +41,8 @@ public final class PetConfig {
         baitMap.put("Blaze", Material.getMaterial(config.getInt("Blaze", 369)));
         baitMap.put("Ghast", Material.getMaterial(config.getInt("Ghast", 370)));
         baitMap.put("Slime", Material.getMaterial(config.getInt("Slime", 341)));
-        baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));        
+        baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));
+        baitMap.put("EnderDragon", Material.getMaterial(config.getInt("EnderDragon", 122)));        
 
 
         provokable = config.getBoolean("Provokable", true);

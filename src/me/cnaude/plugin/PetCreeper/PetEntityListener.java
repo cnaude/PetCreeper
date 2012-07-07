@@ -2,6 +2,7 @@ package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.entity.CraftArrow;
+import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.entity.CraftFireball;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -25,11 +26,10 @@ public class PetEntityListener implements Listener {
             if (this.plugin.isPet(e)) {
                 Player p = this.plugin.getMasterOf(e);
                 if(p.getWorld() == c.getWorld()) {
-                    if ((!this.plugin.isFollowed(p)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
-                        event.setTarget(null);
-                    } else {
-                        event.setTarget(p);
-                    }
+                    if ((!this.plugin.isFollowed(p)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                        
+                        c.setTarget(null);
+                        event.setCancelled(true);                        
+                    } 
                 }
             }
         }
@@ -83,10 +83,9 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity e = event.getEntity();
-        Entity d = event.getDamager();
-        EntityType et = e.getType();
+        Entity d = event.getDamager();        
 
-        if ((e instanceof Wolf) || (e instanceof Ocelot)) {
+        if ((e instanceof Wolf) || (e instanceof Ocelot) || (e instanceof CraftEnderCrystal)) {
             return;
         }
         
@@ -139,8 +138,8 @@ public class PetEntityListener implements Listener {
     public void onEntityDeath(EntityDeathEvent event) {
         Entity e = event.getEntity();
         if (this.plugin.isPet(e)) {
-            Player p = this.plugin.getMasterOf(e);
-            p.sendMessage(ChatColor.RED + "Your " + this.plugin.getPetNameOf(p) + " has died!");
+            Player p = this.plugin.getMasterOf(e);            
+            p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getPetNameOf(p) + ChatColor.RED + " has died!");
             this.plugin.untamePetOf(p);
         }
     }
