@@ -26,7 +26,7 @@ public class PetEntityListener implements Listener {
             if (this.plugin.isPet(e)) {
                 Player p = this.plugin.getMasterOf(e);
                 if(p.getWorld() == c.getWorld()) {
-                    if ((!this.plugin.isFollowed(p)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                        
+                    if ((!this.plugin.isPetFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                        
                         c.setTarget(null);
                         event.setCancelled(true);                        
                     } 
@@ -103,8 +103,8 @@ public class PetEntityListener implements Listener {
                 if (d instanceof Player) { 
                     Player p = (Player)d;
                     if (this.plugin.getMasterOf(e) == p) {
-                        p.sendMessage(ChatColor.RED + "You made your " + this.plugin.getPetNameOf(p) + " angry!");
-                        this.plugin.untamePetOf(p);
+                        p.sendMessage(ChatColor.RED + "You made your " + this.plugin.getNameOfPet(e) + " angry!");
+                        this.plugin.untamePetOf(p,e);
                     }
                 }
             } else if (PetConfig.attackTame) {
@@ -139,8 +139,8 @@ public class PetEntityListener implements Listener {
         Entity e = event.getEntity();
         if (this.plugin.isPet(e)) {
             Player p = this.plugin.getMasterOf(e);            
-            p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getPetNameOf(p) + ChatColor.RED + " has died!");
-            this.plugin.untamePetOf(p);
+            p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(e) + ChatColor.RED + " has died!");
+            this.plugin.untamePetOf(p,e);
         }
     }
 }

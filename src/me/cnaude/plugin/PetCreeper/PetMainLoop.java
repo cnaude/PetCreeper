@@ -37,7 +37,7 @@ public class PetMainLoop {
                     Navigation n = ((CraftLivingEntity) pet).getHandle().al();
                     n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
                 } else {
-                    plugin.teleportPetOf(p);
+                    plugin.teleportPetOf(pet,p);
                 }    
             }
         }

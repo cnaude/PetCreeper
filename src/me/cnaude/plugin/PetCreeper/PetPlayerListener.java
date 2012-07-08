@@ -76,16 +76,18 @@ public class PetPlayerListener implements Listener {
                             p.sendMessage(ChatColor.RED + "You don't have permission to ride that creature.");
                         }
                     } else {
-                        if (this.plugin.isFollowed(p)) {
+                        if (this.plugin.isPetFollowing(e)) {
                             p.sendMessage(ChatColor.GOLD + "Your " + et + " is no longer following you.");
-                            this.plugin.setFollowed(p, false);
+                            this.plugin.petFollowList.remove(e);
+                            this.plugin.petFollowList.put(e, false);
                         } else {
                             p.sendMessage(ChatColor.GOLD + "Your " + et + " is now following you.");
-                            this.plugin.setFollowed(p, true);
+                            this.plugin.petFollowList.remove(e);
+                            this.plugin.petFollowList.put(e, true);
                         }
                     }
                 } else {
-                    p.sendMessage(ChatColor.GOLD + "That " + this.plugin.getPetNameOf(master) + " belongs to " + master.getDisplayName() + ".");
+                    p.sendMessage(ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
                 }
 
             } else {
@@ -96,7 +98,7 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        this.plugin.teleportPetOf(event.getPlayer());
+        this.plugin.teleportPetsOf(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
