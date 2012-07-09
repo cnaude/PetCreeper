@@ -7,7 +7,6 @@ import net.minecraft.server.Navigation;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
 public class PetMainLoop {
@@ -27,18 +26,19 @@ public class PetMainLoop {
         @Override
         public void run() {
             for (Map.Entry<Entity, Player> entry : plugin.petList.entrySet()) {
-                Entity pet = entry.getKey();                
+                Entity e = entry.getKey();                
                 Player p = entry.getValue();
-
-                if (p.getWorld().equals(pet.getWorld())) {                                        
-                    if (pet instanceof Creature) {
-                        ((Creature) pet).setTarget(p);
+                if (plugin.petFollowList.get(e)) {
+                    if (p.getWorld() == e.getWorld()) {                                        
+                        if (e instanceof Creature) {
+                            ((Creature) e).setTarget(p);
+                        }
+                        Navigation n = ((CraftLivingEntity) e).getHandle().al();
+                        n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
+                    } else {                    
+                            e.teleport((Entity)p);                    
                     }
-                    Navigation n = ((CraftLivingEntity) pet).getHandle().al();
-                    n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
-                } else {
-                    plugin.teleportPetOf(pet,p);
-                }    
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ import org.bukkit.entity.Pig;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Slime;
 
-public class Pet {
+public final class Pet {
 
     public EntityType type = EntityType.UNKNOWN;
     public int entityId = -1;
@@ -23,6 +23,10 @@ public class Pet {
     public boolean followed = true;
 
     public Pet(Entity e) {
+        this.initPet(e);                    
+    }
+    
+    public void initPet(Entity e) {
         EntityType et = e.getType();
         int health = ((LivingEntity) e).getHealth();
         if (et == EntityType.CREEPER) {
@@ -53,7 +57,7 @@ public class Pet {
             this.entityId = e.getEntityId();
         }
     }
-
+    
     public Pet() {
     }
 }

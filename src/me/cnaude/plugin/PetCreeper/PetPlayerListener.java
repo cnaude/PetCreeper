@@ -25,17 +25,17 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        this.plugin.petSpawn(event.getPlayer());
+        this.plugin.spawnPetsOf(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        this.plugin.despawnPetOf(event.getPlayer());
+        this.plugin.despawnPetsOf(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerKick(PlayerKickEvent event) {
-        this.plugin.despawnPetOf(event.getPlayer());
+        this.plugin.despawnPetsOf(event.getPlayer());
     }
 
     @EventHandler
@@ -103,7 +103,7 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        this.plugin.petSpawn(event.getPlayer());
+        this.plugin.spawnPetsOf(event.getPlayer());
     }
 
     @EventHandler
