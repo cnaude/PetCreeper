@@ -106,7 +106,29 @@ public class PetCommands implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You have no pets. :(");
             }
         }
+        if (commandLabel.equalsIgnoreCase("petinfo")) {
+            if (this.plugin.isPetOwner(p)) {
+                if (args.length == 1 && args[0].matches("\\d+")) {
+                    int idx = Integer.parseInt(args[0]);
+                    if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                        Pet pet = this.plugin.getPetsOf(p).get(idx);
+                        Entity e = plugin.getEntityOfPet(pet);
+                        //plugin.printPetInfo(p, pet);                            
+                    } else {
+                        p.sendMessage(ChatColor.RED + "Invalid pet ID.");
+                    }                
+                } else {
+                    p.sendMessage(ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petinfo [id]");
+                }
+            } else {
+                p.sendMessage(ChatColor.RED + "You have no pets. :(");
+            }
+        }
         if (commandLabel.equalsIgnoreCase("petgive")) {
+            if (!this.plugin.hasPerm(p, "petcreeper.give")) {
+                p.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+                return true;
+            }
             if (this.plugin.isPetOwner(p)) {
                 if (args.length == 2 && args[0].matches("\\d+")) {
                     int idx = Integer.parseInt(args[0]);

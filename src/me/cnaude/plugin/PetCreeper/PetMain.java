@@ -107,41 +107,45 @@ public class PetMain extends JavaPlugin {
         if (isPetOwner(p)) {
             for (Iterator i = getPetsOf(p).iterator(); i.hasNext();) {
                 Pet pet = (Pet) i.next();
-                spawnPet(pet, p);
+                spawnPet(pet, p, true);
             }
         }
     }
 
-    public void spawnPet(Pet pet, Player p) {
+    public void spawnPet(Pet pet, Player p, boolean msg) {
         Location pos = p.getLocation().clone();
         pos.setY(pos.getY() + 1.0D);
         Entity e = p.getWorld().spawnCreature(pos, pet.type);
-        pet.entityId = e.getEntityId();
-        if (pet.type == EntityType.SHEEP) {
-            ((Sheep) e).setSheared(pet.sheared);
-            ((Sheep) e).setColor(DyeColor.getByData(pet.color));
+        if (e != null) {
+            pet.entityId = e.getEntityId();
+            if (pet.type == EntityType.SHEEP) {
+                ((Sheep) e).setSheared(pet.sheared);
+                ((Sheep) e).setColor(DyeColor.getByData(pet.color));
+            }
+            if (pet.type == EntityType.PIG) {
+                ((Pig) e).setSaddle(pet.saddled);
+            }
+            if (pet.type == EntityType.SLIME) {
+                ((Slime) e).setSize(pet.size);
+            }
+            if (pet.type == EntityType.MAGMA_CUBE) {
+                ((MagmaCube) e).setSize(pet.size);
+            }
+            if (pet.type == EntityType.VILLAGER) {
+                ((Villager) e).setProfession(pet.prof);
+            }
+            if (e instanceof Ageable) {
+                ((Ageable)e).setAge(pet.age);
+            }
+            ((LivingEntity) e).setHealth(pet.hp);
+            petList.put(e, p);
+            petNameList.put(e, pet.petName);
+            petFollowList.put(e, pet.followed);
+            entityIds.put(e.getEntityId(), e);
+            if (msg) {
+                p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " greets you!");
+            }
         }
-        if (pet.type == EntityType.PIG) {
-            ((Pig) e).setSaddle(pet.saddled);
-        }
-        if (pet.type == EntityType.SLIME) {
-            ((Slime) e).setSize(pet.size);
-        }
-        if (pet.type == EntityType.MAGMA_CUBE) {
-            ((MagmaCube) e).setSize(pet.size);
-        }
-        if (pet.type == EntityType.VILLAGER) {
-            ((Villager) e).setProfession(pet.prof);
-        }
-        if (e instanceof Ageable) {
-            ((Ageable)e).setAge(pet.age);
-        }
-        ((LivingEntity) e).setHealth(pet.hp);
-        petList.put(e, p);
-        petNameList.put(e, pet.petName);
-        petFollowList.put(e, pet.followed);
-        entityIds.put(e.getEntityId(), e);
-        p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " greets you!");
     }
 
     public void despawnPetsOf(Player p) {
@@ -202,7 +206,7 @@ public class PetMain extends JavaPlugin {
                 e.teleport(pos);
             } else {
                 this.despawnPet(pet);
-                this.spawnPet(pet, p);
+                this.spawnPet(pet, p, false);
             }
             if (msg) {
                 p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + getNameOfPet(e) + ChatColor.GREEN + " teleported to you.");
@@ -239,7 +243,7 @@ public class PetMain extends JavaPlugin {
                 tamed = true;
 
                 if (spawned) {
-                    p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.type.getName() + ChatColor.GREEN + " greets you!");
+                    //p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.type.getName() + ChatColor.GREEN + " greets you!");
                 } else {
                     if (amt == 1) {
                         p.getInventory().removeItem(new ItemStack[]{bait});

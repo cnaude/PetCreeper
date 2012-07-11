@@ -58,7 +58,7 @@ public class PetPlayerListener implements Listener {
         if ((et == EntityType.WOLF) || (et == EntityType.OCELOT)) {
             return;
         }
-        if (e instanceof LivingEntity) {            
+        if (e instanceof Entity) {             
             if (this.plugin.isPet(e)) {                
                 Player master = this.plugin.getMasterOf(e);
                 if (master == p) {

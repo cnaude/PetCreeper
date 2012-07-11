@@ -1,5 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
+import net.minecraft.server.EntityComplexPart;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.entity.CraftArrow;
 import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
@@ -42,6 +43,14 @@ public class PetEntityListener implements Listener {
             if (this.plugin.isPet(e)) {
                 event.setCancelled(true);
             }
+        }
+    }
+    
+    @EventHandler
+    public void stopDragonDamage(EntityExplodeEvent event) {
+        Entity e = event.getEntity();
+        if (this.plugin.isPet(e)) {
+            event.setCancelled(true);  
         }
     }
 

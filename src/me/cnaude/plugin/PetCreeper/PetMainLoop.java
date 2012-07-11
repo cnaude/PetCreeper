@@ -36,9 +36,10 @@ public class PetMainLoop {
                         Navigation n = ((CraftLivingEntity) e).getHandle().al();
                         n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
                     } else {    
-                            Pet pet = plugin.getPet(e,p);
-                            plugin.despawnPet(pet);
-                            plugin.spawnPet(pet,p);
+                        Pet pet = plugin.getPet(e,p);
+                        plugin.teleportPet(pet, true);                        
+                        //plugin.despawnPet(pet);
+                        //plugin.spawnPet(pet,p, true);
                     }
                 }
             }
