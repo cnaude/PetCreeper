@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import net.minecraft.server.Navigation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PetMain extends JavaPlugin {
 
+    public static final String PLUGIN_NAME = "PetCreeper";
+    public static final String LOG_HEADER = "[" + PLUGIN_NAME + "]";
     private final PetPlayerListener playerListener = new PetPlayerListener(this);
     private final PetEntityListener entityListener = new PetEntityListener(this);
     private static PetMain instance = null;
@@ -24,8 +27,10 @@ public class PetMain extends JavaPlugin {
     public HashMap<Entity, String> petNameList = new HashMap<Entity, String>();
     public HashMap<Entity, Boolean> petFollowList = new HashMap<Entity, Boolean>();
     public HashMap<Integer, Entity> entityIds = new HashMap<Integer, Entity>();
+    static final Logger log = Logger.getLogger("Minecraft");
     PetMainLoop mainLoop;
-    private PetConfig config;
+    public boolean configLoaded = false;
+    private static PetConfig config;
     private PetFile petFile = new PetFile(this);
 
     @Override
@@ -49,6 +54,7 @@ public class PetMain extends JavaPlugin {
         registerCommand("petinfo");
         registerCommand("petname");
         registerCommand("petgive");
+        registerCommand("petreload");
     }
     
     private void registerCommand(String command) {
@@ -59,10 +65,34 @@ public class PetMain extends JavaPlugin {
         }
     }
 
+    public void logInfo(String s) {
+        log.log(Level.INFO,String.format("%s %s",LOG_HEADER,s));
+    }
+    
+    public void message(Player p, String msg) {        
+        msg = msg.replaceAll("%PLAYER%", p.getName());
+        msg = msg.replaceAll("%DPLAYER%", p.getDisplayName());
+        p.sendMessage(msg);
+    }
+    
+    public static PetConfig getPConfig() {
+        return config;
+    }
+    
     void loadConfig() {
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-        config = new PetConfig(this);
+        if (!this.configLoaded) {
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+            logInfo("Configuration loaded.");
+            config = new PetConfig(this); 
+        } else {
+            reloadConfig();
+            getConfig().options().copyDefaults(false);
+            config = new PetConfig(this);
+            logInfo("Configuration reloaded.");
+        }                    
+        instance = this;
+        configLoaded = true;    
     }
 
     public boolean hasPerm(Player p, String s) {
@@ -76,11 +106,15 @@ public class PetMain extends JavaPlugin {
     @Override
     public void onDisable() {
         this.mainLoop.end();
-        if (petFile.savePets()) {            
-            for (Player p : petList.values()) {                              
-                despawnPetsOf(p);                
-            }            
-        }
+        for (Player p : petList.values()) {                              
+            despawnPetsOf(p);                
+        }            
+        petFile.savePets();
+        petNameList.clear();
+        entityIds.clear();
+        petList.clear();
+        petFollowList.clear();
+        playersWithPets.clear();
     }
     
     public ArrayList<Pet> getPetsOf(Player p) {

@@ -73,21 +73,21 @@ public class PetPlayerListener implements Listener {
                                 || this.plugin.hasPerm(p, "petcreeper.ride.All")) {
                             e.setPassenger(p);
                         } else {
-                            p.sendMessage(ChatColor.RED + "You don't have permission to ride that creature.");
+                            this.plugin.message(p,ChatColor.RED + "You don't have permission to ride that creature.");
                         }
                     } else {
                         if (this.plugin.isPetFollowing(e)) {
-                            p.sendMessage(ChatColor.GOLD + "Your " + et + " is no longer following you.");
+                            this.plugin.message(p,ChatColor.GOLD + "Your " + et + " is no longer following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, false);
                         } else {
-                            p.sendMessage(ChatColor.GOLD + "Your " + et + " is now following you.");
+                            this.plugin.message(p,ChatColor.GOLD + "Your " + et + " is now following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, true);
                         }
                     }
                 } else {
-                    p.sendMessage(ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
+                    this.plugin.message(p,ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
                 }
 
             } else {

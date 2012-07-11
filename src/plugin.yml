@@ -21,6 +21,9 @@ commands:
     petgive:
         description: Give your pet to another player
         usage: /petgive [id] [player]
+    petreload:
+        description: Reload configuration
+        usage: /petreload
 permissions:
   petcreeper.pet:
     description: Allows players to use /pet command.

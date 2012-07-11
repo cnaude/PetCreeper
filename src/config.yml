@@ -2,25 +2,30 @@
 #You can't tame Skeletons and Ghasts, because they'll still shoot you.
 #If you want to disable taming a certain mob, delete it or set the code
 #to 0.
-
+Blaze: 369
+CaveSpider: 287
 Chicken: 295
 Cow: 295
 Creeper: 318
+EnderDragon: 318
+Enderman: 122
+Ghast: 370
 Giant: 41
+Golem: 265
+MagmaCube: 378
+MushroomCow: 40
 Pig: 319
 PigZombie: 319
 Sheep: 338
-Spider: 287
-CaveSpider: 287
-Squid: 349
-Zombie: 288
-Golem: 265
-Enderman: 368
-VillagerGolem: 265
-Blaze: 369
 Silverfish: 280
+Slime: 341
+SnowMan: 332
+Spider: 287
+Squid: 349
+Golem: 265
 Villager: 38
-
+VillagerGolem: 265
+Zombie: 288
 #Other options
 Provokable: true
 Ridable: true
