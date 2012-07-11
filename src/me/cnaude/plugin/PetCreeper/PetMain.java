@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import net.minecraft.server.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -74,12 +76,10 @@ public class PetMain extends JavaPlugin {
     @Override
     public void onDisable() {
         this.mainLoop.end();
-        if (petFile.savePets()) {
-            entityIds.clear();
-            petList.clear();
-            petNameList.clear();
-            petFollowList.clear();
-            playersWithPets.clear();
+        if (petFile.savePets()) {            
+            for (Player p : petList.values()) {                              
+                despawnPetsOf(p);                
+            }            
         }
     }
     

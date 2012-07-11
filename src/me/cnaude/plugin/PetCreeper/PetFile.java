@@ -38,6 +38,7 @@ public class PetFile {
     }
     
     public boolean savePets() {
+        boolean saved = false;
         if (!dataFolderExists()) {
             System.out.println("Unable to find data folder! [" + this.dataFolder.getAbsolutePath() + "]");
             return false;
@@ -55,11 +56,12 @@ public class PetFile {
                 }                
             }
             out.close();
-            return true;
+            saved = true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            saved = false;
         }
-        return false;
+        return saved;
     }
     
     public boolean loadPets() {
