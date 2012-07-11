@@ -46,6 +46,7 @@ public class PetMain extends JavaPlugin {
         registerCommand("petlist");
         registerCommand("petinfo");
         registerCommand("petname");
+        registerCommand("petgive");
     }
     
     private void registerCommand(String command) {
@@ -160,7 +161,7 @@ public class PetMain extends JavaPlugin {
             e.remove();
         }
     }
-
+    
     public void printPetListOf(Player p) {
         if (isPetOwner(p)) {
             p.sendMessage(ChatColor.GREEN + "You are the proud owner of the following pets:");
@@ -195,7 +196,7 @@ public class PetMain extends JavaPlugin {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
             Player p = petList.get(e);
-            if (e.getWorld().equals(p.getWorld())) {
+            if (e.getWorld() == p.getWorld()) {
                 Location pos = p.getLocation().clone();
                 pos.setY(pos.getY() + 1.0D);
                 e.teleport(pos);
@@ -215,11 +216,6 @@ public class PetMain extends JavaPlugin {
             EntityType et = e.getType();
             ItemStack bait = p.getItemInHand();
             int amt = bait.getAmount();
-
-            /*if (isPetOwner(p)) {
-             p.sendMessage("You already have a pet!");
-             return false;
-             }*/
             
             if (isPetOwner(p)) {
                 if (getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
@@ -228,10 +224,12 @@ public class PetMain extends JavaPlugin {
                 }
             }
 
-            if ((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) {
-                if (!hasPerm(p, "petcreeper.tame." + et.getName()) && !hasPerm(p, "petcreeper.tame.All")) {
-                    p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + et.getName() + ".");
-                    return false;
+            if (((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) || spawned) {
+                if (!spawned) {
+                    if (!hasPerm(p, "petcreeper.tame." + et.getName()) && !hasPerm(p, "petcreeper.tame.All")) {
+                        p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + et.getName() + ".");
+                        return false;
+                    }
                 }
                 if (!isPetOwner(p)) {
                     this.playersWithPets.put(p.getName(), new ArrayList<Pet>());
@@ -248,8 +246,8 @@ public class PetMain extends JavaPlugin {
                     } else {
                         bait.setAmount(amt - 1);
                     }
-                    if (e instanceof Monster) {
-                        ((Monster) e).setTarget(null);
+                    if (e instanceof Creature) {
+                        ((Creature) e).setTarget(null);
                     }
                     p.sendMessage(ChatColor.GREEN + "You tamed the " + ChatColor.YELLOW + pet.type.getName() + ChatColor.GREEN + "!");
                 }
@@ -280,6 +278,16 @@ public class PetMain extends JavaPlugin {
         }
         playersWithPets.remove(p.getName());
     }
+    
+    public Pet getPet(Entity e, Player p) {
+       Pet returnPet = new Pet();
+       for (Pet pet : getPetsOf(p)) {
+           if (pet.entityId == e.getEntityId()) {
+               returnPet = pet;
+           }
+       }                   
+       return returnPet;
+    }
 
     public void cleanUpLists(Entity e) {
         int id = e.getEntityId();
@@ -299,7 +307,7 @@ public class PetMain extends JavaPlugin {
 
     public void untamePetOf(Player p, Entity e) {
         if (isPetOwner(p)) {
-            for (int i = getPetsOf(p).size(); i > 0; i--) {
+            for (int i = getPetsOf(p).size() - 1; i >= 0; i--) {
                 Pet pet = getPetsOf(p).get(i);
                 if (pet.entityId == e.getEntityId()) {
                     cleanUpLists(e);
@@ -309,7 +317,7 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
-
+    
     public Player getMasterOf(Entity pet) {
         return petList.get(pet);
     }

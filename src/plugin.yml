@@ -18,6 +18,9 @@ commands:
     petname:
         description: Name your pet
         usage: /petname [id] [name]
+    petgive:
+        description: Give your pet to another player
+        usage: /petgive [id] [player]
 permissions:
   petcreeper.pet:
     description: Allows players to use /pet command.

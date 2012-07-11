@@ -28,15 +28,17 @@ public class PetMainLoop {
             for (Map.Entry<Entity, Player> entry : plugin.petList.entrySet()) {
                 Entity e = entry.getKey();                
                 Player p = entry.getValue();
-                if (plugin.petFollowList.get(e)) {
+                if (plugin.petFollowList.get(e)) {                    
                     if (p.getWorld() == e.getWorld()) {                                        
                         if (e instanceof Creature) {
                             ((Creature) e).setTarget(p);
                         }
                         Navigation n = ((CraftLivingEntity) e).getHandle().al();
                         n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
-                    } else {                    
-                            e.teleport((Entity)p);                    
+                    } else {    
+                            Pet pet = plugin.getPet(e,p);
+                            plugin.despawnPet(pet);
+                            plugin.spawnPet(pet,p);
                     }
                 }
             }
