@@ -62,7 +62,7 @@ public class PetCommands implements CommandExecutor {
         if (commandLabel.equalsIgnoreCase("petname")) {
             if (this.plugin.isPetOwner(p)) {
                 if (args.length > 1 && args[0].matches("\\d+")) {
-                    int idx = Integer.parseInt(args[0]);
+                    int idx = Integer.parseInt(args[0]) - 1;
                     if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
                         String s = "";
                         for (int i = 1; i < args.length; i++) {
