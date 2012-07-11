@@ -98,7 +98,7 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        this.plugin.teleportPetsOf(event.getPlayer());
+        this.plugin.teleportPetsOf(event.getPlayer(), false);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

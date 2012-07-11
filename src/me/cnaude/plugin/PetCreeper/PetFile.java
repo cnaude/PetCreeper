@@ -106,6 +106,7 @@ public class PetFile {
                 creeperFile.renameTo(new File(this.dataFolder, "pets.txt.old"));
                 return true;
             } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         } else if (creeperFileJson.exists()) {
             System.out.println("Found pets.json. Attempting to load pets.");

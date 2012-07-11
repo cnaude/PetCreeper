@@ -34,3 +34,4 @@ AttackTame: false
 IdleDistance: 5
 # Allow ops to bypass permissions
 OpsBypassPerms: false
+MaxPetsPerPlayer: 1

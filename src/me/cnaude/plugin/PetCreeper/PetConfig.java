@@ -13,6 +13,7 @@ public final class PetConfig {
     public static boolean ridable;
     public static boolean attackTame;
     public static int idleDistance;
+    public static int maxPetsPerPlayer;
     public static boolean opsBypassPerms;
 
     public PetConfig(PetMain plug) {
@@ -31,7 +32,7 @@ public final class PetConfig {
         baitMap.put("Ghast", Material.getMaterial(config.getInt("Ghast", 370)));
         baitMap.put("Giant", Material.getMaterial(config.getInt("Giant", 41)));
         baitMap.put("Golem", Material.getMaterial(config.getInt("Golem", 265)));
-        baitMap.put("HumanEntity", Material.getMaterial(config.getInt("HumanEntity", 264)));
+        //baitMap.put("HumanEntity", Material.getMaterial(config.getInt("HumanEntity", 264)));
         baitMap.put("MagmaCube", Material.getMaterial(config.getInt("MagmaCube", 378)));
         baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));
         baitMap.put("Pig", Material.getMaterial(config.getInt("Pig", 319)));
@@ -51,6 +52,7 @@ public final class PetConfig {
         ridable = config.getBoolean("Ridable", true);
         attackTame = config.getBoolean("AttackTame", false);
         idleDistance = config.getInt("IdleDistance", 5);
+        maxPetsPerPlayer = config.getInt("MaxPetsPerPlayer", 1);
         opsBypassPerms = config.getBoolean("OpsBypassPerms", false);
     }
 
