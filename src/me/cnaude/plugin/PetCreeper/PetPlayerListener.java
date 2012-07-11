@@ -58,8 +58,8 @@ public class PetPlayerListener implements Listener {
         if ((et == EntityType.WOLF) || (et == EntityType.OCELOT)) {
             return;
         }
-        if (e instanceof Entity) {             
-            if (this.plugin.isPet(e)) {                
+        if (e instanceof Entity) {
+            if (this.plugin.isPet(e)) {
                 Player master = this.plugin.getMasterOf(e);
                 if (master == p) {
                     Entity passenger = e.getPassenger();
@@ -91,8 +91,8 @@ public class PetPlayerListener implements Listener {
                 }
 
             } else {
-                this.plugin.tamePetOf(p, e, false);                
-            }        
+                this.plugin.tamePetOf(p, e, false);
+            }
         }
     }
 
@@ -121,11 +121,10 @@ public class PetPlayerListener implements Listener {
                 Entity e = p.getVehicle();
                 if (e.getType().isAlive()) {
                     //System.out.println("Vehicle is a pet! Target: " + blockLoc.toString());
-                    Navigation n = ((CraftLivingEntity) e).getHandle().al();                                        
+                    Navigation n = ((CraftLivingEntity) e).getHandle().al();
                     n.a(blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), 0.25f);
                 }
             }
-
         }
     }
 }

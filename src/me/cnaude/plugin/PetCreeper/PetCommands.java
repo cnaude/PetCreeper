@@ -88,17 +88,19 @@ public class PetCommands implements CommandExecutor {
         }
         if (commandLabel.equalsIgnoreCase("petfree")) {
             if (this.plugin.isPetOwner(p)) {
-                if (args.length == 1 && args[0].matches("\\d+")) {
-                    int idx = Integer.parseInt(args[0]);
-                    if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
-                        Pet pet = this.plugin.getPetsOf(p).get(idx);
-                        Entity e = plugin.getEntityOfPet(pet);
-                        plugin.untamePetOf(p, e);                            
-                    } else {
-                        p.sendMessage(ChatColor.RED + "Invalid pet ID.");
+                if (args.length == 1) {
+                    if (args[0].matches("\\d+")) {
+                        int idx = Integer.parseInt(args[0]) - 1;
+                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                            Pet pet = this.plugin.getPetsOf(p).get(idx);
+                            Entity e = plugin.getEntityOfPet(pet);
+                            plugin.untamePetOf(p, e);                            
+                        } else {
+                            p.sendMessage(ChatColor.RED + "Invalid pet ID.");
+                        }
+                    } else if (args[0].toString().equalsIgnoreCase("all")) {
+                        plugin.untameAllPetsOf(p);
                     }
-                } else if (args[0].toString().equalsIgnoreCase("all")) {
-                    plugin.untameAllPetsOf(p);
                 } else {
                     p.sendMessage(ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all] [name]");
                 }
@@ -109,7 +111,7 @@ public class PetCommands implements CommandExecutor {
         if (commandLabel.equalsIgnoreCase("petinfo")) {
             if (this.plugin.isPetOwner(p)) {
                 if (args.length == 1 && args[0].matches("\\d+")) {
-                    int idx = Integer.parseInt(args[0]);
+                    int idx = Integer.parseInt(args[0]) - 1;
                     if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
                         Pet pet = this.plugin.getPetsOf(p).get(idx);
                         Entity e = plugin.getEntityOfPet(pet);
@@ -131,7 +133,7 @@ public class PetCommands implements CommandExecutor {
             }
             if (this.plugin.isPetOwner(p)) {
                 if (args.length == 2 && args[0].matches("\\d+")) {
-                    int idx = Integer.parseInt(args[0]);
+                    int idx = Integer.parseInt(args[0]) - 1;
                     if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {                        
                         Pet pet = this.plugin.getPetsOf(p).get(idx);
                         Entity e = plugin.getEntityOfPet(pet);

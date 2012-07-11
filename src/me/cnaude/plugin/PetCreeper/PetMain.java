@@ -169,10 +169,9 @@ public class PetMain extends JavaPlugin {
     public void printPetListOf(Player p) {
         if (isPetOwner(p)) {
             p.sendMessage(ChatColor.GREEN + "You are the proud owner of the following pets:");
-            for (int i = 0; i < getPetsOf(p).size(); i++) {
-                //for(Iterator i = getPetsOf(p).iterator();i.hasNext();) {  
+            for (int i = 0; i < getPetsOf(p).size(); i++) {                
                 Pet pet = getPetsOf(p).get(i);
-                p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + i + ChatColor.YELLOW + "] "
+                p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + (i+1) + ChatColor.YELLOW + "] "
                         + ChatColor.YELLOW + pet.type.toString()
                         + ChatColor.GREEN + " named " + ChatColor.YELLOW
                         + pet.petName + ChatColor.GREEN + ".");
