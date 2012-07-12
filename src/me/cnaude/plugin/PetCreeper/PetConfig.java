@@ -28,7 +28,7 @@ public final class PetConfig {
         baitMap.put("Cow", Material.getMaterial(config.getInt("Cow", 295)));
         baitMap.put("Creeper", Material.getMaterial(config.getInt("Creeper", 318)));
         baitMap.put("EnderDragon", Material.getMaterial(config.getInt("EnderDragon", 122)));
-        baitMap.put("Enderman", Material.getMaterial(config.getInt("Enderman", 368)));
+        baitMap.put("Enderman", Material.getMaterial(config.getInt("Enderman", 381)));
         baitMap.put("Ghast", Material.getMaterial(config.getInt("Ghast", 370)));
         baitMap.put("Giant", Material.getMaterial(config.getInt("Giant", 41)));
         baitMap.put("Golem", Material.getMaterial(config.getInt("Golem", 265)));
