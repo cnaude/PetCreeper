@@ -5,10 +5,10 @@ version: 1.0
 commands:
     pet:
         description: Teleport your pet to you
-        usage: /pet [id]
+        usage: /pet [id|all]
     petfree:
         description: Free your pet
-        usage: /petfree [id]
+        usage: /petfree [id|all]
     petlist:
         description: List your pet type
         usage: /petlist
@@ -25,6 +25,9 @@ commands:
         description: Reload configuration
         usage: /petreload
 permissions:
+  petcreeper.reload:
+    description: Allows players to use /petreload command.
+    default: false 
   petcreeper.pet:
     description: Allows players to use /pet command.
     default: false

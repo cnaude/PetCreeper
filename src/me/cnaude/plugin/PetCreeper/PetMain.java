@@ -12,7 +12,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PetMain extends JavaPlugin {
@@ -145,6 +144,8 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
+    
+    
 
     public void spawnPet(Pet pet, Player p, boolean msg) {
         Location pos = p.getLocation().clone();

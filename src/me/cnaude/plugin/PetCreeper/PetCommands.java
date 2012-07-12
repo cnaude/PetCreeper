@@ -46,17 +46,27 @@ public class PetCommands implements CommandExecutor {
             }
 
             if (commandLabel.equalsIgnoreCase("pet")) {
-                if (!this.plugin.hasPerm(p, "petcreeper.pet")) {
-                    this.plugin.message(p,ChatColor.RED + "You do not have permission to use this command.");
-                    return true;
-                }
-
                 if (this.plugin.isPetOwner(p)) {
-                    this.plugin.teleportPetsOf(p, true);
+                    if (args.length == 1) {
+                        if (args[0].matches("\\d+")) {
+                            int idx = Integer.parseInt(args[0]) - 1;
+                            if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                                Pet pet = this.plugin.getPetsOf(p).get(idx);                                
+                                plugin.teleportPet(pet, true);                            
+                            } else {
+                                this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
+                            }
+                        } else if (args[0].toString().equalsIgnoreCase("all")) {
+                            plugin.teleportPetsOf(p,true);
+                        } else {
+                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/pet [id|all]");
+                        }
+                    } else {
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/pet [id|all]");
+                    }
                 } else {
-                    this.plugin.message(p,ChatColor.RED + "You don't own a pet.");
+                    this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
-                return true;
             }
             if (commandLabel.equalsIgnoreCase("petlist")) {
                 if (this.plugin.isPetOwner(p)) {
@@ -107,6 +117,8 @@ public class PetCommands implements CommandExecutor {
                             }
                         } else if (args[0].toString().equalsIgnoreCase("all")) {
                             plugin.untameAllPetsOf(p);
+                        } else {
+                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all] [name]");
                         }
                     } else {
                         this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all] [name]");
