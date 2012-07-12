@@ -1,7 +1,5 @@
-#Item IDs for bait for various monsters.
-#You can't tame Skeletons and Ghasts, because they'll still shoot you.
-#If you want to disable taming a certain mob, delete it or set the code
-#to 0.
+# Item IDs for bait for various monsters.
+# If you want to disable taming a certain mob set the code to 0 or adjust permissions.
 Blaze: 369
 CaveSpider: 287
 Chicken: 295
@@ -26,17 +24,16 @@ Golem: 265
 Villager: 38
 VillagerGolem: 265
 Zombie: 288
-#Other options
+# Other options
+# If Provokable is true then you are able to hurt your own pet. Your pet will get angry and run away or hurt you.
 Provokable: true
+# Right click your pet with a saddle to ride it.
 Ridable: true
-#If this is true, punching the creature with the bait will tame it, without hurting
-#it. You can still use the right click method too. NOTE: This is inherently
-#incompatible with Provokable: true.
+# If this is true, punching the creature with the bait will tame it, without hurting it. You can still use the right click method too. NOTE: This is inherently incompatible with Provokable: true.
 AttackTame: false
-#Distance from player that the pet will stop following
-#and wander around a bit. Set it too low, and usually-hostile mob will hurt
-#you.
+# Distance from player that the pet will stop following and wander around a bit.
 IdleDistance: 5
 # Allow ops to bypass permissions
 OpsBypassPerms: false
+# Maximum number of pets a player is allowed to have.
 MaxPetsPerPlayer: 1
