@@ -196,7 +196,7 @@ public class PetMain extends JavaPlugin {
             pet.initPet(e);
             pet.entityId = -1;
             cleanUpLists(e);
-            e.remove();
+            e.remove();            
         }
     }
     
@@ -342,15 +342,20 @@ public class PetMain extends JavaPlugin {
         }
     }
 
-    public void untamePetOf(Player p, Entity e) {
+    public void untamePetOf(Player p, Entity e, boolean msg) {
         if (isPetOwner(p)) {
             for (int i = getPetsOf(p).size() - 1; i >= 0; i--) {
                 Pet pet = getPetsOf(p).get(i);
                 if (pet.entityId == e.getEntityId()) {
                     cleanUpLists(e);
                     getPetsOf(p).remove(i);
-                    p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " is now free!");
+                    if (msg) {
+                        p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " is now free!");
+                    }
                 }
+            }
+            if (playersWithPets.get(p.getName()).isEmpty()) {
+                playersWithPets.remove(p.getName());
             }
         }
     }
@@ -364,7 +369,7 @@ public class PetMain extends JavaPlugin {
     }
 
     public boolean isPetOwner(Player p) {
-        return (playersWithPets.containsKey(p.getName()));
+        return playersWithPets.containsKey(p.getName());
     }
 
     public void setFollowed(Player p, Pet pet, boolean f) {

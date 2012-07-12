@@ -101,7 +101,7 @@ public class PetCommands implements CommandExecutor {
                             if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
                                 Pet pet = this.plugin.getPetsOf(p).get(idx);
                                 Entity e = plugin.getEntityOfPet(pet);
-                                plugin.untamePetOf(p, e);                            
+                                plugin.untamePetOf(p, e, true);                            
                             } else {
                                 this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
                             }
@@ -152,7 +152,7 @@ public class PetCommands implements CommandExecutor {
                                         return true;
                                     }
                                 }
-                                plugin.untamePetOf(p, e);                                    
+                                plugin.untamePetOf(p, e, false);                                    
                                 if (plugin.tamePetOf(rec, e, true)) {
                                     this.plugin.message(p,ChatColor.GREEN + "You gave your pet " + ChatColor.YELLOW 
                                             + pet.petName + ChatColor.GREEN + " to " + ChatColor.YELLOW + rec.getName() 

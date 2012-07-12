@@ -1,6 +1,5 @@
 package me.cnaude.plugin.PetCreeper;
 
-import net.minecraft.server.EntityComplexPart;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.entity.CraftArrow;
 import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
@@ -113,7 +112,7 @@ public class PetEntityListener implements Listener {
                     Player p = (Player)d;
                     if (this.plugin.getMasterOf(e) == p) {
                         p.sendMessage(ChatColor.RED + "You made your " + this.plugin.getNameOfPet(e) + " angry!");
-                        this.plugin.untamePetOf(p,e);
+                        this.plugin.untamePetOf(p,e, true);
                     }
                 }
             } else if (PetConfig.attackTame) {
@@ -149,7 +148,7 @@ public class PetEntityListener implements Listener {
         if (this.plugin.isPet(e)) {
             Player p = this.plugin.getMasterOf(e);            
             p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(e) + ChatColor.RED + " has died!");
-            this.plugin.untamePetOf(p,e);
+            this.plugin.untamePetOf(p,e,false);
         }
     }
 }
