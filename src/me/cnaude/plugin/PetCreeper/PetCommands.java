@@ -89,6 +89,11 @@ public class PetCommands implements CommandExecutor {
                             Pet pet = this.plugin.getPetsOf(p).get(idx);
                             if (!s.isEmpty()) {
                                 pet.petName = s;
+                                Entity e = plugin.getEntityOfPet(pet);
+                                if (plugin.petNameList.containsKey(e)) {
+                                    plugin.petNameList.remove(e);
+                                    plugin.petNameList.put(e, s);
+                                }
                                 this.plugin.message(p,ChatColor.GREEN + "You named your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + "!");
                             } else {
                                 this.plugin.message(p,ChatColor.RED + "Invalid pet name.");
@@ -134,7 +139,7 @@ public class PetCommands implements CommandExecutor {
                         if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
                             Pet pet = this.plugin.getPetsOf(p).get(idx);
                             Entity e = plugin.getEntityOfPet(pet);
-                            //plugin.printPetInfo(p, pet);                            
+                            plugin.printPetInfo(p, e);                            
                         } else {
                             this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
                         }                

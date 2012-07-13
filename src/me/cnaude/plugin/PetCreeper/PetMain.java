@@ -53,7 +53,7 @@ public class PetMain extends JavaPlugin {
         registerCommand("petinfo");
         registerCommand("petname");
         registerCommand("petgive");
-        registerCommand("petreload");
+        registerCommand("petreload");        
     }
     
     private void registerCommand(String command) {
@@ -145,7 +145,37 @@ public class PetMain extends JavaPlugin {
         }
     }
     
-    
+    public void printPetInfo(Player p, Entity e) {
+        message(p, ChatColor.GREEN + "=====" + ChatColor.YELLOW + "[Pet Details]" + ChatColor.GREEN + "=====");
+        message(p, ChatColor.GREEN + "  Type: " + ChatColor.WHITE + e.getType().getName());
+        message(p, ChatColor.GREEN + "  Health: " + ChatColor.WHITE + ((LivingEntity) e).getHealth());
+        message(p, ChatColor.GREEN + "  Name: " + ChatColor.WHITE + getNameOfPet(e));
+        if (e.getType() == EntityType.SHEEP) {
+            message(p, ChatColor.GREEN + "  Sheared: " + ChatColor.WHITE + ((Sheep) e).isSheared());
+            message(p, ChatColor.GREEN + "  Color: " + ChatColor.WHITE + ((Sheep) e).getColor().name());            
+        }
+        if (e.getType() == EntityType.PIG) {
+            message(p, ChatColor.GREEN + "  Saddled: " + ChatColor.WHITE + ((Pig) e).hasSaddle());                
+        }
+        if (e.getType() == EntityType.SLIME) {
+            message(p, ChatColor.GREEN + "  Size: " + ChatColor.WHITE + ((Slime) e).getSize());
+        }
+        if (e.getType() == EntityType.MAGMA_CUBE) {
+            message(p, ChatColor.GREEN + "  Size: " + ChatColor.WHITE + ((MagmaCube) e).getSize());
+        }
+        if (e.getType() == EntityType.ENDERMAN) {
+            message(p, ChatColor.GREEN + "  Held Item: " + ChatColor.WHITE + ((Enderman) e).getCarriedMaterial().getItemType().name());
+        }
+        if (e.getType() == EntityType.VILLAGER) {
+            message(p, ChatColor.GREEN + "  Profession: " + ChatColor.WHITE + ((Villager) e).getProfession());
+        }
+        if (e instanceof Ageable) {
+            message(p, ChatColor.GREEN + "  Age: " + ChatColor.WHITE + ((Ageable) e).getAge());
+        }
+        if (petFollowList.containsKey(e)) {
+            message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + petFollowList.get(e));
+        }
+    }
 
     public void spawnPet(Pet pet, Player p, boolean msg) {
         Location pos = p.getLocation().clone();
@@ -155,7 +185,7 @@ public class PetMain extends JavaPlugin {
             pet.entityId = e.getEntityId();
             if (pet.type == EntityType.SHEEP) {
                 ((Sheep) e).setSheared(pet.sheared);
-                ((Sheep) e).setColor(DyeColor.getByData(pet.color));
+                ((Sheep) e).setColor(DyeColor.valueOf(pet.color));
             }
             if (pet.type == EntityType.PIG) {
                 ((Pig) e).setSaddle(pet.saddled);
@@ -165,6 +195,9 @@ public class PetMain extends JavaPlugin {
             }
             if (pet.type == EntityType.MAGMA_CUBE) {
                 ((MagmaCube) e).setSize(pet.size);
+            }
+            if (pet.type == EntityType.ENDERMAN) {
+                ((Enderman) e).setCarriedMaterial(pet.carriedMat);
             }
             if (pet.type == EntityType.VILLAGER) {
                 ((Villager) e).setProfession(pet.prof);
@@ -207,7 +240,7 @@ public class PetMain extends JavaPlugin {
             for (int i = 0; i < getPetsOf(p).size(); i++) {                
                 Pet pet = getPetsOf(p).get(i);
                 p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + (i+1) + ChatColor.YELLOW + "] "
-                        + ChatColor.YELLOW + pet.type.toString()
+                        + ChatColor.YELLOW + pet.type.getName()
                         + ChatColor.GREEN + " named " + ChatColor.YELLOW
                         + pet.petName + ChatColor.GREEN + ".");
             }

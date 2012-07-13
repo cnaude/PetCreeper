@@ -68,49 +68,9 @@ public class PetFile {
         if (!dataFolderExists()) {
             System.out.println("Unable to find data folder! [" + this.dataFolder.getAbsolutePath() + "]");
             return false;
-        }
-        File creeperFile = new File(this.dataFolder, "pets.txt");
+        }        
         File creeperFileJson = new File(this.dataFolder, "pets.json");
-        if (creeperFile.exists()) {
-            System.out.println("Found old pets.txt. Attempting to load pets.");
-            try {
-                BufferedReader in = new BufferedReader(new FileReader(creeperFile));
-                String line;
-                String player = "";
-                while ((line = in.readLine()) != null) {
-                    if (line.equals("\n")) {
-                        continue;
-                    }                    
-                    String[] parts = line.split(":", 2);
-                    parts[1] = parts[1].replaceAll("^\\s+", "");
-                    parts[1] = parts[1].replaceAll("\\s+$", "");
-                    if (parts[0].toUpperCase().equals("PLAYER")) {                        
-                        player = parts[1];
-                        System.out.println("Loading pet for " + player);
-                        this.plugin.playersWithPets.put(player, new ArrayList<Pet>());
-                    } else if (parts[0].toUpperCase().equals("PETTYPE")) {
-                        this.plugin.playersWithPets.get(player).get(0).type = EntityType.fromName(parts[1]);                                                
-                    } else if (parts[0].toUpperCase().equals("PETNAME")) {
-                        this.plugin.playersWithPets.get(player).get(0).petName = parts[1];
-                    } else if (parts[0].toUpperCase().equals("PETHP")) {
-                        this.plugin.playersWithPets.get(player).get(0).hp = Integer.parseInt(parts[1]);
-                    } else if (parts[0].toUpperCase().equals("SADDLED")) {
-                        this.plugin.playersWithPets.get(player).get(0).saddled =  Boolean.parseBoolean(parts[1]);
-                    } else if (parts[0].toUpperCase().equals("SHEARED")) {
-                        this.plugin.playersWithPets.get(player).get(0).sheared = Boolean.parseBoolean(parts[1]);
-                    } else if (parts[0].toUpperCase().equals("SHEEPCOLOR")) {
-                        this.plugin.playersWithPets.get(player).get(0).color = Byte.parseByte(parts[1]);
-                    } else if (parts[0].toUpperCase().equals("FOLLOWED")) {
-                        this.plugin.playersWithPets.get(player).get(0).followed = Boolean.parseBoolean(parts[1]);
-                    }                            
-                }
-                in.close();
-                creeperFile.renameTo(new File(this.dataFolder, "pets.txt.old"));
-                return true;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        } else if (creeperFileJson.exists()) {
+        if (creeperFileJson.exists()) {
             System.out.println("Found pets.json. Attempting to load pets.");
             Gson gson = new Gson();            
             try {             

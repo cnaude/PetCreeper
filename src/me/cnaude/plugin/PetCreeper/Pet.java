@@ -1,8 +1,11 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -12,6 +15,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.material.MaterialData;
 
 public final class Pet {
 
@@ -21,12 +25,13 @@ public final class Pet {
     public int hp = 0;
     public int size = 0;
     public boolean sheared = false;
-    public byte color = 0;
+    public String color = "";
     public boolean saddled = false;
     public String petName = "";
     public boolean followed = true;
     public int age = 0;
-    
+    boolean powered = false;
+    MaterialData carriedMat = new MaterialData(0);    
 
     public Pet(Entity e) {
         this.initPet(e);                    
@@ -38,14 +43,16 @@ public final class Pet {
         if (et == EntityType.CREEPER) {
             World world = e.getWorld();
             Location loc = e.getLocation();
+            this.powered = ((Creeper)e).isPowered();
             e.remove();
             Entity creeper = world.spawnCreature(loc, EntityType.CREEPER);
             this.entityId = creeper.getEntityId();
+            ((Creeper)creeper).setPowered(powered);
         } else {
             if (et == EntityType.SHEEP) {
                 Sheep s = (Sheep) e;
                 this.sheared = s.isSheared();
-                this.color = s.getColor().getData();
+                this.color = s.getColor().toString();
             } else if (et == EntityType.PIG) {
                 Pig pig = (Pig) e;
                 this.saddled = pig.hasSaddle();
@@ -58,6 +65,9 @@ public final class Pet {
             } else if (et == EntityType.VILLAGER) {
                 Villager villager = (Villager) e;
                 this.prof = villager.getProfession();
+            } else if (et == EntityType.ENDERMAN) {
+                Enderman enderman = (Enderman)e;
+                carriedMat = enderman.getCarriedMaterial();
             }
         }
         if (e instanceof Ageable) {
