@@ -1,7 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creeper;
@@ -31,7 +30,16 @@ public final class Pet {
     public boolean followed = true;
     public int age = 0;
     boolean powered = false;
-    MaterialData carriedMat = new MaterialData(0);    
+    MaterialData carriedMat = new MaterialData(0);
+    public modes mode = modes.PASSIVE;
+    public int level = 1;
+    public int exp = 0;
+            
+    public enum modes {
+        PASSIVE,
+        DEFENSIVE,
+        AGGRESSIVE,
+    }
 
     public Pet(Entity e) {
         this.initPet(e);                    

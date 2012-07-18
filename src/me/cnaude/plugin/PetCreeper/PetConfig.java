@@ -13,8 +13,11 @@ public final class PetConfig {
     public static boolean ridable;
     public static boolean attackTame;
     public static int idleDistance;
+    public static int attackDistance;
     public static int maxPetsPerPlayer;
     public static boolean opsBypassPerms;
+    public static boolean PetsAttackPlayers;
+    public static boolean petsAttackPets;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -52,8 +55,11 @@ public final class PetConfig {
         ridable = config.getBoolean("Ridable", true);
         attackTame = config.getBoolean("AttackTame", false);
         idleDistance = config.getInt("IdleDistance", 5);
+        attackDistance = config.getInt("AttackDistance", 10);
         maxPetsPerPlayer = config.getInt("MaxPetsPerPlayer", 1);
         opsBypassPerms = config.getBoolean("OpsBypassPerms", false);
+        PetsAttackPlayers = config.getBoolean("PetsAttackPets", true);
+        petsAttackPets = config.getBoolean("PetsAttackPets", true);
     }
 
     public static Material getBait(EntityType type) {

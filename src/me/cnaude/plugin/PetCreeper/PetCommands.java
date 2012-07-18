@@ -38,14 +38,19 @@ public class PetCommands implements CommandExecutor {
                     this.plugin.message(p,"No permission to reload PetCreeper config!");
                 }                
             }
-            if (p.isInsideVehicle()) {
-                if (p.getVehicle().getType().isAlive()) {
-                    this.plugin.message(p,ChatColor.RED + "You can't use /pet when riding this " + p.getVehicle().getType().getName() + ".");
-                    return true;
-                }
-            }
+
 
             if (commandLabel.equalsIgnoreCase("pet")) {
+                if (!this.plugin.hasPerm(p, "petcreeper.pet")) {
+                    this.plugin.message(p,ChatColor.RED + "You do not have permission to use this command.");
+                    return true;
+                }
+                if (p.isInsideVehicle()) {
+                    if (p.getVehicle().getType().isAlive()) {
+                        this.plugin.message(p,ChatColor.RED + "You can't use /pet when riding this " + p.getVehicle().getType().getName() + ".");
+                        return true;
+                    }
+                }
                 if (this.plugin.isPetOwner(p)) {
                     if (args.length == 1) {
                         if (args[0].matches("\\d+")) {
@@ -75,6 +80,39 @@ public class PetCommands implements CommandExecutor {
                     this.plugin.message(p,ChatColor.RED + "You don't own a pet.");
                 }
                 return true;
+            }
+            if (commandLabel.equalsIgnoreCase("petmode")) {
+                if (!this.plugin.hasPerm(p, "petcreeper.mode")) {
+                    this.plugin.message(p,ChatColor.RED + "You do not have permission to use this command.");
+                    return true;
+                }
+                if (this.plugin.isPetOwner(p)) {
+                    if (args.length == 2 && args[0].matches("\\d+")) {
+                        int idx = Integer.parseInt(args[0]) - 1;
+                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                            String s = args[1].toLowerCase().substring(0,1);                            
+                            Pet pet = this.plugin.getPetsOf(p).get(idx);                            
+                            if (s.startsWith("a")) {
+                                pet.mode = Pet.modes.AGGRESSIVE;
+                                this.plugin.message(p,ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
+                            } else if (s.startsWith("p")) {
+                                pet.mode = Pet.modes.PASSIVE;
+                                this.plugin.message(p,ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
+                            } else if (s.startsWith("d")) {
+                                pet.mode = Pet.modes.DEFENSIVE;
+                                this.plugin.message(p,ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!"); 
+                            } else {
+                                this.plugin.message(p,ChatColor.RED + "Invalid pet mode.");
+                            }
+                        } else {
+                            this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
+                        }
+                    } else {
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petmode [id] [p|d|a]");
+                    }
+                } else {
+                    this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
+                }
             }
             if (commandLabel.equalsIgnoreCase("petname")) {
                 if (this.plugin.isPetOwner(p)) {
@@ -123,10 +161,10 @@ public class PetCommands implements CommandExecutor {
                         } else if (args[0].toString().equalsIgnoreCase("all")) {
                             plugin.untameAllPetsOf(p);
                         } else {
-                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all] [name]");
+                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all]");
                         }
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all] [name]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");

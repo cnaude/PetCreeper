@@ -1,12 +1,14 @@
 package me.cnaude.plugin.PetCreeper;
 
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import net.minecraft.server.Navigation;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
 public class PetMainLoop {
@@ -25,26 +27,27 @@ public class PetMainLoop {
 
         @Override
         public void run() {
-            for (Map.Entry<Entity, Player> entry : plugin.petList.entrySet()) {
-                Entity e = entry.getKey();                
-                Player p = entry.getValue();
-                if (plugin.petFollowList.get(e)) {                    
-                    if (p.getWorld() == e.getWorld()) {                                        
-                        if (e instanceof Creature) {
-                            ((Creature) e).setTarget(p);
-                        }
-                        Navigation n = ((CraftLivingEntity) e).getHandle().al();
-                        n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                    
-                    } else {    
-                        Pet pet = plugin.getPet(e,p);
-                        plugin.teleportPet(pet, true);                        
-                        //plugin.despawnPet(pet);
-                        //plugin.spawnPet(pet,p, true);
-                    }
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (plugin.isPetOwner(p)) {
+                    for (Pet pet : (ArrayList<Pet>)plugin.getPetsOf(p).clone()) {                                                                
+                            Entity e = plugin.getEntityOfPet(pet);
+                            if (e != null) {
+                                if (p.getWorld() == e.getWorld()) {                       
+                                    if (p.getLocation().distance(e.getLocation()) > PetConfig.idleDistance
+                                            && pet.followed) {   
+                                        plugin.walkToPlayer(e,p);                                    
+                                    } else if (e instanceof Monster) {
+                                        plugin.attackNearbyEntities(e,pet.mode);                                    
+                                    } 
+                                } else if (pet.followed) {                                                            
+                                    plugin.teleportPet(pet, true);                        
+                                }
+                            }
+                        } 
+                    }                    
                 }
             }
-        }
-    }
+        }    
 
     public void end() {
         timer.cancel();

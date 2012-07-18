@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 public class PetPlayerListener implements Listener {
@@ -26,6 +27,16 @@ public class PetPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         this.plugin.spawnPetsOf(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        this.plugin.spawnPetsOf(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        this.plugin.despawnPetsOf(event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -73,21 +84,21 @@ public class PetPlayerListener implements Listener {
                                 || this.plugin.hasPerm(p, "petcreeper.ride.All")) {
                             e.setPassenger(p);
                         } else {
-                            this.plugin.message(p,ChatColor.RED + "You don't have permission to ride that creature.");
+                            this.plugin.message(p, ChatColor.RED + "You don't have permission to ride that creature.");
                         }
                     } else {
                         if (this.plugin.isPetFollowing(e)) {
-                            this.plugin.message(p,ChatColor.GOLD + "Your " + et + " is no longer following you.");
+                            this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is no longer following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, false);
                         } else {
-                            this.plugin.message(p,ChatColor.GOLD + "Your " + et + " is now following you.");
+                            this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is now following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, true);
                         }
                     }
                 } else {
-                    this.plugin.message(p,ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
+                    this.plugin.message(p, ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
                 }
 
             } else {
@@ -99,11 +110,6 @@ public class PetPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         this.plugin.teleportPetsOf(event.getPlayer(), false);
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        this.plugin.spawnPetsOf(event.getPlayer());
     }
 
     @EventHandler

@@ -1,6 +1,7 @@
 name: PetCreeper
 main: me.cnaude.plugin.PetCreeper.PetMain
-version: 1.0.1
+version: 1.0.10
+description: Tame those mobs!
 
 commands:
     pet:
@@ -24,7 +25,13 @@ commands:
     petreload:
         description: Reload configuration
         usage: /petreload
+    petmode:
+        description: Change pet mode (aggressive, defensive, or passive)
+        usage: /petmode [id] [a|d|p]
 permissions:
+  'petcreeper.*':
+    description: Gives player access to all features of PetCreeper.
+    default: false 
   petcreeper.reload:
     description: Allows players to use /petreload command.
     default: false 
@@ -33,7 +40,13 @@ permissions:
     default: false
   petcreeper.give:
     description: Allows players to use /petgive command.
-    default: false    
+    default: false  
+  petcreeper.mode:
+    description: Allows players to use /petmode command.
+    default: false  
+  petcreeper.control:
+    description: Allows players to control a pet while riding.
+    default: false
   petcreeper.tame.Creeper:
     description: Allows players to tame this creature.
     default: false
@@ -108,9 +121,6 @@ permissions:
     default: false
   petcreeper.tame.All:
     description: Allows players to tame any creature.
-    default: false
-  petcreeper.tame.control:
-    description: Allows players to control a pet while riding.
     default: false
   petcreeper.ride.Creeper:
     description: Allows players to ride this creature.

@@ -18,6 +18,7 @@ public class PetEntityListener implements Listener {
         this.plugin = instance;
     }
 
+    /*
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityTarget(EntityTargetEvent event) {
         Entity e = event.getEntity();
@@ -25,15 +26,44 @@ public class PetEntityListener implements Listener {
             Creature c = (Creature) e;
             if (this.plugin.isPet(e)) {
                 Player p = this.plugin.getMasterOf(e);
-                if(p.getWorld() == c.getWorld()) {
-                    if ((!this.plugin.isPetFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                        
-                        c.setTarget(null);
-                        event.setCancelled(true);                        
+                if (((Creature)e).getTarget() instanceof Player) {
+                    Player target = (Player)((Creature)e).getTarget();
+                    if (p == target || plugin.getModeOfPet(e,p) == Pet.modes.PASSIVE) {
+                        if(p.getWorld() == c.getWorld()) {
+                            if ((!this.plugin.isPetFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                                                        
+                                //event.setCancelled(true);                        
+                                //c.setTarget(null);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    */
+    /* Does this event fire as well?
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onEntityTargetLivingEntityEvent (EntityTargetLivingEntityEvent  event) {
+        Entity e = event.getEntity();
+        if ((e instanceof Creature)) {
+            Creature c = (Creature) e;
+            if (this.plugin.isPet(e)) {
+                Player p = this.plugin.getMasterOf(e);
+                if (c.getTarget() instanceof Player) {
+                    Player target = (Player)((Creature)e).getTarget();
+                    if (p == target || PetConfig.friendly) {
+                        if(p.getWorld() == c.getWorld()) {
+                            if ((!this.plugin.isPetFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                                                        
+                                //event.setCancelled(true);                        
+                                c.setTarget(null);
+                            }
+                        }
                     } 
                 }
             }
         }
     }
+    */
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onExplosionPrime(ExplosionPrimeEvent event) {
@@ -99,12 +129,46 @@ public class PetEntityListener implements Listener {
         
         if (e instanceof Player) {
             Player p = (Player) e;
-            if (this.plugin.getMasterOf(d) == p) {
-                event.setCancelled(true);
+            if (d instanceof LivingEntity) {
+                if (this.plugin.isPet(d)) {
+                    if ((this.plugin.getMasterOf(d) == p)
+                            || this.plugin.getPet(d).mode == Pet.modes.PASSIVE) {
+                        if (d instanceof Monster) {
+                            ((Monster)d).setTarget(null);
+                        }
+                        event.setCancelled(true);
+
+                    }
+                } else {
+                    if (plugin.isPetOwner((Player)e)) {
+                        for (Pet pet : this.plugin.getPetsOf((Player)(e))) {
+                            if (pet.mode != Pet.modes.PASSIVE) {
+                                Entity pe = this.plugin.getEntityOfPet(pet);
+                                if (pe instanceof Monster) {
+                                    ((Monster)pe).setTarget((LivingEntity)d);
+                                }                               
+                            }
+                        }                    
+                    }
+                }
+            } else if (d instanceof Arrow) {
+                Arrow ar = (Arrow)d;
+                Entity shooter = ar.getShooter();
+                if (this.plugin.isPet(shooter)) {
+                    if ((this.plugin.getMasterOf(shooter) == p)
+                            || this.plugin.getPet(shooter).mode == Pet.modes.PASSIVE
+                            || this.plugin.getPet(shooter).mode == Pet.modes.DEFENSIVE) {
+                        if (shooter instanceof Monster) {
+                            ((Monster)shooter).setTarget(null);
+                        }
+                        ar.remove();
+                        event.setCancelled(true);
+                    }
+                }
             }
         } else {
             if (this.plugin.isPet(e)) {
-                if (!PetConfig.provokable) {
+                if (!PetConfig.provokable && this.plugin.getPet(e).mode == Pet.modes.PASSIVE) {
                     event.setCancelled(true);
                     return;
                 }
@@ -123,24 +187,32 @@ public class PetEntityListener implements Listener {
                     }                    
                 }
             }
-        } 
+        }
     }
-
+    
+    
     @EventHandler
     public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
-        Projectile p = event.getEntity();
+        Projectile p = event.getEntity();        
         Entity e = event.getEntity();
-        if (e instanceof CraftFireball || e instanceof CraftArrow) {
+        if (e instanceof CraftFireball || e instanceof CraftArrow) {        
             Entity sh = (Entity) p.getShooter();
             if (this.plugin.isPet(sh)) {
-                event.setCancelled(true);
-                p.remove();
+                Entity target = ((Creature)sh).getTarget();
+                if (target instanceof Player) {
+                    Pet pet = this.plugin.getPet(sh);
+                    if ((Player)target == this.plugin.getMasterOf(sh) || pet.mode == Pet.modes.PASSIVE) {                        
+                        event.setCancelled(true);
+                        p.remove();
+                    }
+                }
             }
-        } else if (this.plugin.isPet(e)) {
+        } else if (this.plugin.isPet(e)) {            
             event.setCancelled(true);
             p.remove();
         }
     }
+    
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDeath(EntityDeathEvent event) {

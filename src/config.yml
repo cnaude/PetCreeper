@@ -33,7 +33,13 @@ Ridable: true
 AttackTame: false
 # Distance from player that the pet will stop following and wander around a bit.
 IdleDistance: 5
+# Distance pets will check for entities to attack
+AttackDistance: 10
 # Allow ops to bypass permissions
 OpsBypassPerms: false
 # Maximum number of pets a player is allowed to have.
 MaxPetsPerPlayer: 1
+# If true aggressive and defensive pets can attack other players
+PetsAttackPlayers: true
+# If true aggressive and defensive pets can attack player pets
+PetsAttackPets: true
