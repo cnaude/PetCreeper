@@ -18,6 +18,9 @@ public final class PetConfig {
     public static boolean opsBypassPerms;
     public static boolean PetsAttackPlayers;
     public static boolean petsAttackPets;
+    public static long mainLoop;
+    public static boolean disablePermissions;
+    public static String defaultPetMode;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -60,6 +63,9 @@ public final class PetConfig {
         opsBypassPerms = config.getBoolean("OpsBypassPerms", false);
         PetsAttackPlayers = config.getBoolean("PetsAttackPets", true);
         petsAttackPets = config.getBoolean("PetsAttackPets", true);
+        mainLoop = config.getLong("MainLoop", 1000L);
+        disablePermissions = config.getBoolean("DisablePermissions", false);
+        defaultPetMode = config.getString("DefaultPetMode", "P").toUpperCase();
     }
 
     public static Material getBait(EntityType type) {

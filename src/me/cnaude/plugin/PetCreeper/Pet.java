@@ -1,7 +1,5 @@
 package me.cnaude.plugin.PetCreeper;
 
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
@@ -48,36 +46,28 @@ public final class Pet {
     public void initPet(Entity e) {
         EntityType et = e.getType();
         int health = ((LivingEntity) e).getHealth();
-        if (et == EntityType.CREEPER) {
-            World world = e.getWorld();
-            Location loc = e.getLocation();
-            this.powered = ((Creeper)e).isPowered();
-            e.remove();
-            Entity creeper = world.spawnCreature(loc, EntityType.CREEPER);
-            this.entityId = creeper.getEntityId();
-            ((Creeper)creeper).setPowered(powered);
-        } else {
-            if (et == EntityType.SHEEP) {
-                Sheep s = (Sheep) e;
-                this.sheared = s.isSheared();
-                this.color = s.getColor().toString();
-            } else if (et == EntityType.PIG) {
-                Pig pig = (Pig) e;
-                this.saddled = pig.hasSaddle();
-            } else if (et == EntityType.SLIME) {
-                Slime slime = (Slime) e;
-                this.size = slime.getSize();
-            } else if (et == EntityType.MAGMA_CUBE) {
-                MagmaCube magmacube = (MagmaCube) e;
-                this.size = magmacube.getSize();
-            } else if (et == EntityType.VILLAGER) {
-                Villager villager = (Villager) e;
-                this.prof = villager.getProfession();
-            } else if (et == EntityType.ENDERMAN) {
-                Enderman enderman = (Enderman)e;
-                carriedMat = enderman.getCarriedMaterial();
-            }
-        }
+        if (et == EntityType.CREEPER) {            
+            this.powered = ((Creeper)e).isPowered();                        
+        } else if (et == EntityType.SHEEP) {
+            Sheep s = (Sheep) e;
+            this.sheared = s.isSheared();
+            this.color = s.getColor().toString();
+        } else if (et == EntityType.PIG) {
+            Pig pig = (Pig) e;
+            this.saddled = pig.hasSaddle();
+        } else if (et == EntityType.SLIME) {
+            Slime slime = (Slime) e;
+            this.size = slime.getSize();
+        } else if (et == EntityType.MAGMA_CUBE) {
+            MagmaCube magmacube = (MagmaCube) e;
+            this.size = magmacube.getSize();
+        } else if (et == EntityType.VILLAGER) {
+            Villager villager = (Villager) e;
+            this.prof = villager.getProfession();
+        } else if (et == EntityType.ENDERMAN) {
+            Enderman enderman = (Enderman)e;
+            carriedMat = enderman.getCarriedMaterial();
+        }        
         if (e instanceof Ageable) {
             this.age = ((Ageable)e).getAge();
         }

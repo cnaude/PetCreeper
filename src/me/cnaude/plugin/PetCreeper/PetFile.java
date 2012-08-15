@@ -13,7 +13,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import org.bukkit.entity.EntityType;
 
 /**
  *
@@ -38,7 +37,7 @@ public class PetFile {
     }
     
     public boolean savePets() {
-        boolean saved = false;
+        boolean saved;
         if (!dataFolderExists()) {
             System.out.println("Unable to find data folder! [" + this.dataFolder.getAbsolutePath() + "]");
             return false;
@@ -49,7 +48,7 @@ public class PetFile {
             for (Map.Entry<String, ArrayList<Pet>> entry : this.plugin.playersWithPets.entrySet()) {            
                 Gson gson = new Gson();
                 ArrayList<Pet> pets = entry.getValue();
-                for(Iterator i = pets.iterator();i.hasNext();) {
+                for(Iterator i = pets.iterator();i.hasNext();) {                    
                     Pet pet = (Pet)i.next();                    
                     String json = gson.toJson((Object)pet);
                     out.write(entry.getKey() + "=" + json + "\n");

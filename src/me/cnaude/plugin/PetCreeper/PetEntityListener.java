@@ -1,7 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.entity.CraftArrow;
 import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.entity.CraftFireball;
 import org.bukkit.entity.*;
@@ -195,17 +194,11 @@ public class PetEntityListener implements Listener {
     public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
         Projectile p = event.getEntity();        
         Entity e = event.getEntity();
-        if (e instanceof CraftFireball || e instanceof CraftArrow) {        
+        if (e instanceof CraftFireball) {        
             Entity sh = (Entity) p.getShooter();
-            if (this.plugin.isPet(sh)) {
-                Entity target = ((Creature)sh).getTarget();
-                if (target instanceof Player) {
-                    Pet pet = this.plugin.getPet(sh);
-                    if ((Player)target == this.plugin.getMasterOf(sh) || pet.mode == Pet.modes.PASSIVE) {                        
-                        event.setCancelled(true);
-                        p.remove();
-                    }
-                }
+            if (this.plugin.isPet((Entity)sh)) {                
+                event.setCancelled(true);
+                p.remove();
             }
         } else if (this.plugin.isPet(e)) {            
             event.setCancelled(true);
@@ -216,11 +209,36 @@ public class PetEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDeath(EntityDeathEvent event) {
-        Entity e = event.getEntity();
+        Entity e = event.getEntity();        
         if (this.plugin.isPet(e)) {
             Player p = this.plugin.getMasterOf(e);            
             p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(e) + ChatColor.RED + " has died!");
             this.plugin.untamePetOf(p,e,false);
+        } 
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player e = event.getEntity();
+        EntityDamageEvent damev = e.getLastDamageCause();
+        Entity killer;
+        if (damev instanceof EntityDamageByEntityEvent) {
+            killer = (((EntityDamageByEntityEvent) damev).getDamager());
+        
+            if (this.plugin.isPet(killer)) {
+                System.out.println("Death" + killer.toString());
+                Player p = this.plugin.getMasterOf(killer);
+                String s;
+                if (e instanceof Player) {
+                    s = ((Player)e).getName();
+                    this.plugin.message((Player)e, ChatColor.RED + "You were killed by " + ChatColor.YELLOW + p.getName() + "'s " 
+                        + ChatColor.RED + " pet " + ChatColor.YELLOW + killer.getType().getName() + ChatColor.RED + "!");
+                }  else {
+                    s = "a " + e.getType().getName();
+                }
+                p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(killer) 
+                        + ChatColor.RED + " has killed " + ChatColor.YELLOW + s + ChatColor.RED + "!");            
+            }
         }
     }
 }

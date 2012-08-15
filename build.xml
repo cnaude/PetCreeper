@@ -75,4 +75,6 @@
       <echo>Copying to DropBox</echo>
       <copy file="${dist.jar}" tofile="C:/Users/cnaude/Dropbox/Public/${dist.jar}"/>
   </target>
+  
+  <target name="-Xlint:unchecked"></target>
 </project>

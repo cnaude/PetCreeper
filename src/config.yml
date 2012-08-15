@@ -43,3 +43,9 @@ MaxPetsPerPlayer: 1
 PetsAttackPlayers: true
 # If true aggressive and defensive pets can attack player pets
 PetsAttackPets: true
+# Don't change this
+MainLoop: 1000
+# Set to true if you don't use permissions
+DisablePermissions: false
+# Default pet mode (P = Passive, D = Defensive, A = Aggressive)
+DefaultPetMode: P

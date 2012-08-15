@@ -1,5 +1,7 @@
 package me.cnaude.plugin.PetCreeper;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import net.minecraft.server.Navigation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,6 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class PetPlayerListener implements Listener {
 
@@ -24,9 +27,25 @@ public class PetPlayerListener implements Listener {
         this.plugin = instance;
     }
 
+    class petSpawnTask extends TimerTask {
+        Player p;
+        
+        @Override
+        public void run() {
+            plugin.spawnPetsOf(p);
+        }
+        
+        public petSpawnTask(Player p) {
+            this.p = p;
+        }
+    }
+    
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        this.plugin.spawnPetsOf(event.getPlayer());
+        Timer timer = new Timer();
+        long delay = 1*1000;
+        timer.schedule(new petSpawnTask(event.getPlayer()), delay);
+        //this.plugin.spawnPetsOf(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -82,7 +101,7 @@ public class PetPlayerListener implements Listener {
                         }
                         if (this.plugin.hasPerm(p, "petcreeper.ride. " + et.getName())
                                 || this.plugin.hasPerm(p, "petcreeper.ride.All")) {
-                            e.setPassenger(p);
+                            e.setPassenger((LivingEntity)p);
                         } else {
                             this.plugin.message(p, ChatColor.RED + "You don't have permission to ride that creature.");
                         }
@@ -109,7 +128,12 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        this.plugin.teleportPetsOf(event.getPlayer(), false);
+        if (event.getPlayer().isInsideVehicle()) {
+            return;
+        }
+        if (event.getCause() == TeleportCause.COMMAND) {
+            this.plugin.teleportPetsOf(event.getPlayer(), false);
+        }
     }
 
     @EventHandler
@@ -127,7 +151,8 @@ public class PetPlayerListener implements Listener {
                 Entity e = p.getVehicle();
                 if (e.getType().isAlive()) {
                     //System.out.println("Vehicle is a pet! Target: " + blockLoc.toString());
-                    Navigation n = ((CraftLivingEntity) e).getHandle().al();
+                    Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                       
+                    //Navigation n = ((CraftLivingEntity) e).getHandle().al();
                     n.a(blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), 0.25f);
                 }
             }
