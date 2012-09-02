@@ -4,7 +4,6 @@
  */
 package me.cnaude.plugin.PetCreeper;
 
-import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +12,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 
 /**
  *

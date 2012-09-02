@@ -49,14 +49,14 @@ public class PetMain extends JavaPlugin {
 
         mainLoop = new PetMainLoop(this);
 
-        registerCommand("pet");
-        registerCommand("petfree");
-        registerCommand("petlist");
-        registerCommand("petinfo");
-        registerCommand("petname");
-        registerCommand("petgive");
-        registerCommand("petreload");
-        registerCommand("petmode");
+        registerCommand(PetConfig.commandPrefix);
+        registerCommand(PetConfig.commandPrefix + "free");
+        registerCommand(PetConfig.commandPrefix + "list");
+        registerCommand(PetConfig.commandPrefix + "info");
+        registerCommand(PetConfig.commandPrefix + "name");
+        registerCommand(PetConfig.commandPrefix + "give");
+        registerCommand(PetConfig.commandPrefix + "reload");
+        registerCommand(PetConfig.commandPrefix + "mode");
     }
 
     private void registerCommand(String command) {

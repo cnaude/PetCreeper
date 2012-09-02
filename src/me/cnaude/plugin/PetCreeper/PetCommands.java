@@ -30,7 +30,7 @@ public class PetCommands implements CommandExecutor {
         if (sender instanceof Player) {
             Player p = (Player) sender;
 
-            if(commandLabel.equalsIgnoreCase("petreload")) {
+            if(commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "reload")) {
                 if (p.hasPermission("petcreeper.reload")) {                
                     this.plugin.loadConfig();
                     this.plugin.message(p,"Configuration reloaded.");
@@ -40,14 +40,14 @@ public class PetCommands implements CommandExecutor {
             }
 
 
-            if (commandLabel.equalsIgnoreCase("pet")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix)) {
                 if (!this.plugin.hasPerm(p, "petcreeper.pet")) {
                     this.plugin.message(p,ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
                 if (p.isInsideVehicle()) {
                     if (p.getVehicle().getType().isAlive()) {
-                        this.plugin.message(p,ChatColor.RED + "You can't use /pet when riding this " + p.getVehicle().getType().getName() + ".");
+                        this.plugin.message(p,ChatColor.RED + "You can't use /" + PetConfig.commandPrefix + " when riding this " + p.getVehicle().getType().getName() + ".");
                         return true;
                     }
                 }
@@ -64,16 +64,16 @@ public class PetCommands implements CommandExecutor {
                         } else if (args[0].toString().equalsIgnoreCase("all")) {
                             plugin.teleportPetsOf(p,true);
                         } else {
-                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/pet [id|all]");
+                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
                         }
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/pet [id|all]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
             }
-            if (commandLabel.equalsIgnoreCase("petlist")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "list")) {
                 if (this.plugin.isPetOwner(p)) {
                     this.plugin.printPetListOf(p);
                 } else {
@@ -81,7 +81,7 @@ public class PetCommands implements CommandExecutor {
                 }
                 return true;
             }
-            if (commandLabel.equalsIgnoreCase("petmode")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "mode")) {
                 if (!this.plugin.hasPerm(p, "petcreeper.mode")) {
                     this.plugin.message(p,ChatColor.RED + "You do not have permission to use this command.");
                     return true;
@@ -108,13 +108,13 @@ public class PetCommands implements CommandExecutor {
                             this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petmode [id] [p|d|a]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "mode [id] [p|d|a]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
             }
-            if (commandLabel.equalsIgnoreCase("petname")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "name")) {
                 if (this.plugin.isPetOwner(p)) {
                     if (args.length > 1 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
@@ -140,13 +140,13 @@ public class PetCommands implements CommandExecutor {
                             this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petname [id] [name]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "name [id] [name]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
             }
-            if (commandLabel.equalsIgnoreCase("petfree")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "free")) {
                 if (this.plugin.isPetOwner(p)) {
                     if (args.length == 1) {
                         if (args[0].matches("\\d+")) {
@@ -161,16 +161,16 @@ public class PetCommands implements CommandExecutor {
                         } else if (args[0].toString().equalsIgnoreCase("all")) {
                             plugin.untameAllPetsOf(p);
                         } else {
-                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all]");
+                            this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
                         }
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petfree [id|all]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
             }
-            if (commandLabel.equalsIgnoreCase("petinfo")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "info")) {
                 if (this.plugin.isPetOwner(p)) {
                     if (args.length == 1 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
@@ -182,13 +182,13 @@ public class PetCommands implements CommandExecutor {
                             this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
                         }                
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petinfo [id]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "info [id]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
             }
-            if (commandLabel.equalsIgnoreCase("petgive")) {
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "give")) {
                 if (!this.plugin.hasPerm(p, "petcreeper.give")) {
                     this.plugin.message(p,ChatColor.RED + "You do not have permission to use this command.");
                     return true;
@@ -222,14 +222,14 @@ public class PetCommands implements CommandExecutor {
                             this.plugin.message(p,ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/petgive [id] [player]");
+                        this.plugin.message(p,ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "give [id] [player]");
                     }
                 } else {
                     this.plugin.message(p,ChatColor.RED + "You have no pets. :(");
                 }
             }
         } else if (sender instanceof ConsoleCommandSender) {
-            if(commandLabel.equalsIgnoreCase("petreload")) {
+            if(commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "reload")) {
                 this.plugin.loadConfig();            
             }
         }

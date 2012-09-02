@@ -21,6 +21,7 @@ public final class PetConfig {
     public static long mainLoop;
     public static boolean disablePermissions;
     public static String defaultPetMode;
+    public static String commandPrefix;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -66,6 +67,8 @@ public final class PetConfig {
         mainLoop = config.getLong("MainLoop", 1000L);
         disablePermissions = config.getBoolean("DisablePermissions", false);
         defaultPetMode = config.getString("DefaultPetMode", "P").toUpperCase();
+        
+        commandPrefix = config.getString("CommandPrefix", "pet");
     }
 
     public static Material getBait(EntityType type) {

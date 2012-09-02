@@ -49,3 +49,5 @@ MainLoop: 1000
 DisablePermissions: false
 # Default pet mode (P = Passive, D = Defensive, A = Aggressive)
 DefaultPetMode: P
+# Change the command prefix. !!! You MUST edit the plugin.yml after changing this !!
+CommandPrefix: pet
