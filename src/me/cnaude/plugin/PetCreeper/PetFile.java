@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.cnaude.plugin.PetCreeper;
 
 import java.io.BufferedReader;
@@ -13,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 /**
  *
@@ -33,7 +30,6 @@ public class PetFile {
     
     public PetFile(PetMain instance) {
         this.plugin = instance;
-
     }
     
     public boolean savePets() {
@@ -41,11 +37,11 @@ public class PetFile {
         if (!dataFolderExists()) {
             System.out.println("Unable to find data folder! [" + this.dataFolder.getAbsolutePath() + "]");
             return false;
-        }
+        }        
         try {
             File petFile = new File(this.dataFolder, "pets.json");            
             BufferedWriter out = new BufferedWriter(new FileWriter(petFile));
-            for (Map.Entry<String, ArrayList<Pet>> entry : this.plugin.playersWithPets.entrySet()) {            
+            for (Map.Entry<String, ArrayList<Pet>> entry : this.plugin.playersWithPets.entrySet()) {                           
                 Gson gson = new Gson();
                 ArrayList<Pet> pets = entry.getValue();
                 for(Iterator i = pets.iterator();i.hasNext();) {                    
@@ -71,7 +67,7 @@ public class PetFile {
         File creeperFileJson = new File(this.dataFolder, "pets.json");
         if (creeperFileJson.exists()) {
             System.out.println("Found pets.json. Attempting to load pets.");
-            Gson gson = new Gson();            
+            Gson gson = new Gson();        
             try {             
                 BufferedReader in = new BufferedReader(new FileReader(creeperFileJson));
                 String line;
