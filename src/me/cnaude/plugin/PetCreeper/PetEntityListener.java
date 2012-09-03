@@ -40,35 +40,22 @@ public class PetEntityListener implements Listener {
         }
     }
     */
-    /* Does this event fire as well?
+    /* Does this event fire as well? */
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onEntityTargetLivingEntityEvent (EntityTargetLivingEntityEvent  event) {
+    public void onEntityTargetLivingEntityEvent (EntityTargetLivingEntityEvent event) {
         Entity e = event.getEntity();
-        if ((e instanceof Creature)) {
-            Creature c = (Creature) e;
-            if (this.plugin.isPet(e)) {
-                Player p = this.plugin.getMasterOf(e);
-                if (c.getTarget() instanceof Player) {
-                    Player target = (Player)((Creature)e).getTarget();
-                    if (p == target || PetConfig.friendly) {
-                        if(p.getWorld() == c.getWorld()) {
-                            if ((!this.plugin.isPetFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                                                        
-                                //event.setCancelled(true);                        
-                                c.setTarget(null);
-                            }
-                        }
-                    } 
-                }
+        if ((e instanceof Creeper)) {
+            if (this.plugin.isPet(e)) {                
+                event.setCancelled(true);
             }
         }
     }
-    */
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onExplosionPrime(ExplosionPrimeEvent event) {
+    public void onExplosionPrime(ExplosionPrimeEvent event) {        
         Entity e = event.getEntity();
         if ((e instanceof Creeper)) {            
-            if (this.plugin.isPet(e)) {
+            if (this.plugin.isPet(e)) {                
                 event.setCancelled(true);
             }
         }
