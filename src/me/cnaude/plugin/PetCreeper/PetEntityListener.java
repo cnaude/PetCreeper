@@ -71,9 +71,11 @@ public class PetEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onProjectileHitEvent(ProjectileHitEvent event) {        
-        Entity e = event.getEntity().getShooter();                    
-        if (this.plugin.isPet(e)) {
-            event.getEntity().remove();
+        Entity e = event.getEntity().getShooter(); 
+        if (e instanceof Entity) {
+            if (this.plugin.isPet(e)) {
+                event.getEntity().remove();
+            }
         }
     }
 

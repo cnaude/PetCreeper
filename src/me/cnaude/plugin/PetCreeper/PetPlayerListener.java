@@ -103,7 +103,7 @@ public class PetPlayerListener implements Listener {
                                 || this.plugin.hasPerm(p, "petcreeper.ride.All")) {
                             e.setPassenger((LivingEntity)p);
                         } else {
-                            this.plugin.message(p, ChatColor.RED + "You don't have permission to ride that creature.");
+                            this.plugin.message(p, ChatColor.RED + "You don't have permission to ride that " + et.getName());
                         }
                     } else {
                         if (this.plugin.isPetFollowing(e)) {

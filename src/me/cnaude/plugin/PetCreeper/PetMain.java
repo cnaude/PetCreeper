@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.ThaH3lper.EpicBoss.API;
+import me.ThaH3lper.EpicBoss.EpicBoss;
 import net.minecraft.server.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PetMain extends JavaPlugin {
@@ -33,6 +36,7 @@ public class PetMain extends JavaPlugin {
     public boolean configLoaded = false;
     private static PetConfig config;
     private PetFile petFile = new PetFile(this);
+    private static API eBossAPI;
 
     @Override
     public void onEnable() {
@@ -57,6 +61,7 @@ public class PetMain extends JavaPlugin {
         registerCommand(PetConfig.commandPrefix + "give");
         registerCommand(PetConfig.commandPrefix + "reload");
         registerCommand(PetConfig.commandPrefix + "mode");
+                                        
     }
 
     private void registerCommand(String command) {
@@ -412,7 +417,15 @@ public class PetMain extends JavaPlugin {
         }
     }
 
-    public boolean tamePetOf(Player p, Entity e, boolean spawned) {
+    public boolean tamePetOf(Player p, Entity e, boolean spawned) { 
+        if (eBossAPI == null) {
+            setupEpicBossHandler();
+        }
+        if (eBossAPI != null) {
+            if (eBossAPI.entityBoss((LivingEntity)e)) {
+                return false;
+            }
+        }
         boolean tamed = false;
         if (e instanceof LivingEntity) {
             EntityType et = e.getType();
@@ -557,5 +570,18 @@ public class PetMain extends JavaPlugin {
 
     public static PetMain get() {
         return instance;
+    }    
+    
+    public void setupEpicBossHandler() {
+        Plugin epicBossPlugin = getServer().getPluginManager().getPlugin("EpicBoss");
+        
+        if (epicBossPlugin == null) {
+            return;
+        }
+        
+        eBossAPI = new API((EpicBoss)epicBossPlugin);
+        logInfo("EpicBoss detected. Players will not be able to tame bosses.");
+
     }
+    
 }
