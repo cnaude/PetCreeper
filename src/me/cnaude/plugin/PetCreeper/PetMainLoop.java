@@ -1,7 +1,5 @@
 package me.cnaude.plugin.PetCreeper;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.bukkit.Bukkit;

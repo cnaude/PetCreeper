@@ -64,8 +64,10 @@ public class PetEntityListener implements Listener {
     @EventHandler
     public void stopDragonDamage(EntityExplodeEvent event) {
         Entity e = event.getEntity();
-        if (this.plugin.isPet(e)) {
-            event.setCancelled(true);  
+        if (e != null) {
+            if (this.plugin.isPet(e)) {
+                event.setCancelled(true);  
+            }
         }
     }
 

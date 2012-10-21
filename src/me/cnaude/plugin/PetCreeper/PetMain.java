@@ -2,6 +2,7 @@ package me.cnaude.plugin.PetCreeper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -354,9 +355,15 @@ public class PetMain extends JavaPlugin {
             ((Monster) e).setTarget(null);
             return;
         }
-        if (p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).isEmpty()) {
+        try {
+            if (p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).isEmpty()) {
+                ((Monster) e).setTarget(null);
+                return;
+            }
+        } 
+        catch (NoSuchElementException see) {
             ((Monster) e).setTarget(null);
-            return;
+                return;
         }
         if (e instanceof Monster) {   
             for (Iterator<Entity> iterator = p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).iterator(); iterator.hasNext(); ) {
