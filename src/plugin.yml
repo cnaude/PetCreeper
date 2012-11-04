@@ -1,8 +1,8 @@
 name: PetCreeper
 main: me.cnaude.plugin.PetCreeper.PetMain
-version: 1.2.7
+version: 1.3.2
 description: Tame those mobs!
-
+author: Chris Naude
 commands:
     pet:
         description: Teleport your pet to you
@@ -80,6 +80,9 @@ permissions:
   petcreeper.tame.Silverfish:
     description: Allows players to tame this creature.
     default: false
+  petcreeper.tame.Bat:
+    description: Allows players to tame this creature.
+    default: false    
   petcreeper.tame.Blaze:
     description: Allows players to tame this creature.
     default: false
@@ -194,6 +197,9 @@ permissions:
   petcreeper.ride.VillagerGolem:
     description: Allows players to ride this creature.
     default: false
+  petcreeper.ride.Bat:
+    description: Allows players to ride this creature.
+    default: false    
   petcreeper.ride.All:
     description: Allows players to ride any creature.
     default: false    

@@ -18,6 +18,7 @@ public final class PetConfig {
     public static boolean opsBypassPerms;
     public static boolean PetsAttackPlayers;
     public static boolean petsAttackPets;
+    public static boolean invinciblePets;
     public static long mainLoop;
     public static boolean disablePermissions;
     public static String defaultPetMode;
@@ -29,6 +30,7 @@ public final class PetConfig {
     }
 
     public void load() {
+        baitMap.put("Bat", Material.getMaterial(config.getInt("Bat", 375)));
         baitMap.put("Blaze", Material.getMaterial(config.getInt("Blaze", 369)));
         baitMap.put("CaveSpider", Material.getMaterial(config.getInt("CaveSpider", 287)));
         baitMap.put("Chicken", Material.getMaterial(config.getInt("Chicken", 295)));
@@ -53,6 +55,8 @@ public final class PetConfig {
         baitMap.put("Squid", Material.getMaterial(config.getInt("Squid", 349)));
         baitMap.put("Villager", Material.getMaterial(config.getInt("Villager", 38)));
         baitMap.put("VillagerGolem", Material.getMaterial(config.getInt("VillagerGolem", 295)));
+        baitMap.put("Witch", Material.getMaterial(config.getInt("Witch", 115)));
+        baitMap.put("Wither", Material.getMaterial(config.getInt("Wither", 399)));
         baitMap.put("Zombie", Material.getMaterial(config.getInt("Zombie", 295)));
 
         provokable = config.getBoolean("Provokable", true);
@@ -67,11 +71,12 @@ public final class PetConfig {
         mainLoop = config.getLong("MainLoop", 1000L);
         disablePermissions = config.getBoolean("DisablePermissions", false);
         defaultPetMode = config.getString("DefaultPetMode", "P").toUpperCase();
+        invinciblePets = config.getBoolean("InvinciblePets", true);
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }
 
-    public static Material getBait(EntityType type) {
+    public static Material getBait(EntityType type) {        
         if (baitMap.containsKey(type.getName())) {
             return baitMap.get(type.getName());
         } else {

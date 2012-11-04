@@ -158,6 +158,10 @@ public class PetEntityListener implements Listener {
             }
         } else {
             if (this.plugin.isPet(e)) {
+                if (PetConfig.invinciblePets) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if (!PetConfig.provokable && this.plugin.getPet(e).mode == Pet.modes.PASSIVE) {
                     event.setCancelled(true);
                     return;

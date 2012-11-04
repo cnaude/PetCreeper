@@ -1,5 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
+import org.bukkit.craftbukkit.entity.CraftSkeleton;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
@@ -32,6 +33,7 @@ public final class Pet {
     public modes mode = modes.PASSIVE;
     public int level = 1;
     public int exp = 0;
+    public int skelType = 0;
             
     public enum modes {
         PASSIVE,
@@ -66,7 +68,9 @@ public final class Pet {
             this.prof = villager.getProfession();
         } else if (et == EntityType.ENDERMAN) {
             Enderman enderman = (Enderman)e;
-            carriedMat = enderman.getCarriedMaterial();
+            this.carriedMat = enderman.getCarriedMaterial();
+        } else if (et == EntityType.SKELETON) {
+            this.skelType = ((CraftSkeleton)e).getHandle().getSkeletonType();
         }        
         if (e instanceof Ageable) {
             this.age = ((Ageable)e).getAge();
@@ -74,7 +78,10 @@ public final class Pet {
         this.type = et;
         this.hp = health;
         this.entityId = e.getEntityId();
-        this.petName = et.getName();        
+        this.petName = et.getName();  
+        if (this.skelType == 1) {
+            this.petName = "Wither"+this.petName;
+        }
     }
     
     public Pet() {

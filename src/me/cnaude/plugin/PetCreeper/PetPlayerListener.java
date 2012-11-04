@@ -82,13 +82,13 @@ public class PetPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        Entity e = event.getRightClicked();
+        Entity e = event.getRightClicked();        
         Player p = event.getPlayer();
         EntityType et = e.getType();
         if ((et == EntityType.WOLF) || (et == EntityType.OCELOT)) {
             return;
         }
-        if (e instanceof Entity) {
+        if (e instanceof Entity) {                 
             if (this.plugin.isPet(e)) {
                 Player master = this.plugin.getMasterOf(e);
                 if (master == p) {
@@ -120,7 +120,7 @@ public class PetPlayerListener implements Listener {
                     this.plugin.message(p, ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
                 }
 
-            } else {
+            } else {                
                 this.plugin.tamePetOf(p, e, false);
             }
         }
