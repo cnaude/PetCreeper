@@ -34,6 +34,7 @@ public final class Pet {
     public int level = 1;
     public int exp = 0;
     public int skelType = 0;
+    public boolean ageLocked = false;
             
     public enum modes {
         PASSIVE,
@@ -74,6 +75,7 @@ public final class Pet {
         }        
         if (e instanceof Ageable) {
             this.age = ((Ageable)e).getAge();
+            this.ageLocked = ((Ageable)e).getAgeLock();
         }
         this.type = et;
         this.hp = health;

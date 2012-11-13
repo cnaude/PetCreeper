@@ -195,6 +195,12 @@ public class PetEntityListener implements Listener {
                 event.setCancelled(true);
                 p.remove();
             }
+        } else if (e instanceof ThrownPotion) {        
+            Entity sh = (Entity) p.getShooter();
+            if (this.plugin.isPet((Entity)sh)) {                
+                event.setCancelled(true);
+                p.remove();
+            }
         } else if (this.plugin.isPet(e)) {            
             event.setCancelled(true);
             p.remove();

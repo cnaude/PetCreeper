@@ -436,6 +436,38 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
+    
+    public void lockPetAge(Pet pet) {
+        Entity e = getEntityOfPet(pet);
+        if (e instanceof Ageable) {
+            pet.ageLocked = true;
+            ((Ageable)e).setAgeLock(true);
+        }
+    }
+    
+    public void unlockPetAge(Pet pet) {
+        Entity e = getEntityOfPet(pet);
+        if (e instanceof Ageable) {
+            pet.ageLocked = false;
+            ((Ageable)e).setAgeLock(false);
+        }
+    }
+    
+    public void setPetAsBaby(Pet pet) {
+        Entity e = getEntityOfPet(pet);
+        if (e instanceof Ageable) {
+            ((Ageable)e).setBaby();
+            pet.age = ((Ageable)e).getAge();
+        }
+    }
+    
+    public void setPetAsAdult(Pet pet) {
+        Entity e = getEntityOfPet(pet);
+        if (e instanceof Ageable) {
+            ((Ageable)e).setAdult();
+            pet.age = ((Ageable)e).getAge();
+        }
+    } 
 
     public boolean tamePetOf(Player p, Entity e, boolean spawned) {          
         if (eBossAPI == null) {
@@ -577,7 +609,10 @@ public class PetMain extends JavaPlugin {
     }
 
     public boolean isPet(Entity pet) {
-        return petList.containsKey(pet);
+        if (pet != null) {
+            return petList.containsKey(pet);
+        }
+        return false;
     }
 
     public boolean isPetOwner(Player p) {
