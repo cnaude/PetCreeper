@@ -246,7 +246,7 @@ public class PetCommands implements CommandExecutor {
                                 this.plugin.setPetAsAdult(pet);
                                 this.plugin.message(p, ChatColor.GREEN + "Your pet is now an " + ChatColor.YELLOW + "adult" + ChatColor.GREEN + "!");
                             } else if (s.startsWith("l")) {
-                                this.plugin.lockPetAge(pet);
+                                this.plugin.lockPetAge(pet);    
                                 this.plugin.message(p, ChatColor.GREEN + "Your pet's age is now " + ChatColor.YELLOW + "locked" + ChatColor.GREEN + "!");
                             } else if (s.startsWith("u")) {
                                 this.plugin.unlockPetAge(pet);

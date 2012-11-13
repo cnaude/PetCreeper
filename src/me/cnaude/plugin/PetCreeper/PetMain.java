@@ -63,6 +63,7 @@ public class PetMain extends JavaPlugin {
         registerCommand(PetConfig.commandPrefix + "give");
         registerCommand(PetConfig.commandPrefix + "reload");
         registerCommand(PetConfig.commandPrefix + "mode");
+        registerCommand(PetConfig.commandPrefix + "age");
                                         
     }
 
