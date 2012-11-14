@@ -64,6 +64,7 @@ public class PetMain extends JavaPlugin {
         registerCommand(PetConfig.commandPrefix + "reload");
         registerCommand(PetConfig.commandPrefix + "mode");
         registerCommand(PetConfig.commandPrefix + "age");
+        registerCommand(PetConfig.commandPrefix + "spawn");
                                         
     }
 
@@ -518,6 +519,9 @@ public class PetMain extends JavaPlugin {
                 this.playersWithPets.get(p.getName()).add(pet);
                 tamed = true;
                 pe.setFireTicks(0);
+                if (pe instanceof Tameable) {
+                    ((Tameable)pe).setOwner(p);
+                }
 
                 if (spawned) {                    
                     //p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.type.getName() + ChatColor.GREEN + " greets you!");

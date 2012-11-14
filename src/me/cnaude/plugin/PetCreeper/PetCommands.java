@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 /**
@@ -21,8 +22,7 @@ public class PetCommands implements CommandExecutor {
     private final PetMain plugin;
 
     public PetCommands(PetMain instance) {
-        this.plugin = instance;
-
+        plugin = instance;
     }
 
     @Override
@@ -32,99 +32,99 @@ public class PetCommands implements CommandExecutor {
 
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "reload")) {
                 if (p.hasPermission("petcreeper.reload")) {
-                    this.plugin.loadConfig();
-                    this.plugin.message(p, "Configuration reloaded.");
+                    plugin.loadConfig();
+                    plugin.message(p, "Configuration reloaded.");
                 } else {
-                    this.plugin.message(p, "No permission to reload PetCreeper config!");
+                    plugin.message(p, "No permission to reload PetCreeper config!");
                 }
             }
 
 
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix)) {
-                if (!this.plugin.hasPerm(p, "petcreeper.pet")) {
-                    this.plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
+                if (!plugin.hasPerm(p, "petcreeper.pet")) {
+                    plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
                 if (p.isInsideVehicle()) {
                     if (p.getVehicle().getType().isAlive()) {
-                        this.plugin.message(p, ChatColor.RED + "You can't use /" + PetConfig.commandPrefix + " when riding this " + p.getVehicle().getType().getName() + ".");
+                        plugin.message(p, ChatColor.RED + "You can't use /" + PetConfig.commandPrefix + " when riding this " + p.getVehicle().getType().getName() + ".");
                         return true;
                     }
                 }
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length == 1) {
                         if (args[0].matches("\\d+")) {
                             int idx = Integer.parseInt(args[0]) - 1;
-                            if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
-                                Pet pet = this.plugin.getPetsOf(p).get(idx);
+                            if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
+                                Pet pet = plugin.getPetsOf(p).get(idx);
                                 plugin.teleportPet(pet, true);
                             } else {
-                                this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                                plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                             }
                         } else if (args[0].toString().equalsIgnoreCase("all")) {
                             plugin.teleportPetsOf(p, true);
                         } else {
-                            this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                            plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
                 }
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "list")) {
-                if (this.plugin.isPetOwner(p)) {
-                    this.plugin.printPetListOf(p);
+                if (plugin.isPetOwner(p)) {
+                    plugin.printPetListOf(p);
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You don't own a pet.");
+                    plugin.message(p, ChatColor.RED + "You don't own a pet.");
                 }
                 return true;
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "mode")) {
-                if (!this.plugin.hasPerm(p, "petcreeper.mode")) {
-                    this.plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
+                if (!plugin.hasPerm(p, "petcreeper.mode")) {
+                    plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length == 2 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
-                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                        if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             String s = args[1].toLowerCase().substring(0, 1);
-                            Pet pet = this.plugin.getPetsOf(p).get(idx);
+                            Pet pet = plugin.getPetsOf(p).get(idx);
                             if (s.startsWith("a")) {
                                 pet.mode = Pet.modes.AGGRESSIVE;
-                                this.plugin.message(p, ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
+                                plugin.message(p, ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
                             } else if (s.startsWith("p")) {
                                 pet.mode = Pet.modes.PASSIVE;
-                                this.plugin.message(p, ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
+                                plugin.message(p, ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
                             } else if (s.startsWith("d")) {
                                 pet.mode = Pet.modes.DEFENSIVE;
-                                this.plugin.message(p, ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
+                                plugin.message(p, ChatColor.GREEN + "You made your pet " + ChatColor.YELLOW + pet.mode + ChatColor.GREEN + "!");
                             } else {
-                                this.plugin.message(p, ChatColor.RED + "Invalid pet mode.");
+                                plugin.message(p, ChatColor.RED + "Invalid pet mode.");
                             }
                         } else {
-                            this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                            plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "mode [id] [p|d|a]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "mode [id] [p|d|a]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
                 }
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "name")) {
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length > 1 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
-                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                        if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             String s = "";
                             for (int i = 1; i < args.length; i++) {
                                 s += args[i] + " ";
                             }
                             s = s.substring(0, s.length() - 1);
-                            Pet pet = this.plugin.getPetsOf(p).get(idx);
+                            Pet pet = plugin.getPetsOf(p).get(idx);
                             if (!s.isEmpty()) {
                                 pet.petName = s;
                                 Entity e = plugin.getEntityOfPet(pet);
@@ -132,141 +132,185 @@ public class PetCommands implements CommandExecutor {
                                     plugin.petNameList.remove(e);
                                     plugin.petNameList.put(e, s);
                                 }
-                                this.plugin.message(p, ChatColor.GREEN + "You named your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + "!");
+                                plugin.message(p, ChatColor.GREEN + "You named your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + "!");
                             } else {
-                                this.plugin.message(p, ChatColor.RED + "Invalid pet name.");
+                                plugin.message(p, ChatColor.RED + "Invalid pet name.");
                             }
                         } else {
-                            this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                            plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "name [id] [name]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "name [id] [name]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
                 }
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "free")) {
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length == 1) {
                         if (args[0].matches("\\d+")) {
                             int idx = Integer.parseInt(args[0]) - 1;
-                            if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
-                                Pet pet = this.plugin.getPetsOf(p).get(idx);
+                            if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
+                                Pet pet = plugin.getPetsOf(p).get(idx);
                                 Entity e = plugin.getEntityOfPet(pet);
                                 plugin.untamePetOf(p, e, true);
                             } else {
-                                this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                                plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                             }
                         } else if (args[0].toString().equalsIgnoreCase("all")) {
                             plugin.untameAllPetsOf(p);
                         } else {
-                            this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
+                            plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
                 }
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "info")) {
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length == 1 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
-                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
-                            Pet pet = this.plugin.getPetsOf(p).get(idx);
+                        if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
+                            Pet pet = plugin.getPetsOf(p).get(idx);
                             Entity e = plugin.getEntityOfPet(pet);
                             plugin.printPetInfo(p, e);
                         } else {
-                            this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                            plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "info [id]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "info [id]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
                 }
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "give")) {
-                if (!this.plugin.hasPerm(p, "petcreeper.give")) {
-                    this.plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
+                if (!plugin.hasPerm(p, "petcreeper.give")) {
+                    plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length == 2 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
-                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
-                            Pet pet = this.plugin.getPetsOf(p).get(idx);
+                        if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
+                            Pet pet = plugin.getPetsOf(p).get(idx);
                             Entity e = plugin.getEntityOfPet(pet);
                             Player rec = plugin.getServer().getPlayer(args[1]);
                             if (rec != null && rec instanceof Player) {
                                 if (plugin.isPetOwner(rec)) {
                                     if (plugin.getPetsOf(rec).size() >= PetConfig.maxPetsPerPlayer) {
-                                        this.plugin.message(p, ChatColor.RED + "Player " + rec.getName() + " already has maximum number of pets!");
+                                        plugin.message(p, ChatColor.RED + "Player " + rec.getName() + " already has maximum number of pets!");
                                         return true;
                                     }
                                 }
                                 plugin.untamePetOf(p, e, false);
                                 if (plugin.tamePetOf(rec, e, true)) {
-                                    this.plugin.message(p, ChatColor.GREEN + "You gave your pet " + ChatColor.YELLOW
+                                    plugin.message(p, ChatColor.GREEN + "You gave your pet " + ChatColor.YELLOW
                                             + pet.petName + ChatColor.GREEN + " to " + ChatColor.YELLOW + rec.getName()
                                             + ChatColor.GREEN + ".");
                                 } else {
-                                    this.plugin.message(p, ChatColor.RED + "Error give pet to player!");
+                                    plugin.message(p, ChatColor.RED + "Error give pet to player!");
                                 }
                             } else {
-                                this.plugin.message(p, ChatColor.RED + "Invalid player.");
+                                plugin.message(p, ChatColor.RED + "Invalid player.");
                             }
                         } else {
-                            this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                            plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "give [id] [player]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "give [id] [player]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                }
+            }
+            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "spawn")) {
+                int spawnCount = 1;
+                if (args.length == 2) {
+                    if (args[1].matches("\\d+")) {
+                        spawnCount = Integer.parseInt(args[1]);
+                        if (spawnCount > PetConfig.maxSpawnCount) {
+                            spawnCount = PetConfig.maxSpawnCount;
+                        }
+                    }
+                }
+                if (args.length >= 1) {
+                    String petType = args[0];
+                    if (petType.equalsIgnoreCase("ocelot")) {
+                        petType = "Ozelot";
+                    } else if (petType.equalsIgnoreCase("wither")) {
+                        petType = "WitherBoss";
+                    }
+                    EntityType et = EntityType.fromName(petType);
+                    if (et != null) {
+                        if (!et.isAlive()) {
+                            plugin.message(p, ChatColor.RED + "Invalid pet type.");
+                            return true;
+                        }
+                        if (!plugin.hasPerm(p, "petcreeper.spawn." + et.getName()) && !plugin.hasPerm(p, "petcreeper.spawn.All")) {
+                            p.sendMessage(ChatColor.RED + "You don't have permission to spawn a " + et.getName() + ".");
+                            return true;
+                        }
+                        for (int x = 1; x <= spawnCount; x++) {
+                            if (plugin.isPetOwner(p)) {              
+                                if (plugin.getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
+                                    p.sendMessage(ChatColor.RED + "You have too many pets!");
+                                    return true;
+                                }
+                            }
+                            Entity e = p.getWorld().spawnEntity(p.getLocation(), et);
+                            plugin.tamePetOf(p, e, true);
+                        }
+                    } else {
+                        plugin.message(p, ChatColor.RED + "Invalid pet type.");
+                    }
+                } else {
+                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "spawn [pet type] ([count])");
                 }
             }
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "age")) {
-                if (!this.plugin.hasPerm(p, "petcreeper.age")) {
-                    this.plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
+                if (!plugin.hasPerm(p, "petcreeper.age")) {
+                    plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
-                if (this.plugin.isPetOwner(p)) {
+                if (plugin.isPetOwner(p)) {
                     if (args.length == 2 && args[0].matches("\\d+")) {
                         int idx = Integer.parseInt(args[0]) - 1;
-                        if (idx >= 0 && idx < this.plugin.getPetsOf(p).size()) {
+                        if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             String s = args[1].toLowerCase().substring(0, 1);
-                            Pet pet = this.plugin.getPetsOf(p).get(idx);
+                            Pet pet = plugin.getPetsOf(p).get(idx);
                             if (s.startsWith("b")) {
-                                this.plugin.setPetAsBaby(pet);
-                                this.plugin.message(p, ChatColor.GREEN + "Your pet is now a " + ChatColor.YELLOW + "baby" + ChatColor.GREEN + "!");
+                                plugin.setPetAsBaby(pet);
+                                plugin.message(p, ChatColor.GREEN + "Your pet is now a " + ChatColor.YELLOW + "baby" + ChatColor.GREEN + "!");
                             } else if (s.startsWith("a")) {
-                                this.plugin.setPetAsAdult(pet);
-                                this.plugin.message(p, ChatColor.GREEN + "Your pet is now an " + ChatColor.YELLOW + "adult" + ChatColor.GREEN + "!");
+                                plugin.setPetAsAdult(pet);
+                                plugin.message(p, ChatColor.GREEN + "Your pet is now an " + ChatColor.YELLOW + "adult" + ChatColor.GREEN + "!");
                             } else if (s.startsWith("l")) {
-                                this.plugin.lockPetAge(pet);    
-                                this.plugin.message(p, ChatColor.GREEN + "Your pet's age is now " + ChatColor.YELLOW + "locked" + ChatColor.GREEN + "!");
+                                plugin.lockPetAge(pet);
+                                plugin.message(p, ChatColor.GREEN + "Your pet's age is now " + ChatColor.YELLOW + "locked" + ChatColor.GREEN + "!");
                             } else if (s.startsWith("u")) {
-                                this.plugin.unlockPetAge(pet);
-                                this.plugin.message(p, ChatColor.GREEN + "Your pet's is now " + ChatColor.YELLOW + "unlocked" + ChatColor.GREEN + "!");
+                                plugin.unlockPetAge(pet);
+                                plugin.message(p, ChatColor.GREEN + "Your pet's is now " + ChatColor.YELLOW + "unlocked" + ChatColor.GREEN + "!");
                             } else {
-                                this.plugin.message(p, ChatColor.RED + "Invalid pet age.");
+                                plugin.message(p, ChatColor.RED + "Invalid pet age.");
                             }
                         } else {
-                            this.plugin.message(p, ChatColor.RED + "Invalid pet ID.");
+                            plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        this.plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "age [id] [baby|adult]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "age [id] [baby|adult]");
                     }
                 } else {
-                    this.plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    plugin.message(p, ChatColor.RED + "You have no pets. :(");
                 }
             }
         } else if (sender instanceof ConsoleCommandSender) {
             if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "reload")) {
-                this.plugin.loadConfig();
+                plugin.loadConfig();
             }
         }
         return true;

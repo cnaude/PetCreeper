@@ -113,7 +113,8 @@ public class PetEntityListener implements Listener {
         Entity e = event.getEntity();
         Entity d = event.getDamager();        
 
-        if ((e instanceof Wolf) || (e instanceof Ocelot) || (e instanceof CraftEnderCrystal)) {
+        //if ((e instanceof Wolf) || (e instanceof Ocelot) || (e instanceof CraftEnderCrystal)) {
+        if (e instanceof CraftEnderCrystal) {
             return;
         }
         

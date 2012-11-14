@@ -13,6 +13,7 @@ Giant: 41
 Golem: 265
 MagmaCube: 378
 MushroomCow: 40
+Ozelot: 357
 Pig: 319
 PigZombie: 319
 Sheep: 338
@@ -25,7 +26,8 @@ Squid: 349
 Villager: 38
 VillagerGolem: 265
 Witch: 115
-Wither: 399
+WitherBoss: 399
+Wolf: 319
 Zombie: 288
 # Other options
 # If Provokable is true then you are able to hurt your own pet. Your pet will get angry and run away or hurt you.
@@ -56,3 +58,5 @@ DefaultPetMode: P
 CommandPrefix: pet
 # This makes pets invincible
 InvinciblePets: false
+# Maximum pets a player can spawn with /petspawn
+MaxSpawnCount: 1

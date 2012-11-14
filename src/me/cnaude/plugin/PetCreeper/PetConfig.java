@@ -23,6 +23,7 @@ public final class PetConfig {
     public static boolean disablePermissions;
     public static String defaultPetMode;
     public static String commandPrefix;
+    public static int maxSpawnCount;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -44,6 +45,7 @@ public final class PetConfig {
         //baitMap.put("HumanEntity", Material.getMaterial(config.getInt("HumanEntity", 264)));
         baitMap.put("LavaSlime", Material.getMaterial(config.getInt("MagmaCube", 378)));
         baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));
+        baitMap.put("Ocelot", Material.getMaterial(config.getInt("Ocelot", 357)));
         baitMap.put("Pig", Material.getMaterial(config.getInt("Pig", 319)));
         baitMap.put("PigZombie", Material.getMaterial(config.getInt("PigZombie", 319)));
         baitMap.put("Sheep", Material.getMaterial(config.getInt("Sheep", 338)));
@@ -56,7 +58,8 @@ public final class PetConfig {
         baitMap.put("Villager", Material.getMaterial(config.getInt("Villager", 38)));
         baitMap.put("VillagerGolem", Material.getMaterial(config.getInt("VillagerGolem", 295)));
         baitMap.put("Witch", Material.getMaterial(config.getInt("Witch", 115)));
-        baitMap.put("Wither", Material.getMaterial(config.getInt("Wither", 399)));
+        baitMap.put("WitherBoss", Material.getMaterial(config.getInt("WitherBoss", 399)));
+        baitMap.put("Wolf", Material.getMaterial(config.getInt("Wolf", 319)));
         baitMap.put("Zombie", Material.getMaterial(config.getInt("Zombie", 295)));
 
         provokable = config.getBoolean("Provokable", true);
@@ -72,6 +75,7 @@ public final class PetConfig {
         disablePermissions = config.getBoolean("DisablePermissions", false);
         defaultPetMode = config.getString("DefaultPetMode", "P").toUpperCase();
         invinciblePets = config.getBoolean("InvinciblePets", true);
+        maxSpawnCount = config.getInt("MaxSpawnCount", 1);
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }

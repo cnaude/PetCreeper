@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -85,7 +86,8 @@ public class PetPlayerListener implements Listener {
         Entity e = event.getRightClicked();        
         Player p = event.getPlayer();
         EntityType et = e.getType();
-        if ((et == EntityType.WOLF) || (et == EntityType.OCELOT)) {
+        //if ((et == EntityType.WOLF) || (et == EntityType.OCELOT)) {
+        if (e instanceof CraftEnderCrystal) {
             return;
         }
         if (e instanceof Entity) {                 
