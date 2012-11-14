@@ -233,10 +233,11 @@ public class PetCommands implements CommandExecutor {
                 if (args.length == 2) {
                     if (args[1].matches("\\d+")) {
                         spawnCount = Integer.parseInt(args[1]);
-                        if (spawnCount > PetConfig.maxSpawnCount) {
-                            spawnCount = PetConfig.maxSpawnCount;
-                        }
+                        
                     }
+                }
+                if (spawnCount > PetConfig.maxSpawnCount) {
+                    spawnCount = PetConfig.maxSpawnCount;
                 }
                 if (args.length >= 1) {
                     String petType = args[0];
