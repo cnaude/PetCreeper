@@ -11,11 +11,9 @@ import me.ThaH3lper.EpicBoss.EpicBoss;
 import net.minecraft.server.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftSkeleton;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -55,25 +53,17 @@ public class PetMain extends JavaPlugin {
 
         mainLoop = new PetMainLoop(this);
 
-        registerCommand(PetConfig.commandPrefix);
-        registerCommand(PetConfig.commandPrefix + "free");
-        registerCommand(PetConfig.commandPrefix + "list");
-        registerCommand(PetConfig.commandPrefix + "info");
-        registerCommand(PetConfig.commandPrefix + "name");
-        registerCommand(PetConfig.commandPrefix + "give");
-        registerCommand(PetConfig.commandPrefix + "reload");
-        registerCommand(PetConfig.commandPrefix + "mode");
-        registerCommand(PetConfig.commandPrefix + "age");
-        registerCommand(PetConfig.commandPrefix + "spawn");
-                                        
-    }
+        getCommand(PetConfig.commandPrefix).setExecutor(new PetCommand(this));
+        getCommand(PetConfig.commandPrefix + "age").setExecutor(new PetAgeCommand(this));
+        getCommand(PetConfig.commandPrefix + "free").setExecutor(new PetFreeCommand(this));
+        getCommand(PetConfig.commandPrefix + "give").setExecutor(new PetGiveCommand(this));
+        getCommand(PetConfig.commandPrefix + "info").setExecutor(new PetInfoCommand(this));
+        getCommand(PetConfig.commandPrefix + "list").setExecutor(new PetListCommand(this));
+        getCommand(PetConfig.commandPrefix + "mode").setExecutor(new PetModeCommand(this));
+        getCommand(PetConfig.commandPrefix + "name").setExecutor(new PetNameCommand(this));
+        getCommand(PetConfig.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
+        getCommand(PetConfig.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
 
-    private void registerCommand(String command) {
-        try {
-            getCommand(command).setExecutor(new PetCommands(this));
-        } catch (Exception ex) {
-            System.out.println("Failed to register command '" + command + "'! Is it allready used by some other Plugin? " + ex.getMessage());
-        }
     }
 
     public void logInfo(String s) {
@@ -107,7 +97,7 @@ public class PetMain extends JavaPlugin {
     }
 
     public boolean hasPerm(Player p, String s) {
-        if ((p.hasPermission(s)) || (p.hasPermission("petcreeper.*")) 
+        if ((p.hasPermission(s)) || (p.hasPermission("petcreeper.*"))
                 || (p.isOp() && PetConfig.opsBypassPerms)
                 || PetConfig.disablePermissions) {
             return true;
@@ -119,7 +109,7 @@ public class PetMain extends JavaPlugin {
     @Override
     public void onDisable() {
         this.mainLoop.end();
-        
+
         for (String p : petList.values()) {
             despawnPetsOf(getServer().getPlayer(p));
         }
@@ -153,14 +143,14 @@ public class PetMain extends JavaPlugin {
 
     public void spawnPetsOf(Player p) {
         if (isPetOwner(p)) {
-            for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext(); ) {
+            for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
                 Pet pet = iterator.next();
                 if (!spawnPet(pet, p, true)) {
                     if (playersWithPets.get(p.getName()).contains(pet)) {
                         iterator.remove();
                     }
                 }
-            }            
+            }
         }
     }
 
@@ -208,43 +198,15 @@ public class PetMain extends JavaPlugin {
         pos.setY(pos.getY() + 1.0D);
         if (pos instanceof Location) {
             try {
-                Entity e = p.getWorld().spawnEntity(pos, pet.type);                
+                Entity e = p.getWorld().spawnEntity(pos, pet.type);
                 if (e instanceof Entity) {
                     pet.entityId = e.getEntityId();
-                    if (pet.type == EntityType.SHEEP) {
-                        ((Sheep) e).setSheared(pet.sheared);
-                        ((Sheep) e).setColor(DyeColor.valueOf(pet.color));
-                    }
-                    if (pet.type == EntityType.PIG) {
-                        ((Pig) e).setSaddle(pet.saddled);
-                    }
-                    if (pet.type == EntityType.SLIME) {
-                        ((Slime) e).setSize(pet.size);
-                    }
-                    if (pet.type == EntityType.MAGMA_CUBE) {
-                        ((MagmaCube) e).setSize(pet.size);
-                    }
-                    if (pet.type == EntityType.ENDERMAN) {
-                        ((Enderman) e).setCarriedMaterial(pet.carriedMat);
-                    }
-                    if (pet.type == EntityType.VILLAGER) {
-                        ((Villager) e).setProfession(pet.prof);
-                    }
-                    if (pet.type == EntityType.SKELETON) {
-                        ((CraftSkeleton)e).getHandle().setSkeletonType(pet.skelType);
-                    }
-                    if (e instanceof Ageable) {
-                        ((Ageable) e).setAge(pet.age);
-                    }
-                    if (e instanceof LivingEntity) {
-                        ((LivingEntity) e).setHealth(pet.hp);
-                    } else if (e instanceof Ambient) {
-                        ((Ambient) e).setHealth(pet.hp);
-                    }
+                    pet.initEntity(e,p);
+
                     petList.put(e, p.getName());
                     petNameList.put(e, pet.petName);
                     petFollowList.put(e, pet.followed);
-                    entityIds.put(e.getEntityId(), e);
+                    entityIds.put(e.getEntityId(), e);                        
 
                     if (msg) {
                         p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " greets you!");
@@ -270,7 +232,7 @@ public class PetMain extends JavaPlugin {
 
     public void despawnPetsOf(Player p) {
         if (isPetOwner(p)) {
-            for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext(); ) {                                                                            
+            for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
                 despawnPet(iterator.next());
             }
         }
@@ -280,7 +242,7 @@ public class PetMain extends JavaPlugin {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
             pet.initPet(e);
-            pet.petName = getNameOfPet(e);            
+            pet.petName = getNameOfPet(e);
             pet.entityId = -1;
             cleanUpLists(e);
             e.remove();
@@ -308,7 +270,7 @@ public class PetMain extends JavaPlugin {
         }
     }
 
-    public Entity getEntityOfPet(Pet pet) {
+    public Entity getEntityOfPet(Pet pet) {        
         Entity e = null;
         if (entityIds.containsKey(pet.entityId)) {
             e = entityIds.get(pet.entityId);
@@ -319,13 +281,13 @@ public class PetMain extends JavaPlugin {
     public void teleportPet(Pet pet, boolean msg) {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
-            Player p =  getServer().getPlayer(petList.get(e));
+            Player p = getServer().getPlayer(petList.get(e));
             //if (e.getWorld() == p.getWorld()) {
             //    Location pos = p.getLocation().clone();
             //    pos.setY(pos.getY() + 1.0D);
             //    if (!e.teleport(pos)) {
-                    this.despawnPet(pet);
-                    this.spawnPet(pet, p, false);
+            this.despawnPet(pet);
+            this.spawnPet(pet, p, false);
             //    }
             //} else {
             //    this.despawnPet(pet);
@@ -342,29 +304,29 @@ public class PetMain extends JavaPlugin {
             return;
         }
         if (e.getType() == EntityType.CREEPER) {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                                   
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);     
+            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
+            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
             return;
-        }        
+        }
         if (e.getType() == EntityType.SQUID) {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                                   
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);     
+            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
+            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
             return;
         }
         if (e.getType() == EntityType.SKELETON) {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                                   
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);     
+            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
+            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
             return;
-        } 
+        }
         if (e instanceof Monster) {
             ((Monster) e).setTarget(p);
         } else {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                                   
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);                     
+            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
+            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
         }
     }
-    
-    public void attackNearbyEntities(Entity e, Player p, Pet.modes mode) {     
+
+    public void attackNearbyEntities(Entity e, Player p, Pet.modes mode) {
         // Passive pets don't attack
         if (mode == Pet.modes.PASSIVE) {
             ((Monster) e).setTarget(null);
@@ -375,14 +337,13 @@ public class PetMain extends JavaPlugin {
                 ((Monster) e).setTarget(null);
                 return;
             }
-        } 
-        catch (NoSuchElementException see) {
+        } catch (NoSuchElementException see) {
             ((Monster) e).setTarget(null);
-                return;
+            return;
         }
-        if (e instanceof Monster) {   
-            for (Iterator<Entity> iterator = p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).iterator(); iterator.hasNext(); ) {
-                Entity target = iterator.next();    
+        if (e instanceof Monster) {
+            for (Iterator<Entity> iterator = p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).iterator(); iterator.hasNext();) {
+                Entity target = iterator.next();
                 if (target == p) {
                     continue;
                 }
@@ -438,50 +399,50 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
-    
+
     public void lockPetAge(Pet pet) {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
             pet.ageLocked = true;
-            ((Ageable)e).setAgeLock(true);
+            ((Ageable) e).setAgeLock(true);
         }
     }
-    
+
     public void unlockPetAge(Pet pet) {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
             pet.ageLocked = false;
-            ((Ageable)e).setAgeLock(false);
+            ((Ageable) e).setAgeLock(false);
         }
     }
-    
+
     public void setPetAsBaby(Pet pet) {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
-            ((Ageable)e).setBaby();
-            pet.age = ((Ageable)e).getAge();
+            ((Ageable) e).setBaby();
+            pet.age = ((Ageable) e).getAge();
         }
     }
-    
+
     public void setPetAsAdult(Pet pet) {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
-            ((Ageable)e).setAdult();
-            pet.age = ((Ageable)e).getAge();
+            ((Ageable) e).setAdult();
+            pet.age = ((Ageable) e).getAge();
         }
-    } 
+    }
 
-    public boolean tamePetOf(Player p, Entity e, boolean spawned) {          
+    public boolean tamePetOf(Player p, Entity e, boolean spawned) {
         if (eBossAPI == null) {
             setupEpicBossHandler();
         }
         if (eBossAPI != null) {
-            if (eBossAPI.entityBoss((LivingEntity)e)) {
+            if (eBossAPI.entityBoss((LivingEntity) e)) {
                 return false;
             }
         }
         boolean tamed = false;
-        if (e instanceof LivingEntity) {            
+        if (e instanceof LivingEntity) {
             EntityType et = e.getType();
             ItemStack bait = p.getItemInHand();
             int amt = bait.getAmount();
@@ -493,7 +454,7 @@ public class PetMain extends JavaPlugin {
                 }
             }
 
-            if (((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) || spawned) {                
+            if (((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) || spawned) {
                 if (!spawned) {
                     if (!hasPerm(p, "petcreeper.tame." + et.getName()) && !hasPerm(p, "petcreeper.tame.All")) {
                         p.sendMessage(ChatColor.RED + "You don't have permission to tame a " + et.getName() + ".");
@@ -503,15 +464,15 @@ public class PetMain extends JavaPlugin {
                 if (!isPetOwner(p)) {
                     this.playersWithPets.put(p.getName(), new ArrayList<Pet>());
                 }
-                
+
                 Entity pe;
                 if (e.getType() == EntityType.CREEPER) {
                     World world = e.getWorld();
                     Location loc = e.getLocation();
-                    Boolean powered = ((Creeper)e).isPowered();
-                    e.remove();                    
-                    pe = world.spawnEntity(loc, EntityType.CREEPER);                    
-                    ((Creeper)pe).setPowered(powered);   
+                    Boolean powered = ((Creeper) e).isPowered();
+                    e.remove();
+                    pe = world.spawnEntity(loc, EntityType.CREEPER);
+                    ((Creeper) pe).setPowered(powered);
                 } else {
                     pe = e;
                 }
@@ -520,12 +481,12 @@ public class PetMain extends JavaPlugin {
                 tamed = true;
                 pe.setFireTicks(0);
                 if (pe instanceof Tameable) {
-                    ((Tameable)pe).setOwner(p);
+                    ((Tameable) pe).setOwner(p);
                 }
 
-                if (spawned) {                    
+                if (spawned) {
                     //p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.type.getName() + ChatColor.GREEN + " greets you!");
-                } else {                    
+                } else {
                     if (amt == 1) {
                         p.getInventory().removeItem(new ItemStack[]{bait});
                     } else {
@@ -540,15 +501,25 @@ public class PetMain extends JavaPlugin {
                 petList.put(pe, p.getName());
                 if (PetConfig.defaultPetMode.equals("D")) {
                     pet.mode = Pet.modes.DEFENSIVE;
+                    if (pe instanceof Wolf) {
+                        ((Wolf) pe).setOwner(p);
+                    }
                 }
                 if (PetConfig.defaultPetMode.equals("P")) {
                     pet.mode = Pet.modes.PASSIVE;
+                    if (pe instanceof Wolf) {
+                        ((Wolf) pe).setOwner(p);
+                    }
                 }
                 if (PetConfig.defaultPetMode.equals("A")) {
                     pet.mode = Pet.modes.AGGRESSIVE;
+                    if (pe instanceof Wolf) {
+                        ((Wolf) pe).setOwner(null);
+                        ((Wolf) pe).setAngry(true);
+                    }
                 }
             }
-        } 
+        }
         return tamed;
     }
 
@@ -559,11 +530,16 @@ public class PetMain extends JavaPlugin {
                 Entity e = getEntityOfPet(pet);
                 p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + petNameList.get(e) + ChatColor.GREEN + " is now free!");
                 cleanUpLists(e);
+                if (e instanceof Tameable) {
+                    ((Tameable) e).setOwner(null);
+                }
+                if (e instanceof Wolf) {
+                    ((Wolf) e).setAngry(false);
+                }
             }
         }
         playersWithPets.remove(p.getName());
     }
-       
 
     public Pet getPet(Entity e) {
         Pet returnPet = new Pet();
@@ -593,10 +569,16 @@ public class PetMain extends JavaPlugin {
 
     public void untamePetOf(Player p, Entity e, boolean msg) {
         if (isPetOwner(p)) {
-            for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext(); ) {
-                Pet pet = iterator.next();     
+            for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
+                Pet pet = iterator.next();
                 if (pet.entityId == e.getEntityId()) {
                     cleanUpLists(e);
+                    if (e instanceof Tameable) {
+                        ((Tameable) e).setOwner(null);
+                    }
+                    if (e instanceof Wolf) {
+                        ((Wolf) e).setAngry(false);
+                    }
                     iterator.remove();
                     if (msg) {
                         p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " is now free!");
@@ -630,18 +612,17 @@ public class PetMain extends JavaPlugin {
 
     public static PetMain get() {
         return instance;
-    }    
-    
+    }
+
     public void setupEpicBossHandler() {
         Plugin epicBossPlugin = getServer().getPluginManager().getPlugin("EpicBoss");
-        
+
         if (epicBossPlugin == null) {
             return;
         }
-        
-        eBossAPI = new API((EpicBoss)epicBossPlugin);
+
+        eBossAPI = new API((EpicBoss) epicBossPlugin);
         logInfo("EpicBoss detected. Players will not be able to tame bosses.");
 
     }
-    
 }

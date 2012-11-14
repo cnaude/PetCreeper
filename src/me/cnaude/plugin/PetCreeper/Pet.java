@@ -1,7 +1,9 @@
 package me.cnaude.plugin.PetCreeper;
 
+import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.entity.CraftSkeleton;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -9,10 +11,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Pig;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.Wolf;
 import org.bukkit.material.MaterialData;
 
 public final class Pet {
@@ -35,22 +40,61 @@ public final class Pet {
     public int exp = 0;
     public int skelType = 0;
     public boolean ageLocked = false;
-            
+
     public enum modes {
+
         PASSIVE,
         DEFENSIVE,
-        AGGRESSIVE,
-    }
+        AGGRESSIVE,}
 
     public Pet(Entity e) {
-        this.initPet(e);                    
+        this.initPet(e);
     }
-    
+
+    public void initEntity(Entity e, Player p) {
+        if (this.type == EntityType.SHEEP) {
+            ((Sheep) e).setSheared(this.sheared);
+            ((Sheep) e).setColor(DyeColor.valueOf(this.color));
+        }
+        if (this.type == EntityType.PIG) {
+            ((Pig) e).setSaddle(this.saddled);
+        }
+        if (this.type == EntityType.SLIME) {
+            ((Slime) e).setSize(this.size);
+        }
+        if (this.type == EntityType.MAGMA_CUBE) {
+            ((MagmaCube) e).setSize(this.size);
+        }
+        if (this.type == EntityType.ENDERMAN) {
+            ((Enderman) e).setCarriedMaterial(this.carriedMat);
+        }
+        if (this.type == EntityType.VILLAGER) {
+            ((Villager) e).setProfession(this.prof);
+        }
+        if (this.type == EntityType.SKELETON) {
+            ((CraftSkeleton) e).getHandle().setSkeletonType(this.skelType);
+        }
+        if (e instanceof Ageable) {
+            ((Ageable) e).setAge(this.age);
+        }
+        if (e instanceof LivingEntity) {
+            ((LivingEntity) e).setHealth(this.hp);
+        } else if (e instanceof Ambient) {
+            ((Ambient) e).setHealth(this.hp);
+        }
+        if (e instanceof Wolf && this.mode == Pet.modes.AGGRESSIVE) {
+            ((Wolf) e).setOwner(null);
+            ((Wolf) e).setAngry(true);
+        } else if (e instanceof Tameable) {
+            ((Tameable) e).setOwner(p);
+        }
+    }
+
     public void initPet(Entity e) {
         EntityType et = e.getType();
         int health = ((LivingEntity) e).getHealth();
-        if (et == EntityType.CREEPER) {            
-            this.powered = ((Creeper)e).isPowered();                        
+        if (et == EntityType.CREEPER) {
+            this.powered = ((Creeper) e).isPowered();
         } else if (et == EntityType.SHEEP) {
             Sheep s = (Sheep) e;
             this.sheared = s.isSheared();
@@ -68,24 +112,24 @@ public final class Pet {
             Villager villager = (Villager) e;
             this.prof = villager.getProfession();
         } else if (et == EntityType.ENDERMAN) {
-            Enderman enderman = (Enderman)e;
+            Enderman enderman = (Enderman) e;
             this.carriedMat = enderman.getCarriedMaterial();
         } else if (et == EntityType.SKELETON) {
-            this.skelType = ((CraftSkeleton)e).getHandle().getSkeletonType();
-        }        
+            this.skelType = ((CraftSkeleton) e).getHandle().getSkeletonType();
+        }
         if (e instanceof Ageable) {
-            this.age = ((Ageable)e).getAge();
-            this.ageLocked = ((Ageable)e).getAgeLock();
+            this.age = ((Ageable) e).getAge();
+            this.ageLocked = ((Ageable) e).getAgeLock();
         }
         this.type = et;
         this.hp = health;
         this.entityId = e.getEntityId();
-        this.petName = et.getName();  
+        this.petName = et.getName();
         if (this.skelType == 1) {
-            this.petName = "Wither"+this.petName;
+            this.petName = "Wither" + this.petName;
         }
     }
-    
+
     public Pet() {
     }
 }
