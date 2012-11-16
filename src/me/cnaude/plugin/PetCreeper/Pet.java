@@ -2,6 +2,7 @@ package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.entity.CraftZombie;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Creeper;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
@@ -24,6 +26,7 @@ public final class Pet {
 
     public EntityType type = EntityType.UNKNOWN;
     public Profession prof = Profession.FARMER;
+    public String catType = "BLACK_CAT";
     public int entityId = -1;
     public int hp = 0;
     public int size = 0;
@@ -40,6 +43,7 @@ public final class Pet {
     public int exp = 0;
     public int skelType = 0;
     public boolean ageLocked = false;
+    public boolean zombieVillager = false;
 
     public enum modes {
 
@@ -74,6 +78,9 @@ public final class Pet {
         if (this.type == EntityType.SKELETON) {
             ((CraftSkeleton) e).getHandle().setSkeletonType(this.skelType);
         }
+        if (this.type == EntityType.ZOMBIE) {
+            ((CraftZombie)e).getHandle().setVillager(this.zombieVillager);
+        }
         if (e instanceof Ageable) {
             ((Ageable) e).setAge(this.age);
         }
@@ -87,6 +94,21 @@ public final class Pet {
             ((Wolf) e).setAngry(true);
         } else if (e instanceof Tameable) {
             ((Tameable) e).setOwner(p);
+        }
+        if (e instanceof Wolf) {
+            if (this.followed) {
+                ((Wolf)e).setSitting(false);
+            } else {
+                ((Wolf)e).setSitting(true);
+            }
+        }
+        if (e instanceof Ocelot) {
+            ((Ocelot)e).setCatType(Ocelot.Type.valueOf(this.catType));
+            if (this.followed) {
+                ((Ocelot)e).setSitting(false);
+            } else {
+                ((Ocelot)e).setSitting(true);
+            }
         }
     }
 
@@ -116,6 +138,10 @@ public final class Pet {
             this.carriedMat = enderman.getCarriedMaterial();
         } else if (et == EntityType.SKELETON) {
             this.skelType = ((CraftSkeleton) e).getHandle().getSkeletonType();
+        } else if (et == EntityType.ZOMBIE) {
+            this.zombieVillager = ((CraftZombie)e).getHandle().isVillager();
+        } else if (et == EntityType.OCELOT) {
+            this.catType = ((Ocelot)e).getCatType().name();
         }
         if (e instanceof Ageable) {
             this.age = ((Ageable) e).getAge();

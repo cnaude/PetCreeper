@@ -24,6 +24,7 @@ public final class PetConfig {
     public static String defaultPetMode;
     public static String commandPrefix;
     public static int maxSpawnCount;
+    public static boolean overrideDefaultTaming;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -76,6 +77,7 @@ public final class PetConfig {
         defaultPetMode = config.getString("DefaultPetMode", "P").toUpperCase();
         invinciblePets = config.getBoolean("InvinciblePets", true);
         maxSpawnCount = config.getInt("MaxSpawnCount", 1);
+        overrideDefaultTaming = config.getBoolean("OverrideDefaultTaming", true);
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }

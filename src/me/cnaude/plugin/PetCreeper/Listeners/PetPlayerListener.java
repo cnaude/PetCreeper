@@ -1,7 +1,9 @@
-package me.cnaude.plugin.PetCreeper;
+package me.cnaude.plugin.PetCreeper.Listeners;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import me.cnaude.plugin.PetCreeper.PetConfig;
+import me.cnaude.plugin.PetCreeper.PetMain;
 import net.minecraft.server.Navigation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -112,10 +114,24 @@ public class PetPlayerListener implements Listener {
                             this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is no longer following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, false);
+                            this.plugin.getPet(e).followed = false;
+                            if (e instanceof Wolf) {
+                                ((Wolf)e).setSitting(true);
+                            }
+                            if (e instanceof Ocelot) {
+                                ((Ocelot)e).setSitting(true);
+                            }
                         } else {
                             this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is now following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, true);
+                            this.plugin.getPet(e).followed = true;
+                            if (e instanceof Wolf) {
+                                ((Wolf)e).setSitting(false);
+                            }
+                            if (e instanceof Ocelot) {
+                                ((Ocelot)e).setSitting(false);
+                            }
                         }
                     }
                 } else {

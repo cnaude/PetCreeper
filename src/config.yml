@@ -60,3 +60,5 @@ CommandPrefix: pet
 InvinciblePets: false
 # Maximum pets a player can spawn with /petspawn
 MaxSpawnCount: 1
+# Override the default taming of wolves and cats
+OverrideDefaultTaming: true

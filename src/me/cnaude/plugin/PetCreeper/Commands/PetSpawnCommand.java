@@ -2,15 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.cnaude.plugin.PetCreeper;
+package me.cnaude.plugin.PetCreeper.Commands;
 
+import me.cnaude.plugin.PetCreeper.PetConfig;
+import me.cnaude.plugin.PetCreeper.PetMain;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.entity.CraftZombie;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Zombie;
 
 /**
  *
@@ -39,11 +46,30 @@ public class PetSpawnCommand implements CommandExecutor {
             }
             if (args.length >= 1) {
                 String petType = args[0];
+                String subType = "";
                 if (petType.equalsIgnoreCase("ocelot")) {
                     petType = "Ozelot";
                 } else if (petType.equalsIgnoreCase("wither")) {
                     petType = "WitherBoss";
-                }
+                } else if (petType.equalsIgnoreCase("zombievillager")) {
+                    petType = "Zombie";
+                    subType = "Villager";
+                } else if (petType.equalsIgnoreCase("witherskeleton")) {
+                    petType = "Skeleton";
+                    subType = "Wither";
+                } else if (petType.equalsIgnoreCase("redcat")) {
+                    petType = "Ozelot";
+                    subType = "red_cat";
+                } else if (petType.equalsIgnoreCase("blackcat")) {
+                    petType = "Ozelot";
+                    subType = "black_cat";
+                } else if (petType.equalsIgnoreCase("siamesecat")) {
+                    petType = "Ozelot";
+                    subType = "siamese_cat";
+                } else if (petType.equalsIgnoreCase("wildcat")) {
+                    petType = "Ozelot";
+                    subType = "wild_ocelot";
+                } 
                 EntityType et = EntityType.fromName(petType);
                 if (et != null) {
                     if (!et.isAlive()) {
@@ -62,7 +88,24 @@ public class PetSpawnCommand implements CommandExecutor {
                             }
                         }
                         Entity e = p.getWorld().spawnEntity(p.getLocation(), et);
-                        plugin.tamePetOf(p, e, true);
+                        if (e instanceof Skeleton) {
+                            if (subType.equalsIgnoreCase("wither")) {
+                                ((CraftSkeleton) e).getHandle().setSkeletonType(1);
+                            }
+                        }
+                        if (e instanceof Zombie) {
+                            if (subType.equalsIgnoreCase("villager")) {
+                                ((CraftZombie)e).getHandle().setVillager(true);
+                            }
+                        }
+                        if (e instanceof Ocelot) {
+                            if (!subType.isEmpty()) {
+                                ((Ocelot)e).setCatType(Ocelot.Type.valueOf(subType.toUpperCase()));
+                            }                            
+                        }
+                        if (plugin.tamePetOf(p, e, true)) {
+                            p.sendMessage(ChatColor.GREEN + "Your spawned pet " + ChatColor.YELLOW + et.getName() + ChatColor.GREEN + " greets you!");
+                        }
                     }
                 } else {
                     plugin.message(p, ChatColor.RED + "Invalid pet type.");

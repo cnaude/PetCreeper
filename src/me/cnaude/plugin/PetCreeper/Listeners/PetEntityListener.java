@@ -1,5 +1,8 @@
-package me.cnaude.plugin.PetCreeper;
+package me.cnaude.plugin.PetCreeper.Listeners;
 
+import me.cnaude.plugin.PetCreeper.Pet;
+import me.cnaude.plugin.PetCreeper.PetConfig;
+import me.cnaude.plugin.PetCreeper.PetMain;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.entity.CraftFireball;
@@ -48,6 +51,28 @@ public class PetEntityListener implements Listener {
             if (this.plugin.isPet(e)) {                
                 event.setCancelled(true);
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityTameEvent(EntityTameEvent event) {
+        if (PetConfig.overrideDefaultTaming) {
+            Entity e = event.getEntity();
+            Player p = (Player)event.getOwner();
+            if (this.plugin.getPet(e).type != EntityType.UNKNOWN) {
+                p.sendMessage(ChatColor.RED + "This " + e.getType() + " is already tamed!");   
+                event.setCancelled(true);
+                return;
+            }
+            if (this.plugin.isPetOwner(p)) {
+                if (this.plugin.getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
+                    event.setCancelled(true);
+                    p.sendMessage(ChatColor.RED + "You have too many pets!");
+                    return;
+                } 
+            }
+            this.plugin.tamePetOf(p, e, true);
+            p.sendMessage(ChatColor.GREEN + "You have tamed a wild " + ChatColor.YELLOW + e.getType().getName() + ChatColor.GREEN + "!");
         }
     }
 
