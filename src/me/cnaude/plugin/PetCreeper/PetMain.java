@@ -3,6 +3,7 @@ package me.cnaude.plugin.PetCreeper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftZombie;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -49,7 +51,9 @@ public class PetMain extends JavaPlugin {
     private static PetConfig config;
     private PetFile petFile = new PetFile(this);
     private static API eBossAPI;
-
+    int taskID;
+    public ArrayList<String> bigNamesList = new ArrayList<String>();
+    
     @Override
     public void onEnable() {
         loadConfig();
@@ -62,8 +66,11 @@ public class PetMain extends JavaPlugin {
                 spawnPetsOf(p);
             }
         }
+        petFile.loadNames();
 
-        mainLoop = new PetMainLoop(this);
+        //mainLoop = new PetMainLoop(this);
+        
+        petFollowTask();
 
         getCommand(PetConfig.commandPrefix).setExecutor(new PetCommand(this));
         getCommand(PetConfig.commandPrefix + "age").setExecutor(new PetAgeCommand(this));
@@ -76,6 +83,33 @@ public class PetMain extends JavaPlugin {
         getCommand(PetConfig.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
         getCommand(PetConfig.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
 
+    }
+    
+    private void petFollowTask() {
+        taskID = this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (isPetOwner(p)) {
+                        for (Pet pet : getPetsOf(p)) {
+                            Entity e = getEntityOfPet(pet);
+                            if (e != null) {
+                                if (p.getWorld() == e.getWorld()) {                       
+                                    if (p.getLocation().distance(e.getLocation()) > PetConfig.idleDistance
+                                            && isFollowing(e)) {
+                                        walkToPlayer(e, p);
+                                    } else if (e instanceof Monster) {                                        
+                                        attackNearbyEntities(e, p, pet.mode);
+                                    }
+                                } //else if (pet.followed) {
+                                  //  plugin.teleportPet(pet, true);
+                                //}
+                            }
+                        }
+                    }
+                }
+            }
+        }, 60L, 60L);
     }
 
     public void logInfo(String s) {
@@ -120,7 +154,9 @@ public class PetMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.mainLoop.end();
+        getServer().getScheduler().cancelTask(taskID);
+        taskID = 0;
+        //this.mainLoop.end();
 
         for (String p : petList.values()) {
             despawnPetsOf(getServer().getPlayer(p));
@@ -163,7 +199,23 @@ public class PetMain extends JavaPlugin {
         message(p, ChatColor.GREEN + "  Type: " + ChatColor.WHITE + e.getType().getName());
         message(p, ChatColor.GREEN + "  Health: " + ChatColor.WHITE + ((LivingEntity) e).getHealth());
         message(p, ChatColor.GREEN + "  Name: " + ChatColor.WHITE + getNameOfPet(e));
-        message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + isFollowing(e));
+        boolean follow;
+        if (e instanceof Wolf) {
+            if (((Wolf)e).isSitting()) {
+                follow = false;
+            } else {
+                follow = true;
+            }
+        } else if (e instanceof Ocelot) {
+            if (((Ocelot)e).isSitting()) {
+                follow = false;
+            } else {
+                follow = true;
+            }
+        } else {
+            follow = isFollowing(e);
+        }
+        message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + follow);
         ChatColor mColor = ChatColor.BLUE;
         if (getModeOfPet(e, p) == Pet.modes.AGGRESSIVE) {
             mColor = ChatColor.RED;
@@ -197,6 +249,13 @@ public class PetMain extends JavaPlugin {
         if (e instanceof Ageable) {
             message(p, ChatColor.GREEN + "  Age: " + ChatColor.WHITE + ((Ageable) e).getAge());
         }
+        if (e.getType() == EntityType.ZOMBIE) {
+            String zt = "Normal";
+            if (((CraftZombie)e).getHandle().isVillager()) {
+                zt = "Villager";
+            }
+            message(p, ChatColor.GREEN + "  Zombie Type: " + ChatColor.WHITE + zt);
+        }
     }
     
     public boolean isFollowing(Entity e) {
@@ -229,7 +288,7 @@ public class PetMain extends JavaPlugin {
                     spawned = true;
                 }
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                logInfo(ex.getMessage());
                 return false;
             }
         }
@@ -635,5 +694,13 @@ public class PetMain extends JavaPlugin {
         eBossAPI = new API((EpicBoss) epicBossPlugin);
         logInfo("EpicBoss detected. Players will not be able to tame bosses.");
 
+    }
+    
+    public String getRandomName() {
+        Random generator = new Random();
+        if (!bigNamesList.isEmpty()) {
+            return bigNamesList.get(1 + generator.nextInt(bigNamesList.size()));
+        }
+        return "";
     }
 }

@@ -16,7 +16,7 @@ public class PetMainLoop {
         plugin = instance;
         timer = new Timer();
         timer.schedule(new petTask(), 0, PetConfig.mainLoop);
-        System.out.println("PetCreeper main loop running. [" + PetConfig.mainLoop + "]");
+        plugin.logInfo("PetCreeper main loop running. [" + PetConfig.mainLoop + "]");
     }
 
     class petTask extends TimerTask {
@@ -35,9 +35,9 @@ public class PetMainLoop {
                                 } else if (e instanceof Monster) {
                                     plugin.attackNearbyEntities(e, p, pet.mode);
                                 }
-                            } else if (pet.followed) {
-                                plugin.teleportPet(pet, true);
-                            }
+                            } //else if (pet.followed) {
+                              //  plugin.teleportPet(pet, true);
+                            //}
                         }
                     }
                 }

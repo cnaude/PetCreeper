@@ -1,5 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
@@ -25,6 +26,7 @@ public final class PetConfig {
     public static String commandPrefix;
     public static int maxSpawnCount;
     public static boolean overrideDefaultTaming;
+    public static ArrayList<String> nameFiles = new ArrayList<String>();
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -78,6 +80,7 @@ public final class PetConfig {
         invinciblePets = config.getBoolean("InvinciblePets", true);
         maxSpawnCount = config.getInt("MaxSpawnCount", 1);
         overrideDefaultTaming = config.getBoolean("OverrideDefaultTaming", true);
+        nameFiles = (ArrayList)config.getStringList("NameFiles");
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }

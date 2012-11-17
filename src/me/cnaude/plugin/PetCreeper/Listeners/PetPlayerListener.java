@@ -125,18 +125,15 @@ public class PetPlayerListener implements Listener {
                             this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is no longer following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, false);
-                            Pet pet = this.plugin.getPet(e);
-                            System.out.println("BEFORE: " + pet.followed);
-                            pet.followed = false;
-                            System.out.println("AFTER: " + pet.followed);
+                            Pet pet = this.plugin.getPet(e);                            
+                            pet.followed = false;                            
                         } else {
                             this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is now following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, true);
-                            Pet pet = this.plugin.getPet(e);
-                            System.out.println("BEFORE: " + pet.followed);
+                            Pet pet = this.plugin.getPet(e);                            
                             pet.followed = true;
-                            System.out.println("AFTER: " + pet.followed);
+                            
                         }
 
                     }
@@ -173,10 +170,8 @@ public class PetPlayerListener implements Listener {
             Location blockLoc = targetBlock.getLocation();
             if (p.isInsideVehicle()) {
                 Entity e = p.getVehicle();
-                if (e.getType().isAlive()) {
-                    //System.out.println("Vehicle is a pet! Target: " + blockLoc.toString());
-                    Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
-                    //Navigation n = ((CraftLivingEntity) e).getHandle().al();
+                if (e.getType().isAlive()) {                    
+                    Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                    
                     n.a(blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), 0.25f);
                 }
             }

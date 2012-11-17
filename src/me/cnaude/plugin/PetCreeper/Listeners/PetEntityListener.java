@@ -20,29 +20,35 @@ public class PetEntityListener implements Listener {
         this.plugin = instance;
     }
 
+    
     /*
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityTarget(EntityTargetEvent event) {
         Entity e = event.getEntity();
         if ((e instanceof Creature)) {
+            plugin.logInfo("C1");
             Creature c = (Creature) e;
-            if (this.plugin.isPet(e)) {
+            if (this.plugin.isPet(e)) {                
                 Player p = this.plugin.getMasterOf(e);
+                plugin.logInfo("C2: master=" + p.getName());
                 if (((Creature)e).getTarget() instanceof Player) {
+                    plugin.logInfo("C3");
                     Player target = (Player)((Creature)e).getTarget();
-                    if (p == target || plugin.getModeOfPet(e,p) == Pet.modes.PASSIVE) {
+                    if (p == target) {
+                        plugin.logInfo("C4");
                         if(p.getWorld() == c.getWorld()) {
-                            if ((!this.plugin.isPetFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                                                        
-                                //event.setCancelled(true);                        
-                                //c.setTarget(null);
+                            plugin.logInfo("C5");
+                            if ((!this.plugin.isFollowing(e)) || (c.getPassenger() != null) || (c.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                                                        
+                                event.setCancelled(true);  
+                                plugin.logInfo("Canclling target");
                             }
                         }
                     }
                 }
             }
         }
-    }
-    */
+    }*/
+    
     /* Does this event fire as well? */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityTargetLivingEntityEvent (EntityTargetLivingEntityEvent event) {
@@ -253,7 +259,6 @@ public class PetEntityListener implements Listener {
             killer = (((EntityDamageByEntityEvent) damev).getDamager());
         
             if (this.plugin.isPet(killer)) {
-                System.out.println("Death" + killer.toString());
                 Player p = this.plugin.getMasterOf(killer);
                 String s;
                 if (e instanceof Player) {

@@ -11,11 +11,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 
 /**
  *
@@ -44,12 +41,22 @@ public class PetNameCommand implements CommandExecutor {
                         s = s.substring(0, s.length() - 1);
                         Pet pet = plugin.getPetsOf(p).get(idx);
                         if (!s.isEmpty()) {
-                            pet.petName = s;
                             Entity e = plugin.getEntityOfPet(pet);
+                            if (s.equalsIgnoreCase("random")) {
+                                String rnd = plugin.getRandomName();
+                                if (!rnd.isEmpty()) {
+                                    pet.petName = rnd;
+                                } else {
+                                    pet.petName = e.getType().getName();
+                                }
+                            } else {
+                                pet.petName = s;
+                            }
+                            pet.petName = Character.toUpperCase(pet.petName.charAt(0)) + pet.petName.substring(1);
                             if (plugin.petNameList.containsKey(e)) {
                                 plugin.petNameList.remove(e);
-                                plugin.petNameList.put(e, s);
-                            }
+                                plugin.petNameList.put(e, pet.petName);
+                            }                            
                             plugin.message(p, ChatColor.GREEN + "You named your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + "!");
                         } else {
                             plugin.message(p, ChatColor.RED + "Invalid pet name.");

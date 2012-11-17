@@ -62,3 +62,7 @@ InvinciblePets: false
 MaxSpawnCount: 1
 # Override the default taming of wolves and cats
 OverrideDefaultTaming: true
+# Files that contain names for random pet names
+NameFiles:
+  - male-names.txt
+  - female-names.txt
