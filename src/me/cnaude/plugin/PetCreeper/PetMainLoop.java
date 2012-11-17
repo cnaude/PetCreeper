@@ -28,9 +28,9 @@ public class PetMainLoop {
                     for (Pet pet : plugin.getPetsOf(p)) {
                         Entity e = plugin.getEntityOfPet(pet);
                         if (e != null) {
-                            if (p.getWorld() == e.getWorld()) {
+                            if (p.getWorld() == e.getWorld()) {                       
                                 if (p.getLocation().distance(e.getLocation()) > PetConfig.idleDistance
-                                        && pet.followed) {
+                                        && plugin.isFollowing(e)) {
                                     plugin.walkToPlayer(e, p);
                                 } else if (e instanceof Monster) {
                                     plugin.attackNearbyEntities(e, p, pet.mode);

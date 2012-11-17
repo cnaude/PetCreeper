@@ -145,14 +145,6 @@ public class PetMain extends JavaPlugin {
         return s;
     }
 
-    public Boolean isPetFollowing(Entity e) {
-        Boolean f = false;
-        if (petFollowList.containsKey(e)) {
-            f = petFollowList.get(e);
-        }
-        return f;
-    }
-
     public void spawnPetsOf(Player p) {
         if (isPetOwner(p)) {
             for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
@@ -171,7 +163,7 @@ public class PetMain extends JavaPlugin {
         message(p, ChatColor.GREEN + "  Type: " + ChatColor.WHITE + e.getType().getName());
         message(p, ChatColor.GREEN + "  Health: " + ChatColor.WHITE + ((LivingEntity) e).getHealth());
         message(p, ChatColor.GREEN + "  Name: " + ChatColor.WHITE + getNameOfPet(e));
-        message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + isPetFollowing(e));
+        message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + isFollowing(e));
         ChatColor mColor = ChatColor.BLUE;
         if (getModeOfPet(e, p) == Pet.modes.AGGRESSIVE) {
             mColor = ChatColor.RED;
@@ -204,6 +196,14 @@ public class PetMain extends JavaPlugin {
         }
         if (e instanceof Ageable) {
             message(p, ChatColor.GREEN + "  Age: " + ChatColor.WHITE + ((Ageable) e).getAge());
+        }
+    }
+    
+    public boolean isFollowing(Entity e) {
+        if (petFollowList.containsKey(e)) {            
+            return petFollowList.get(e);            
+        } else {
+            return false;
         }
     }
 
@@ -296,7 +296,7 @@ public class PetMain extends JavaPlugin {
     public void teleportPet(Pet pet, boolean msg) {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
-            Player p = getServer().getPlayer(petList.get(e));
+            Player p = getServer().getPlayer(petList.get(e));            
             this.despawnPet(pet);
             this.spawnPet(pet, p, false);
             if (msg) {
@@ -306,6 +306,10 @@ public class PetMain extends JavaPlugin {
     }
 
     public void walkToPlayer(Entity e, Player p) {
+        // Wolves and ocelots handle their own walking
+        if (e instanceof Wolf || e instanceof Ocelot) {
+            return;
+        }
         if (e.getPassenger() instanceof Player) {
             return;
         }
@@ -548,7 +552,7 @@ public class PetMain extends JavaPlugin {
 
     public Pet getPet(Entity e) {
         Pet returnPet = new Pet();
-        if (petList.contains(e)) {
+        if (petList.containsKey(e)) {
             for (Pet pet : getPetsOf(getServer().getPlayer(petList.get(e)))) {
                 if (pet.entityId == e.getEntityId()) {
                     returnPet = pet;
