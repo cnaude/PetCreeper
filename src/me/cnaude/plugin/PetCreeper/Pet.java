@@ -151,8 +151,11 @@ public final class Pet {
         this.hp = health;
         this.entityId = e.getEntityId();
         this.petName = et.getName();
-        if (this.skelType == 1) {
+        if (this.skelType == 1 && !PetConfig.randomizePetNames) {
             this.petName = "Wither" + this.petName;
+        }
+        if (PetConfig.randomizePetNames) {
+            this.petName = PetMain.get().getRandomName();
         }
     }
 

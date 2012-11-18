@@ -66,3 +66,5 @@ OverrideDefaultTaming: true
 NameFiles:
   - male-names.txt
   - female-names.txt
+# Automatically randomize pet names
+RandomizePetNames: true

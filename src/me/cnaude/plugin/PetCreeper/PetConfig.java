@@ -27,6 +27,7 @@ public final class PetConfig {
     public static int maxSpawnCount;
     public static boolean overrideDefaultTaming;
     public static ArrayList<String> nameFiles = new ArrayList<String>();
+    public static boolean randomizePetNames;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -81,6 +82,7 @@ public final class PetConfig {
         maxSpawnCount = config.getInt("MaxSpawnCount", 1);
         overrideDefaultTaming = config.getBoolean("OverrideDefaultTaming", true);
         nameFiles = (ArrayList)config.getStringList("NameFiles");
+        randomizePetNames = config.getBoolean("RandomizePetNames", true);
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }
