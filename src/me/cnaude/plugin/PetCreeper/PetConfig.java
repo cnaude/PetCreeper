@@ -10,6 +10,7 @@ public final class PetConfig {
 
     private final Configuration config;
     private static HashMap<String, Material> baitMap = new HashMap<String, Material>();
+    private static HashMap<String, Integer> tamingXPMap = new HashMap<String, Integer>();
     public static boolean provokable;
     public static boolean ridable;
     public static boolean attackTame;
@@ -28,6 +29,7 @@ public final class PetConfig {
     public static boolean overrideDefaultTaming;
     public static ArrayList<String> nameFiles = new ArrayList<String>();
     public static boolean randomizePetNames;
+    public static boolean mcMMOSuport;    
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -65,6 +67,37 @@ public final class PetConfig {
         baitMap.put("WitherBoss", Material.getMaterial(config.getInt("WitherBoss", 399)));
         baitMap.put("Wolf", Material.getMaterial(config.getInt("Wolf", 319)));
         baitMap.put("Zombie", Material.getMaterial(config.getInt("Zombie", 295)));
+        
+        tamingXPMap.put("Bat", (config.getInt("mcMMOTamingXP.Bat", 10)));
+        tamingXPMap.put("Blaze", (config.getInt("mcMMOTamingXP.Blaze", 10)));
+        tamingXPMap.put("CaveSpider", (config.getInt("mcMMOTamingXP.CaveSpider", 10)));
+        tamingXPMap.put("Chicken", (config.getInt("mcMMOTamingXP.Chicken", 10)));
+        tamingXPMap.put("Cow", (config.getInt("mcMMOTamingXP.Cow", 10)));
+        tamingXPMap.put("Creeper", (config.getInt("mcMMOTamingXP.Creeper", 10)));
+        tamingXPMap.put("EnderDragon", (config.getInt("mcMMOTamingXP.EnderDragon", 10)));
+        tamingXPMap.put("Enderman", (config.getInt("mcMMOTamingXP.Enderman", 10)));
+        tamingXPMap.put("Ghast", (config.getInt("mcMMOTamingXP.Ghast", 10)));
+        tamingXPMap.put("Giant", (config.getInt("mcMMOTamingXP.Giant", 10)));
+        tamingXPMap.put("Golem", (config.getInt("mcMMOTamingXP.Golem", 10)));
+        //tamingXPMap.put("HumanEntity", (config.getInt("HumanEntity", 10)));
+        tamingXPMap.put("LavaSlime", (config.getInt("MagmaCube", 10)));
+        tamingXPMap.put("MushroomCow", (config.getInt("mcMMOTamingXP.MushroomCow", 10)));
+        tamingXPMap.put("Ozelot", (config.getInt("mcMMOTamingXP.Ozelot", 10)));
+        tamingXPMap.put("Pig", (config.getInt("mcMMOTamingXP.Pig", 10)));
+        tamingXPMap.put("PigZombie", (config.getInt("mcMMOTamingXP.PigZombie", 10)));
+        tamingXPMap.put("Sheep", (config.getInt("mcMMOTamingXP.Sheep", 10)));
+        tamingXPMap.put("Silverfish", (config.getInt("mcMMOTamingXP.Silverfish", 10)));
+        tamingXPMap.put("Skeleton", (config.getInt("mcMMOTamingXP.Skeleton", 10)));
+        tamingXPMap.put("Slime", (config.getInt("mcMMOTamingXP.Slime", 10)));
+        tamingXPMap.put("SnowMan", (config.getInt("mcMMOTamingXP.SnowMan", 10)));
+        tamingXPMap.put("Spider", (config.getInt("mcMMOTamingXP.Spider", 10)));
+        tamingXPMap.put("Squid", (config.getInt("mcMMOTamingXP.Squid", 10)));
+        tamingXPMap.put("Villager", (config.getInt("mcMMOTamingXP.Villager", 10)));
+        tamingXPMap.put("VillagerGolem", (config.getInt("mcMMOTamingXP.VillagerGolem", 10)));
+        tamingXPMap.put("Witch", (config.getInt("mcMMOTamingXP.Witch", 115)));
+        tamingXPMap.put("WitherBoss", (config.getInt("mcMMOTamingXP.WitherBoss", 10)));
+        tamingXPMap.put("Wolf", (config.getInt("mcMMOTamingXP.Wolf", 10)));
+        tamingXPMap.put("Zombie", (config.getInt("mcMMOTamingXP.Zombie", 10)));
 
         provokable = config.getBoolean("Provokable", true);
         ridable = config.getBoolean("Ridable", true);
@@ -83,6 +116,7 @@ public final class PetConfig {
         overrideDefaultTaming = config.getBoolean("OverrideDefaultTaming", true);
         nameFiles = (ArrayList)config.getStringList("NameFiles");
         randomizePetNames = config.getBoolean("RandomizePetNames", true);
+        mcMMOSuport = config.getBoolean("mcMMOSuport", true);        
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }
@@ -92,6 +126,14 @@ public final class PetConfig {
             return baitMap.get(type.getName());
         } else {
             return Material.AIR;
+        }
+    }
+    
+    public static Integer getTamingXP(EntityType type) {        
+        if (tamingXPMap.containsKey(type.getName())) {
+            return tamingXPMap.get(type.getName());
+        } else {
+            return 0;
         }
     }
 }

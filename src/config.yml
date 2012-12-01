@@ -68,3 +68,35 @@ NameFiles:
   - female-names.txt
 # Automatically randomize pet names
 RandomizePetNames: true
+# Despawn pets on quit
+DespawnOnQuit: true
+mcMMOTamingXP:
+  Bat: 10
+  Blaze: 10
+  CaveSpider: 10
+  Chicken: 10
+  Cow: 10
+  Creeper: 10
+  EnderDragon: 10
+  Enderman: 10
+  Ghast: 10
+  Giant: 10
+  Golem: 10
+  MagmaCube: 10
+  MushroomCow: 10
+  Ozelot: 10
+  Pig: 10
+  PigZombie: 10
+  Sheep: 10
+  Silverfish: 10
+  Skeleton: 10
+  Slime: 10
+  SnowMan: 10
+  Spider: 10
+  Squid: 10
+  Villager: 10
+  VillagerGolem: 10
+  Witch: 10
+  WitherBoss: 10
+  Wolf: 10
+  Zombie: 10

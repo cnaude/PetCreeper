@@ -1,8 +1,11 @@
 package me.cnaude.plugin.PetCreeper;
 
+import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.datatypes.SkillType;
+import com.gmail.nossr50.util.Permissions;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -14,6 +17,7 @@ import me.cnaude.plugin.PetCreeper.Commands.PetCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetFreeCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetGiveCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetInfoCommand;
+import me.cnaude.plugin.PetCreeper.Commands.PetKillCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetListCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetModeCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetNameCommand;
@@ -46,14 +50,13 @@ public class PetMain extends JavaPlugin {
     public ConcurrentHashMap<Entity, Boolean> petFollowList = new ConcurrentHashMap<Entity, Boolean>();
     public ConcurrentHashMap<Integer, Entity> entityIds = new ConcurrentHashMap<Integer, Entity>();
     static final Logger log = Logger.getLogger("Minecraft");
-    PetMainLoop mainLoop;
     public boolean configLoaded = false;
     private static PetConfig config;
     private PetFile petFile = new PetFile(this);
     private static API eBossAPI;
     int taskID;
     public ArrayList<String> bigNamesList = new ArrayList<String>();
-    
+
     @Override
     public void onEnable() {
         loadConfig();
@@ -68,8 +71,6 @@ public class PetMain extends JavaPlugin {
         }
         petFile.loadNames();
 
-        //mainLoop = new PetMainLoop(this);
-        
         petFollowTask();
 
         getCommand(PetConfig.commandPrefix).setExecutor(new PetCommand(this));
@@ -77,39 +78,38 @@ public class PetMain extends JavaPlugin {
         getCommand(PetConfig.commandPrefix + "free").setExecutor(new PetFreeCommand(this));
         getCommand(PetConfig.commandPrefix + "give").setExecutor(new PetGiveCommand(this));
         getCommand(PetConfig.commandPrefix + "info").setExecutor(new PetInfoCommand(this));
+        getCommand(PetConfig.commandPrefix + "kill").setExecutor(new PetKillCommand(this));
         getCommand(PetConfig.commandPrefix + "list").setExecutor(new PetListCommand(this));
         getCommand(PetConfig.commandPrefix + "mode").setExecutor(new PetModeCommand(this));
         getCommand(PetConfig.commandPrefix + "name").setExecutor(new PetNameCommand(this));
         getCommand(PetConfig.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
         getCommand(PetConfig.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
-
     }
-    
+
     private void petFollowTask() {
         taskID = this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (isPetOwner(p)) {
-                        for (Pet pet : getPetsOf(p)) {
+                        for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
+                            Pet pet = iterator.next();
                             Entity e = getEntityOfPet(pet);
                             if (e != null) {
-                                if (p.getWorld() == e.getWorld()) {                       
+                                if (p.getWorld() == e.getWorld()) {
                                     if (p.getLocation().distance(e.getLocation()) > PetConfig.idleDistance
                                             && isFollowing(e)) {
                                         walkToPlayer(e, p);
-                                    } else if (e instanceof Monster) {                                        
+                                    } else {
                                         attackNearbyEntities(e, p, pet.mode);
                                     }
-                                } //else if (pet.followed) {
-                                  //  plugin.teleportPet(pet, true);
-                                //}
+                                }
                             }
                         }
                     }
                 }
             }
-        }, 60L, 60L);
+        }, 20L, 20L);
     }
 
     public void logInfo(String s) {
@@ -156,10 +156,9 @@ public class PetMain extends JavaPlugin {
     public void onDisable() {
         getServer().getScheduler().cancelTask(taskID);
         taskID = 0;
-        //this.mainLoop.end();
 
         for (String p : petList.values()) {
-            despawnPetsOf(getServer().getPlayer(p));
+                despawnPetsOf(getServer().getPlayer(p));
         }
         petFile.savePets();
         petNameList.clear();
@@ -199,23 +198,7 @@ public class PetMain extends JavaPlugin {
         message(p, ChatColor.GREEN + "  Type: " + ChatColor.WHITE + e.getType().getName());
         message(p, ChatColor.GREEN + "  Health: " + ChatColor.WHITE + ((LivingEntity) e).getHealth());
         message(p, ChatColor.GREEN + "  Name: " + ChatColor.WHITE + getNameOfPet(e));
-        boolean follow;
-        if (e instanceof Wolf) {
-            if (((Wolf)e).isSitting()) {
-                follow = false;
-            } else {
-                follow = true;
-            }
-        } else if (e instanceof Ocelot) {
-            if (((Ocelot)e).isSitting()) {
-                follow = false;
-            } else {
-                follow = true;
-            }
-        } else {
-            follow = isFollowing(e);
-        }
-        message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + follow);
+        message(p, ChatColor.GREEN + "  Following: " + ChatColor.WHITE + isFollowing(e));
         ChatColor mColor = ChatColor.BLUE;
         if (getModeOfPet(e, p) == Pet.modes.AGGRESSIVE) {
             mColor = ChatColor.RED;
@@ -251,16 +234,29 @@ public class PetMain extends JavaPlugin {
         }
         if (e.getType() == EntityType.ZOMBIE) {
             String zt = "Normal";
-            if (((CraftZombie)e).getHandle().isVillager()) {
+            if (((CraftZombie) e).getHandle().isVillager()) {
                 zt = "Villager";
             }
             message(p, ChatColor.GREEN + "  Zombie Type: " + ChatColor.WHITE + zt);
         }
     }
-    
+
     public boolean isFollowing(Entity e) {
-        if (petFollowList.containsKey(e)) {            
-            return petFollowList.get(e);            
+        if (e instanceof Wolf) {
+            if (((Wolf) e).isSitting()) {
+                return false;
+            } else {
+                return true;
+            }
+        } else if (e instanceof Ocelot) {
+            if (((Ocelot) e).isSitting()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        if (petFollowList.containsKey(e)) {
+            return petFollowList.get(e);
         } else {
             return false;
         }
@@ -343,6 +339,15 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
+    
+    public void killPetsOf(Player p) {
+        if (isPetOwner(p)) {
+            //iterate backwards to prevent concurrent modification ex
+            for (int x = getPetsOf(p).size(); x > 0; x--) {
+                killPet(getPetsOf(p).get(x-1));
+            }
+        }
+    }
 
     public Entity getEntityOfPet(Pet pet) {
         Entity e = null;
@@ -351,11 +356,20 @@ public class PetMain extends JavaPlugin {
         }
         return e;
     }
+    
+    public void killPet(Pet pet) {
+        if (entityIds.containsKey(pet.entityId)) {
+            Entity e = entityIds.get(pet.entityId);
+            if (e != null) {
+                ((LivingEntity)e).damage(((LivingEntity)e).getHealth());
+            }
+        }
+    }
 
     public void teleportPet(Pet pet, boolean msg) {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
-            Player p = getServer().getPlayer(petList.get(e));            
+            Player p = getServer().getPlayer(petList.get(e));
             this.despawnPet(pet);
             this.spawnPet(pet, p, false);
             if (msg) {
@@ -365,105 +379,124 @@ public class PetMain extends JavaPlugin {
     }
 
     public void walkToPlayer(Entity e, Player p) {
-        // Wolves and ocelots handle their own walking
-        if (e instanceof Wolf || e instanceof Ocelot) {
-            return;
+        // Tamed animals already handle their own following
+        if (e instanceof Tameable) {
+            if (((Tameable) e).isTamed()) {
+                return;
+            }
         }
         if (e.getPassenger() instanceof Player) {
             return;
         }
-        if (e.getType() == EntityType.CREEPER) {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
+        
+        // Movoing the dragon is too buggy
+        if (e instanceof EnderDragon) {
             return;
         }
-        if (e.getType() == EntityType.SQUID) {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
-            return;
-        }
-        if (e.getType() == EntityType.SKELETON) {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
-            return;
-        }
-        if (e instanceof Monster) {
-            ((Monster) e).setTarget(p);
+        // Once this is set we can't unset it.
+        //((Creature)e).setTarget(p);
+
+        // If the pet is too far just teleport instead of attempt navigation
+        if (e.getLocation().distance(p.getLocation()) > 15) {
+            e.teleport(p);
         } else {
             Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.25f);
+            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.5f);
         }
     }
 
     public void attackNearbyEntities(Entity e, Player p, Pet.modes mode) {
         // Passive pets don't attack
+        //logInfo("C1");
         if (mode == Pet.modes.PASSIVE) {
-            ((Monster) e).setTarget(null);
-            return;
-        }
-        try {
-            if (p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).isEmpty()) {
-                ((Monster) e).setTarget(null);
-                return;
+            if (e instanceof Creature) {
+                ((Creature) e).setTarget(null);
+            } else if (e instanceof Wolf) {
+                ((Wolf) e).setTarget(null);
             }
-        } catch (NoSuchElementException see) {
-            ((Monster) e).setTarget(null);
             return;
         }
-        if (e instanceof Monster) {
-            for (Iterator<Entity> iterator = p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance).iterator(); iterator.hasNext();) {
-                Entity target = iterator.next();
-                if (target == p) {
-                    continue;
+        //logInfo("C2");
+        List<Entity> ne;
+        try {
+            ne = p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance);
+            //logInfo("C3");
+            if (ne != null) {
+                //logInfo("C3");
+                if (ne.isEmpty()) {
+                    //logInfo("C4");
+                    if (e instanceof Creature) {
+                        ((Creature) e).setTarget(null);
+                    } else if (e instanceof Wolf) {
+                        ((Wolf) e).setTarget(null);
+                    }
+                    return;
                 }
-                if (petList.containsKey(target)) {
+            }
+        } catch (Exception ex) {
+            if (e instanceof Creature) {
+                ((Creature) e).setTarget(null);
+            } else if (e instanceof Wolf) {
+                ((Wolf) e).setTarget(null);
+            }
+            //logInfo("C5: " + ex.getMessage());
+            return;
+        }
+        if (e instanceof Creature || e instanceof Wolf) {
+            //logInfo("C6");
+            try {
+                for (Iterator<Entity> iterator = ne.iterator(); iterator.hasNext();) {
+                    Entity target = iterator.next();
+                    //logInfo("C7: " + target.getType());
                     // Don't attack owner
-                    if (getServer().getPlayer(petList.get(target)) == p) {
+                    if (target == p) {
+                        //logInfo("C8");
                         continue;
                     }
-                    // Globally we check if pets don't attack pets
-                    if (!PetConfig.petsAttackPets) {
-                        continue;
-                    }
-                }
-                if (target instanceof Player) {
-                    // Defensive pets don't attack players unless provoked
-                    if (mode == Pet.modes.DEFENSIVE) {
-                        continue;
-                    }
-                    // Globally we check if pets can attack players
-                    if (!PetConfig.PetsAttackPlayers) {
-                        continue;
-                    }
-                }
-                if (target instanceof Monster
-                        || (target instanceof LivingEntity && mode == Pet.modes.AGGRESSIVE)) {
-                    /*
-                     if (e instanceof Skeleton) {
-                     ((Creature)e).
-                     Location spawn = e.getLocation();
-                     Location tl = target.getLocation().clone();
-                     tl.setY(tl.getY() + 1);
-                     spawn.setY(spawn.getY()+3);
-                     Vector v = tl.toVector().subtract(spawn.toVector()).normalize();
+                    if (petList.containsKey(target)) {
+                        //logInfo("C9");
 
-                     int arrows = Math.round(1);
-                     for (int i = 0; i < arrows; i++) {
-                     Arrow ar = e.getWorld().spawnArrow(spawn, v, 2.0f, 12f);
-                     //ar.setVelocity(ar.getVelocity());
-                     ar.setShooter((LivingEntity)p);
-                     }
-                     break;
-                     }
-                     */
-                    //p.sendMessage("targeting" + target.getType().getName());
-                    ((Monster) e).setTarget((LivingEntity) target);
-                    break;
+                        // Don't attackthe owner's other pet
+                        if (getServer().getPlayer(petList.get(target)) == p) {
+                            continue;
+                        }
+                        // Globally we check if pets don't attack pets
+                        if (!PetConfig.petsAttackPets) {
+                            //logInfo("C10");
+                            continue;
+                        }
+                    }
+                    if (target instanceof Player) {
+                        //logInfo("C10");
+                        // Defensive pets don't attack players unless provoked
+                        if (mode == Pet.modes.DEFENSIVE) {
+                            //logInfo("C11");
+                            continue;
+                        }
+                        // Globally we check if pets can attack players
+                        if (!PetConfig.PetsAttackPlayers) {
+                            //logInfo("C12");
+                            continue;
+                        }
+                    }
+                    if (target instanceof Monster || (target instanceof LivingEntity && mode == Pet.modes.AGGRESSIVE)) {
+                        //logInfo("C13");
+                        if (e instanceof Creature) {
+                            //logInfo("C14");
+                            ((Creature) e).setTarget((LivingEntity) target);
+                        } else if (e instanceof Wolf) {
+                            //p.sendMessage("C15");
+                            ((Wolf) e).setTarget((LivingEntity) target);
+                        }
+                        break;
+                    }
                 }
+            } catch (Exception ex) {
+                //logInfo("C16: " + ex.getMessage());
             }
         } else {
-            //p.sendMessage("targeting null1");
             if (e instanceof Monster) {
+                //logInfo("C17");
                 ((Monster) e).setTarget(null);
             }
         }
@@ -551,6 +584,9 @@ public class PetMain extends JavaPlugin {
                 if (pe instanceof Tameable) {
                     ((Tameable) pe).setOwner(p);
                 }
+                if (pe instanceof Creature) {
+                    ((Creature) pe).setTarget(null);
+                }
 
                 if (spawned) {
                     //p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.type.getName() + ChatColor.GREEN + " greets you!");
@@ -576,7 +612,8 @@ public class PetMain extends JavaPlugin {
                 if (PetConfig.defaultPetMode.equals("P")) {
                     pet.mode = Pet.modes.PASSIVE;
                     if (pe instanceof Wolf) {
-                        ((Wolf) pe).setOwner(p);
+                        ((Wolf) pe).setOwner(null);
+                        ((Wolf) pe).setAngry(false);
                     }
                 }
                 if (PetConfig.defaultPetMode.equals("A")) {
@@ -586,9 +623,21 @@ public class PetMain extends JavaPlugin {
                         ((Wolf) pe).setAngry(true);
                     }
                 }
+                mcMMOXP(pe, p);
             }
         }
         return tamed;
+    }
+
+    public void mcMMOXP(Entity e, Player p) {
+        if (PetConfig.mcMMOSuport) {
+            Plugin plmc = getServer().getPluginManager().getPlugin("mcMMO");
+            if (plmc != null) {
+                if (Permissions.getInstance().taming(p) && !e.hasMetadata("mcmmoSummoned") && PetConfig.mcMMOSuport) {
+                    ExperienceAPI.addXP(p, SkillType.TAMING, PetConfig.getTamingXP(e.getType()));
+                }
+            }
+        }
     }
 
     public void untameAllPetsOf(Player p) {
@@ -695,11 +744,12 @@ public class PetMain extends JavaPlugin {
         logInfo("EpicBoss detected. Players will not be able to tame bosses.");
 
     }
-    
+
     public String getRandomName() {
         Random generator = new Random();
         if (!bigNamesList.isEmpty()) {
-            return bigNamesList.get(1 + generator.nextInt(bigNamesList.size()));
+            String r = bigNamesList.get(1 + generator.nextInt(bigNamesList.size()));
+            return Character.toUpperCase(r.charAt(0)) + r.substring(1);
         }
         return "";
     }

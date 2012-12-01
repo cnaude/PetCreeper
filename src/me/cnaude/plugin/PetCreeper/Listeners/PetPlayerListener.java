@@ -10,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -19,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -50,7 +50,6 @@ public class PetPlayerListener implements Listener {
         Timer timer = new Timer();
         long delay = 1 * 1000;
         timer.schedule(new petSpawnTask(event.getPlayer()), delay);
-        //this.plugin.spawnPetsOf(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -125,23 +124,30 @@ public class PetPlayerListener implements Listener {
                             this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is no longer following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, false);
-                            Pet pet = this.plugin.getPet(e);                            
-                            pet.followed = false;                            
+                            Pet pet = this.plugin.getPet(e);
+                            pet.followed = false;
                         } else {
                             this.plugin.message(p, ChatColor.GOLD + "Your " + et + " is now following you.");
                             this.plugin.petFollowList.remove(e);
                             this.plugin.petFollowList.put(e, true);
-                            Pet pet = this.plugin.getPet(e);                            
+                            Pet pet = this.plugin.getPet(e);
                             pet.followed = true;
-                            
-                        }
 
+                        }
                     }
                 } else {
                     this.plugin.message(p, ChatColor.GOLD + "That " + e.getType().getName() + " belongs to " + master.getDisplayName() + ".");
                 }
 
             } else {
+                if (PetConfig.overrideDefaultTaming) {
+                    if (p.getItemInHand().getType() == Material.BONE) {
+                        event.setCancelled(true);
+                    }
+                    if (p.getItemInHand().getType() == Material.RAW_FISH) {
+                        event.setCancelled(true);
+                    }
+                }
                 this.plugin.tamePetOf(p, e, false);
             }
         }
@@ -170,8 +176,8 @@ public class PetPlayerListener implements Listener {
             Location blockLoc = targetBlock.getLocation();
             if (p.isInsideVehicle()) {
                 Entity e = p.getVehicle();
-                if (e.getType().isAlive()) {                    
-                    Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();                    
+                if (e.getType().isAlive()) {
+                    Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
                     n.a(blockLoc.getX(), blockLoc.getY(), blockLoc.getZ(), 0.25f);
                 }
             }

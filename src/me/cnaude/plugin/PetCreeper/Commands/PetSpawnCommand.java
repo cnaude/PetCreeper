@@ -104,7 +104,9 @@ public class PetSpawnCommand implements CommandExecutor {
                             }                            
                         }
                         if (plugin.tamePetOf(p, e, true)) {
-                            p.sendMessage(ChatColor.GREEN + "Your spawned pet " + ChatColor.YELLOW + et.getName() + ChatColor.GREEN + " greets you!");
+                            p.sendMessage(ChatColor.GREEN + "You spawned a pet " + ChatColor.YELLOW 
+                                    + et.getName() + ChatColor.GREEN + " named " + ChatColor.YELLOW 
+                                    + plugin.getNameOfPet(e) + ChatColor.GREEN + "!");
                         }
                     }
                 } else {

@@ -51,8 +51,7 @@ public class PetNameCommand implements CommandExecutor {
                                 }
                             } else {
                                 pet.petName = s;
-                            }
-                            pet.petName = Character.toUpperCase(pet.petName.charAt(0)) + pet.petName.substring(1);
+                            }                            
                             if (plugin.petNameList.containsKey(e)) {
                                 plugin.petNameList.remove(e);
                                 plugin.petNameList.put(e, pet.petName);
