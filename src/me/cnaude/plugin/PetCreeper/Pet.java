@@ -1,7 +1,9 @@
 package me.cnaude.plugin.PetCreeper;
 
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.entity.CraftWolf;
 import org.bukkit.craftbukkit.entity.CraftZombie;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
@@ -43,7 +45,7 @@ public final class Pet {
     public int exp = 0;
     public int skelType = 0;
     public boolean ageLocked = false;
-    public boolean zombieVillager = false;
+    public boolean zombieVillager = false;    
 
     public enum modes {
 
@@ -100,6 +102,9 @@ public final class Pet {
                 ((Wolf)e).setSitting(false);
             } else {
                 ((Wolf)e).setSitting(true);
+            }  
+            if (!color.isEmpty()) {
+                ((CraftWolf)e).getHandle().setCollarColor(DyeColor.valueOf(this.color).getData());
             }
         }
         if (e instanceof Ocelot) {
@@ -142,6 +147,8 @@ public final class Pet {
             this.zombieVillager = ((CraftZombie)e).getHandle().isVillager();
         } else if (et == EntityType.OCELOT) {
             this.catType = ((Ocelot)e).getCatType().name();
+        } else if (et == EntityType.WOLF) {
+            this.color = (DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor())).name();                      
         }
         if (e instanceof Ageable) {
             this.age = ((Ageable) e).getAge();

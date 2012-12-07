@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import me.ThaH3lper.EpicBoss.API;
 import me.ThaH3lper.EpicBoss.EpicBoss;
 import me.cnaude.plugin.PetCreeper.Commands.PetAgeCommand;
+import me.cnaude.plugin.PetCreeper.Commands.PetColorCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetFreeCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetGiveCommand;
@@ -28,9 +29,11 @@ import me.cnaude.plugin.PetCreeper.Listeners.PetPlayerListener;
 import net.minecraft.server.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftWolf;
 import org.bukkit.craftbukkit.entity.CraftZombie;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -82,6 +85,7 @@ public class PetMain extends JavaPlugin {
         getCommand(PetConfig.commandPrefix + "list").setExecutor(new PetListCommand(this));
         getCommand(PetConfig.commandPrefix + "mode").setExecutor(new PetModeCommand(this));
         getCommand(PetConfig.commandPrefix + "name").setExecutor(new PetNameCommand(this));
+        getCommand(PetConfig.commandPrefix + "color").setExecutor(new PetColorCommand(this));
         getCommand(PetConfig.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
         getCommand(PetConfig.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
     }
@@ -232,6 +236,9 @@ public class PetMain extends JavaPlugin {
         if (e instanceof Ageable) {
             message(p, ChatColor.GREEN + "  Age: " + ChatColor.WHITE + ((Ageable) e).getAge());
         }
+        if (e.getType() == EntityType.WOLF) {                       
+            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor()));                                  
+        }
         if (e.getType() == EntityType.ZOMBIE) {
             String zt = "Normal";
             if (((CraftZombie) e).getHandle().isVillager()) {
@@ -353,6 +360,18 @@ public class PetMain extends JavaPlugin {
         Entity e = null;
         if (entityIds.containsKey(pet.entityId)) {
             e = entityIds.get(pet.entityId);
+        } 
+        return e;
+    }
+    
+    public Entity getEntityOfPet(Pet pet, Player p) {
+        Entity e;
+        if (entityIds.containsKey(pet.entityId)) {
+            e = entityIds.get(pet.entityId);
+        } else {
+            // respawn the pet if it somehow disappeared...
+            spawnPet(pet, p, false);
+            e = getEntityOfPet(pet);
         }
         return e;
     }
