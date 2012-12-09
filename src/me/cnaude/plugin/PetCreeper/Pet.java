@@ -1,6 +1,5 @@
 package me.cnaude.plugin.PetCreeper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.entity.CraftSkeleton;
 import org.bukkit.craftbukkit.entity.CraftWolf;
@@ -85,6 +84,7 @@ public final class Pet {
         }
         if (e instanceof Ageable) {
             ((Ageable) e).setAge(this.age);
+            ((Ageable) e).setAgeLock(this.ageLocked);        
         }
         if (e instanceof LivingEntity) {
             ((LivingEntity) e).setHealth(this.hp);

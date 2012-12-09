@@ -235,6 +235,7 @@ public class PetMain extends JavaPlugin {
         }
         if (e instanceof Ageable) {
             message(p, ChatColor.GREEN + "  Age: " + ChatColor.WHITE + ((Ageable) e).getAge());
+            message(p, ChatColor.GREEN + "  Age Lock: " + ChatColor.WHITE + ((Ageable) e).getAgeLock());
         }
         if (e.getType() == EntityType.WOLF) {                       
             message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor()));                                  
@@ -525,7 +526,7 @@ public class PetMain extends JavaPlugin {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
             pet.ageLocked = true;
-            ((Ageable) e).setAgeLock(true);
+            ((Ageable) e).setAgeLock(true);            
         }
     }
 
@@ -533,7 +534,7 @@ public class PetMain extends JavaPlugin {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
             pet.ageLocked = false;
-            ((Ageable) e).setAgeLock(false);
+            ((Ageable) e).setAgeLock(false);            
         }
     }
 
