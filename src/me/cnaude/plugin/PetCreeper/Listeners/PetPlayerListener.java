@@ -89,13 +89,22 @@ public class PetPlayerListener implements Listener {
         Player p = event.getPlayer();
         EntityType et = e.getType();
 
-        if (et.isAlive()) {
+        if (et.isAlive()) {                        
             if (this.plugin.isPet(e)) {
+                if (et.equals(EntityType.PIG)) {
+                    if (((Pig)e).hasSaddle()) {
+                        if (p.isSneaking()) {                            
+                            event.setCancelled(true);                        
+                        } else {
+                            return;
+                        }
+                    }
+                }
                 Player master = this.plugin.getMasterOf(e);
                 if (master == p) {
                     Entity passenger = e.getPassenger();
                     if ((!(et == EntityType.PIG)) && (passenger == p)) {
-                        e.eject();
+                        e.eject();                    
                     } else if ((PetConfig.ridable) && (p.getItemInHand().getType() == Material.SADDLE) && (passenger == null)) {
                         if ((et == EntityType.PIG)) {
                             return;

@@ -1,6 +1,6 @@
 name: PetCreeper
 main: me.cnaude.plugin.PetCreeper.PetMain
-version: 1.6.5
+version: 1.6.6
 description: Tame those mobs!
 author: Chris Naude
 softdepends: [mcMMO]
@@ -41,6 +41,9 @@ commands:
     petspawn:
         description: Spawn a pet
         usage: /petspawn [creature type] [count]
+    petsaddle:
+        description: Tell your pet to drop its saddle
+        usage: /petsaddle [id]
 permissions:
   'petcreeper.*':
     description: Gives player access to all features of PetCreeper.
@@ -59,6 +62,9 @@ permissions:
     default: false 
   petcreeper.mode:
     description: Allows players to use /petmode command.
+    default: false  
+  petcreeper.saddle:
+    description: Allows players to use /petsaddle command.
     default: false  
   petcreeper.age:
     description: Allows players to use /petage command.

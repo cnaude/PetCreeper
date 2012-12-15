@@ -23,6 +23,7 @@ import me.cnaude.plugin.PetCreeper.Commands.PetListCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetModeCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetNameCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetReloadCommand;
+import me.cnaude.plugin.PetCreeper.Commands.PetSaddleCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetSpawnCommand;
 import me.cnaude.plugin.PetCreeper.Listeners.PetEntityListener;
 import me.cnaude.plugin.PetCreeper.Listeners.PetPlayerListener;
@@ -87,6 +88,7 @@ public class PetMain extends JavaPlugin {
         getCommand(PetConfig.commandPrefix + "name").setExecutor(new PetNameCommand(this));
         getCommand(PetConfig.commandPrefix + "color").setExecutor(new PetColorCommand(this));
         getCommand(PetConfig.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
+        getCommand(PetConfig.commandPrefix + "saddle").setExecutor(new PetSaddleCommand(this));
         getCommand(PetConfig.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
     }
 
