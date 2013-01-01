@@ -12,10 +12,11 @@ import org.bukkit.DyeColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftWolf;
+//import org.bukkit.craftbukkit.entity.CraftWolf;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Wolf;
 
 /**
  *
@@ -56,7 +57,7 @@ public class PetColorCommand implements CommandExecutor {
                             if (dc != null) {
                                 if (pet.type.equals(EntityType.WOLF)) {
                                     pet.color = color;
-                                    ((CraftWolf)plugin.getEntityOfPet(pet)).getHandle().setCollarColor(dc.getData());
+                                    ((Wolf)plugin.getEntityOfPet(pet)).setCollarColor(dc);
                                     plugin.message(p, ChatColor.GREEN + "You changed your wolf's collar to " + ChatColor.YELLOW + pet.color + ChatColor.GREEN + "!");                                    
                                 } else if (pet.type.equals(EntityType.SHEEP)) {
                                     pet.color = color;

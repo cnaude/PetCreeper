@@ -1,9 +1,10 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.DyeColor;
-import org.bukkit.craftbukkit.entity.CraftSkeleton;
-import org.bukkit.craftbukkit.entity.CraftWolf;
-import org.bukkit.craftbukkit.entity.CraftZombie;
+//import org.bukkit.craftbukkit.v1_4_5.entity.CraftWolf;
+//import org.bukkit.craftbukkit.v1_4_5.entity.CraftSkeleton;
+//import org.bukkit.craftbukkit.v1_4_5.entity.CraftWolf;
+//import org.bukkit.craftbukkit.v1_4_5.entity.CraftZombie;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Creeper;
@@ -16,11 +17,14 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zombie;
 import org.bukkit.material.MaterialData;
 
 public final class Pet {
@@ -77,10 +81,12 @@ public final class Pet {
             ((Villager) e).setProfession(this.prof);
         }
         if (this.type == EntityType.SKELETON) {
-            ((CraftSkeleton) e).getHandle().setSkeletonType(this.skelType);
+            ((Skeleton)e).setSkeletonType(SkeletonType.getType(this.skelType));
+            //((CraftSkeleton) e).getHandle().setSkeletonType(this.skelType);
         }
         if (this.type == EntityType.ZOMBIE) {
-            ((CraftZombie)e).getHandle().setVillager(this.zombieVillager);
+            //((CraftZombie)e).getHandle().setVillager(this.zombieVillager);
+            ((Zombie)e).setVillager(this.zombieVillager);
         }
         if (e instanceof Ageable) {
             ((Ageable) e).setAge(this.age);
@@ -104,7 +110,8 @@ public final class Pet {
                 ((Wolf)e).setSitting(true);
             }  
             if (!color.isEmpty()) {
-                ((CraftWolf)e).getHandle().setCollarColor(DyeColor.valueOf(this.color).getData());
+                //((CraftWolf)e).getHandle().setCollarColor(DyeColor.valueOf(this.color).getData());
+                ((Wolf)e).setCollarColor(DyeColor.valueOf(this.color));
             }
         }
         if (e instanceof Ocelot) {
@@ -142,13 +149,16 @@ public final class Pet {
             Enderman enderman = (Enderman) e;
             this.carriedMat = enderman.getCarriedMaterial();
         } else if (et == EntityType.SKELETON) {
-            this.skelType = ((CraftSkeleton) e).getHandle().getSkeletonType();
+            //this.skelType = ((CraftSkeleton) e).getHandle().getSkeletonType();
+            this.skelType = ((Skeleton) e).getSkeletonType().getId();
         } else if (et == EntityType.ZOMBIE) {
-            this.zombieVillager = ((CraftZombie)e).getHandle().isVillager();
+            //this.zombieVillager = ((CraftZombie)e).getHandle().isVillager();
+            this.zombieVillager = ((Zombie)e).isVillager();
         } else if (et == EntityType.OCELOT) {
             this.catType = ((Ocelot)e).getCatType().name();
         } else if (et == EntityType.WOLF) {
-            this.color = (DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor())).name();                      
+            //this.color = (DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor())).name();                      
+            this.color = ((Wolf)e).getCollarColor().name();         
         }
         if (e instanceof Ageable) {
             this.age = ((Ageable) e).getAge();

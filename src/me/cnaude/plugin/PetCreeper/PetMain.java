@@ -27,15 +27,15 @@ import me.cnaude.plugin.PetCreeper.Commands.PetSaddleCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetSpawnCommand;
 import me.cnaude.plugin.PetCreeper.Listeners.PetEntityListener;
 import me.cnaude.plugin.PetCreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.Navigation;
+import net.minecraft.server.v1_4_6.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftWolf;
-import org.bukkit.craftbukkit.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftWolf;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftZombie;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -93,7 +93,7 @@ public class PetMain extends JavaPlugin {
     }
 
     private void petFollowTask() {
-        taskID = this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+        taskID = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
@@ -190,7 +190,7 @@ public class PetMain extends JavaPlugin {
         if (isPetOwner(p)) {
             for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
                 Pet pet = iterator.next();
-                if (!spawnPet(pet, p, true)) {
+                if (!spawnPet(pet, p, p.getLocation(), true)) {
                     if (playersWithPets.get(p.getName()).contains(pet)) {
                         iterator.remove();
                     }
@@ -271,10 +271,10 @@ public class PetMain extends JavaPlugin {
             return false;
         }
     }
-
-    public boolean spawnPet(Pet pet, Player p, boolean msg) {
+   
+    public boolean spawnPet(Pet pet, Player p, Location l, boolean msg) {
         boolean spawned = false;
-        Location pos = p.getLocation().clone();
+        Location pos = l.clone();
         pos.setY(pos.getY() + 1.0D);
         if (pos instanceof Location) {
             try {
@@ -341,11 +341,11 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
-
-    public void teleportPetsOf(Player p, boolean msg) {
+   
+    public void teleportPetsOf(Player p, Location l, boolean msg) {
         if (isPetOwner(p)) {
             for (Iterator i = getPetsOf(p).iterator(); i.hasNext();) {
-                teleportPet((Pet) i.next(), msg);
+                teleportPet((Pet) i.next(), l, msg);
             }
         }
     }
@@ -373,7 +373,7 @@ public class PetMain extends JavaPlugin {
             e = entityIds.get(pet.entityId);
         } else {
             // respawn the pet if it somehow disappeared...
-            spawnPet(pet, p, false);
+            spawnPet(pet, p, p.getLocation(), false);
             e = getEntityOfPet(pet);
         }
         return e;
@@ -387,13 +387,13 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
-
-    public void teleportPet(Pet pet, boolean msg) {
+   
+    public void teleportPet(Pet pet, Location l, boolean msg) {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
             Player p = getServer().getPlayer(petList.get(e));
             this.despawnPet(pet);
-            this.spawnPet(pet, p, false);
+            this.spawnPet(pet, p, l, false);
             if (msg) {
                 p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + getNameOfPet(e) + ChatColor.GREEN + " teleported to you.");
             }
@@ -467,6 +467,9 @@ public class PetMain extends JavaPlugin {
         if (e instanceof Creature || e instanceof Wolf) {
             //logInfo("C6");
             try {
+                if (ne == null) {
+                    return;
+                }
                 for (Iterator<Entity> iterator = ne.iterator(); iterator.hasNext();) {
                     Entity target = iterator.next();
                     //logInfo("C7: " + target.getType());

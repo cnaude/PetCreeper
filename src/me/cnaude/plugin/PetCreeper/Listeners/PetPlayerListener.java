@@ -5,12 +5,14 @@ import java.util.TimerTask;
 import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
-import net.minecraft.server.Navigation;
+//import net.minecraft.server.Navigation;
+import net.minecraft.server.v1_4_6.Navigation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+//import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -161,14 +163,12 @@ public class PetPlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (event.getPlayer().isInsideVehicle()) {
             return;
         }
-        if (event.getCause() == TeleportCause.COMMAND) {
-            this.plugin.teleportPetsOf(event.getPlayer(), false);
-        }
+        this.plugin.teleportPetsOf(event.getPlayer(), event.getTo(), false);
     }
 
     @EventHandler

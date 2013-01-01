@@ -45,12 +45,12 @@ public class PetCommand implements CommandExecutor {
                         int idx = Integer.parseInt(args[0]) - 1;
                         if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             Pet pet = plugin.getPetsOf(p).get(idx);
-                            plugin.teleportPet(pet, true);
+                            plugin.teleportPet(pet, p.getLocation(), true);
                         } else {
                             plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else if (args[0].toString().equalsIgnoreCase("all")) {
-                        plugin.teleportPetsOf(p, true);
+                        plugin.teleportPetsOf(p, p.getLocation(), true);
                     } else {
                         plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
                     }

@@ -4,7 +4,7 @@ import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.entity.CraftFireball;
+//import org.bukkit.craftbukkit.entity.CraftFireball;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -257,7 +257,7 @@ public class PetEntityListener implements Listener {
     public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
         Projectile p = event.getEntity();
         Entity e = event.getEntity();
-        if (e instanceof CraftFireball) {
+        if (e instanceof Fireball) {
             Entity sh = (Entity) p.getShooter();
             if (this.plugin.isPet((Entity) sh)) {
                 event.setCancelled(true);
