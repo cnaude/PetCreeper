@@ -30,6 +30,7 @@ public final class PetConfig {
     public static ArrayList<String> nameFiles = new ArrayList<String>();
     public static boolean randomizePetNames;
     public static boolean mcMMOSuport;    
+    public static boolean rememberPetLocation;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -116,7 +117,8 @@ public final class PetConfig {
         overrideDefaultTaming = config.getBoolean("OverrideDefaultTaming", true);
         nameFiles = (ArrayList)config.getStringList("NameFiles");
         randomizePetNames = config.getBoolean("RandomizePetNames", true);
-        mcMMOSuport = config.getBoolean("mcMMOSuport", true);        
+        mcMMOSuport = config.getBoolean("mcMMOSuport", true);     
+        rememberPetLocation = config.getBoolean("RememberPetLocation", false);
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }

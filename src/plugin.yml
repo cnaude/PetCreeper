@@ -1,6 +1,6 @@
 name: PetCreeper
 main: me.cnaude.plugin.PetCreeper.PetMain
-version: 1.6.9
+version: 1.7.0
 description: Tame those mobs!
 author: Chris Naude
 softdepends: [mcMMO]

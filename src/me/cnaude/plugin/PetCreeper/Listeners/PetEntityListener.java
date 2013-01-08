@@ -1,5 +1,6 @@
 package me.cnaude.plugin.PetCreeper.Listeners;
 
+import java.util.List;
 import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.inventory.ItemStack;
 
 public class PetEntityListener implements Listener {
 
@@ -282,6 +284,8 @@ public class PetEntityListener implements Listener {
             Player p = this.plugin.getMasterOf(e);
             p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(e) + ChatColor.RED + " has died!");
             this.plugin.untamePetOf(p, e, false);
+            //List<ItemStack> drops = event.getDrops();
+            //drops.clear();
         }
     }
 

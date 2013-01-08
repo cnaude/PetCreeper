@@ -1,6 +1,7 @@
 package me.cnaude.plugin.PetCreeper;
 
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 //import org.bukkit.craftbukkit.v1_4_5.entity.CraftWolf;
 //import org.bukkit.craftbukkit.v1_4_5.entity.CraftSkeleton;
 //import org.bukkit.craftbukkit.v1_4_5.entity.CraftWolf;
@@ -48,7 +49,10 @@ public final class Pet {
     public int exp = 0;
     public int skelType = 0;
     public boolean ageLocked = false;
-    public boolean zombieVillager = false;    
+    public boolean zombieVillager = false;
+    public double x, y, z;
+    public String world;
+    public boolean sitting = false;
 
     public enum modes {
 
@@ -104,7 +108,7 @@ public final class Pet {
             ((Tameable) e).setOwner(p);
         }
         if (e instanceof Wolf) {
-            if (this.followed) {
+            if (this.followed || !this.sitting) {
                 ((Wolf)e).setSitting(false);
             } else {
                 ((Wolf)e).setSitting(true);
@@ -116,7 +120,7 @@ public final class Pet {
         }
         if (e instanceof Ocelot) {
             ((Ocelot)e).setCatType(Ocelot.Type.valueOf(this.catType));
-            if (this.followed) {
+            if (this.followed || !this.sitting) {
                 ((Ocelot)e).setSitting(false);
             } else {
                 ((Ocelot)e).setSitting(true);
@@ -156,9 +160,21 @@ public final class Pet {
             this.zombieVillager = ((Zombie)e).isVillager();
         } else if (et == EntityType.OCELOT) {
             this.catType = ((Ocelot)e).getCatType().name();
+            this.sitting = ((Ocelot)e).isSitting();
+            if (this.sitting) {
+                this.followed = false;
+            } else {
+                this.followed = true;
+            }
         } else if (et == EntityType.WOLF) {
             //this.color = (DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor())).name();                      
-            this.color = ((Wolf)e).getCollarColor().name();         
+            this.color = ((Wolf)e).getCollarColor().name(); 
+            this.sitting = ((Wolf)e).isSitting();
+            if (this.sitting) {
+                this.followed = false;
+            } else {
+                this.followed = true;
+            }
         }
         if (e instanceof Ageable) {
             this.age = ((Ageable) e).getAge();
@@ -174,6 +190,10 @@ public final class Pet {
         if (PetConfig.randomizePetNames) {
             this.petName = PetMain.get().getRandomName();
         }
+        this.x = e.getLocation().getX();
+        this.y = e.getLocation().getY();
+        this.z = e.getLocation().getZ();
+        this.world = e.getLocation().getWorld().getName();
     }
 
     public Pet() {

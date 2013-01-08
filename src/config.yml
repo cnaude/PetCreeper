@@ -68,8 +68,8 @@ NameFiles:
   - female-names.txt
 # Automatically randomize pet names
 RandomizePetNames: true
-# Despawn pets on quit
-DespawnOnQuit: true
+# Attempt to spawn pets in their last known location
+RememberPetLocation: false
 mcMMOTamingXP:
   Bat: 10
   Blaze: 10

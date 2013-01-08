@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftWolf;
@@ -190,7 +191,13 @@ public class PetMain extends JavaPlugin {
         if (isPetOwner(p)) {
             for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
                 Pet pet = iterator.next();
-                if (!spawnPet(pet, p, p.getLocation(), true)) {
+                Location loc;
+                if (PetConfig.rememberPetLocation && !pet.followed) {
+                    loc = new Location(getServer().getWorld(pet.world),pet.x,pet.y,pet.z);
+                } else  {
+                    loc = p.getLocation();
+                }
+                if (!spawnPet(pet, p, loc, true)) {
                     if (playersWithPets.get(p.getName()).contains(pet)) {
                         iterator.remove();
                     }
