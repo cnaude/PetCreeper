@@ -39,6 +39,9 @@ public class PetKillCommand implements CommandExecutor {
                         int idx = Integer.parseInt(args[0]) - 1;
                         if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             Pet pet = plugin.getPetsOf(p).get(idx);
+                            if (PetConfig.noDropOnKillCommand) {
+                                plugin.petNoItemDrop.add(pet.entityId);
+                            }
                             plugin.killPet(pet);
                         } else {
                             plugin.message(p, ChatColor.RED + "Invalid pet ID.");

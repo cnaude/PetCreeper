@@ -70,6 +70,12 @@ NameFiles:
 RandomizePetNames: true
 # Attempt to spawn pets in their last known location
 RememberPetLocation: false
+# Default pet age when using /petspawn (adult or baby)
+DefaultPetAge: adult
+# If the default for spawned babies is baby then set this to true to keep them from growing up
+LockSpawnedBabies: false
+# Prevent the pet from dropping items when player does a /petkill
+NoDropOnKillCommand: false
 mcMMOTamingXP:
   Bat: 10
   Blaze: 10

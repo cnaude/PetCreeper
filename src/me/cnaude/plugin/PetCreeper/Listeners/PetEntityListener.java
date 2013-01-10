@@ -282,10 +282,12 @@ public class PetEntityListener implements Listener {
         Entity e = event.getEntity();
         if (this.plugin.isPet(e)) {
             Player p = this.plugin.getMasterOf(e);
-            p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(e) + ChatColor.RED + " has died!");
+            p.sendMessage(ChatColor.RED + "Your pet " + ChatColor.YELLOW + this.plugin.getNameOfPet(e) + ChatColor.RED + " has died!");            
             this.plugin.untamePetOf(p, e, false);
-            //List<ItemStack> drops = event.getDrops();
-            //drops.clear();
+            if (plugin.petNoItemDrop.contains(e.getEntityId())) {
+                event.getDrops().clear();
+                plugin.petNoItemDrop.remove(plugin.petNoItemDrop.indexOf(e.getEntityId()));
+            }            
         }
     }
 

@@ -32,7 +32,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftWolf;
@@ -54,6 +53,7 @@ public class PetMain extends JavaPlugin {
     public ConcurrentHashMap<Entity, String> petNameList = new ConcurrentHashMap<Entity, String>();
     public ConcurrentHashMap<Entity, Boolean> petFollowList = new ConcurrentHashMap<Entity, Boolean>();
     public ConcurrentHashMap<Integer, Entity> entityIds = new ConcurrentHashMap<Integer, Entity>();
+    public ArrayList<Integer> petNoItemDrop = new ArrayList<Integer>();
     static final Logger log = Logger.getLogger("Minecraft");
     public boolean configLoaded = false;
     private static PetConfig config;

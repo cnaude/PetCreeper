@@ -31,6 +31,9 @@ public final class PetConfig {
     public static boolean randomizePetNames;
     public static boolean mcMMOSuport;    
     public static boolean rememberPetLocation;
+    public static boolean noDropOnKillCommand;
+    public static String defaultPetAge;
+    public static boolean lockSpawnedBabies;
 
     public PetConfig(PetMain plug) {
         config = plug.getConfig();
@@ -119,6 +122,9 @@ public final class PetConfig {
         randomizePetNames = config.getBoolean("RandomizePetNames", true);
         mcMMOSuport = config.getBoolean("mcMMOSuport", true);     
         rememberPetLocation = config.getBoolean("RememberPetLocation", false);
+        noDropOnKillCommand = config.getBoolean("NoDropOnKillCommand", false);
+        defaultPetAge = config.getString("DefaultPetAge", "adult");
+        lockSpawnedBabies = config.getBoolean("LockSpawnedBabies",false);
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }

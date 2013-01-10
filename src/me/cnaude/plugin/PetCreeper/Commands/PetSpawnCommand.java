@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 //import org.bukkit.craftbukkit.entity.CraftZombie;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftSkeleton;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftZombie;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
@@ -90,6 +91,14 @@ public class PetSpawnCommand implements CommandExecutor {
                             }
                         }
                         Entity e = p.getWorld().spawnEntity(p.getLocation(), et);
+                        if (e instanceof Ageable) {
+                            if (PetConfig.defaultPetAge.equalsIgnoreCase("baby")) {
+                                ((Ageable)e).setBaby();
+                                ((Ageable)e).setAgeLock(PetConfig.lockSpawnedBabies);
+                            } else if (PetConfig.defaultPetAge.equalsIgnoreCase("adult")) {
+                                ((Ageable)e).setAdult();
+                            } 
+                        }
                         if (e instanceof Skeleton) {
                             if (subType.equalsIgnoreCase("wither")) {
                                 ((CraftSkeleton) e).getHandle().setSkeletonType(1);
