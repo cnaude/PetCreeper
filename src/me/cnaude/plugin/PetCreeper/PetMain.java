@@ -10,8 +10,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import me.ThaH3lper.EpicBoss.API;
-import me.ThaH3lper.EpicBoss.EpicBoss;
+import me.ThaH3lper.com.EpicBoss;
 import me.cnaude.plugin.PetCreeper.Commands.PetAgeCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetColorCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetCommand;
@@ -58,9 +57,9 @@ public class PetMain extends JavaPlugin {
     public boolean configLoaded = false;
     private static PetConfig config;
     private PetFile petFile = new PetFile(this);
-    private static API eBossAPI;
     int taskID;
     public ArrayList<String> bigNamesList = new ArrayList<String>();
+    private EpicBoss epicboss;
 
     @Override
     public void onEnable() {
@@ -165,7 +164,7 @@ public class PetMain extends JavaPlugin {
         taskID = 0;
 
         for (String p : petList.values()) {
-                despawnPetsOf(getServer().getPlayer(p));
+            despawnPetsOf(getServer().getPlayer(p));
         }
         petFile.savePets();
         petNameList.clear();
@@ -193,8 +192,8 @@ public class PetMain extends JavaPlugin {
                 Pet pet = iterator.next();
                 Location loc;
                 if (PetConfig.rememberPetLocation && !pet.followed) {
-                    loc = new Location(getServer().getWorld(pet.world),pet.x,pet.y,pet.z);
-                } else  {
+                    loc = new Location(getServer().getWorld(pet.world), pet.x, pet.y, pet.z);
+                } else {
                     loc = p.getLocation();
                 }
                 if (!spawnPet(pet, p, loc, true)) {
@@ -246,8 +245,8 @@ public class PetMain extends JavaPlugin {
             message(p, ChatColor.GREEN + "  Age: " + ChatColor.WHITE + ((Ageable) e).getAge());
             message(p, ChatColor.GREEN + "  Age Lock: " + ChatColor.WHITE + ((Ageable) e).getAgeLock());
         }
-        if (e.getType() == EntityType.WOLF) {                       
-            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor()));                                  
+        if (e.getType() == EntityType.WOLF) {
+            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + DyeColor.getByData((byte) ((CraftWolf) e).getHandle().getCollarColor()));
         }
         if (e.getType() == EntityType.ZOMBIE) {
             String zt = "Normal";
@@ -278,7 +277,7 @@ public class PetMain extends JavaPlugin {
             return false;
         }
     }
-   
+
     public boolean spawnPet(Pet pet, Player p, Location l, boolean msg) {
         boolean spawned = false;
         Location pos = l.clone();
@@ -348,7 +347,7 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
-   
+
     public void teleportPetsOf(Player p, Location l, boolean msg) {
         if (isPetOwner(p)) {
             for (Iterator i = getPetsOf(p).iterator(); i.hasNext();) {
@@ -356,12 +355,12 @@ public class PetMain extends JavaPlugin {
             }
         }
     }
-    
+
     public void killPetsOf(Player p) {
         if (isPetOwner(p)) {
             //iterate backwards to prevent concurrent modification ex
             for (int x = getPetsOf(p).size(); x > 0; x--) {
-                killPet(getPetsOf(p).get(x-1));
+                killPet(getPetsOf(p).get(x - 1));
             }
         }
     }
@@ -370,10 +369,10 @@ public class PetMain extends JavaPlugin {
         Entity e = null;
         if (entityIds.containsKey(pet.entityId)) {
             e = entityIds.get(pet.entityId);
-        } 
+        }
         return e;
     }
-    
+
     public Entity getEntityOfPet(Pet pet, Player p) {
         Entity e;
         if (entityIds.containsKey(pet.entityId)) {
@@ -385,16 +384,16 @@ public class PetMain extends JavaPlugin {
         }
         return e;
     }
-    
+
     public void killPet(Pet pet) {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
             if (e != null) {
-                ((LivingEntity)e).damage(((LivingEntity)e).getHealth());
+                ((LivingEntity) e).damage(((LivingEntity) e).getHealth());
             }
         }
     }
-   
+
     public void teleportPet(Pet pet, Location l, boolean msg) {
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
@@ -417,7 +416,7 @@ public class PetMain extends JavaPlugin {
         if (e.getPassenger() instanceof Player) {
             return;
         }
-        
+
         // Movoing the dragon is too buggy
         if (e instanceof EnderDragon) {
             return;
@@ -538,7 +537,7 @@ public class PetMain extends JavaPlugin {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
             pet.ageLocked = true;
-            ((Ageable) e).setAgeLock(true);            
+            ((Ageable) e).setAgeLock(true);
         }
     }
 
@@ -546,7 +545,7 @@ public class PetMain extends JavaPlugin {
         Entity e = getEntityOfPet(pet);
         if (e instanceof Ageable) {
             pet.ageLocked = false;
-            ((Ageable) e).setAgeLock(false);            
+            ((Ageable) e).setAgeLock(false);
         }
     }
 
@@ -567,16 +566,18 @@ public class PetMain extends JavaPlugin {
     }
 
     public boolean tamePetOf(Player p, Entity e, boolean spawned) {
-        if (eBossAPI == null) {
-            setupEpicBossHandler();
-        }
-        if (eBossAPI != null) {
-            if (eBossAPI.entityBoss((LivingEntity) e)) {
-                return false;
-            }
-        }
         boolean tamed = false;
         if (e instanceof LivingEntity) {
+            if (epicboss == null) {
+                setupEpicBossHandler();
+            }
+            if (epicboss != null) {
+                if (epicboss.api != null) {
+                    if (epicboss.api.isBoss((LivingEntity) e)) {
+                        return false;
+                    }
+                }
+            }
             EntityType et = e.getType();
             ItemStack bait = p.getItemInHand();
             int amt = bait.getAmount();
@@ -665,7 +666,7 @@ public class PetMain extends JavaPlugin {
         if (PetConfig.mcMMOSuport) {
             Plugin plmc = getServer().getPluginManager().getPlugin("mcMMO");
             if (plmc != null) {
-                if (Permissions.getInstance().taming(p) && !e.hasMetadata("mcmmoSummoned") && PetConfig.mcMMOSuport) {
+                if (Permissions.taming(p) && !e.hasMetadata("mcmmoSummoned") && PetConfig.mcMMOSuport) {
                     ExperienceAPI.addXP(p, SkillType.TAMING, PetConfig.getTamingXP(e.getType()));
                 }
             }
@@ -766,15 +767,14 @@ public class PetMain extends JavaPlugin {
     }
 
     public void setupEpicBossHandler() {
-        Plugin epicBossPlugin = getServer().getPluginManager().getPlugin("EpicBoss");
+        Plugin epicBossPlugin = getServer().getPluginManager().getPlugin("EpicBossRecoded");
 
         if (epicBossPlugin == null) {
             return;
         }
 
-        eBossAPI = new API((EpicBoss) epicBossPlugin);
-        logInfo("EpicBoss detected. Players will not be able to tame bosses.");
-
+        epicboss = ((EpicBoss)epicBossPlugin);
+        logInfo("EpicBoss detected. Players will not be able to tame bosses. [" + epicboss.toString() +"]");
     }
 
     public String getRandomName() {
