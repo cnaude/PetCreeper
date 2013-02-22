@@ -1,7 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
 import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.util.Permissions;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,15 +25,12 @@ import me.cnaude.plugin.PetCreeper.Commands.PetSaddleCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetSpawnCommand;
 import me.cnaude.plugin.PetCreeper.Listeners.PetEntityListener;
 import me.cnaude.plugin.PetCreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.v1_4_6.Navigation;
+import net.minecraft.server.v1_4_R1.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftWolf;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -246,11 +242,11 @@ public class PetMain extends JavaPlugin {
             message(p, ChatColor.GREEN + "  Age Lock: " + ChatColor.WHITE + ((Ageable) e).getAgeLock());
         }
         if (e.getType() == EntityType.WOLF) {
-            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + DyeColor.getByData((byte) ((CraftWolf) e).getHandle().getCollarColor()));
+            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + ((Wolf)e).getCollarColor().name());
         }
         if (e.getType() == EntityType.ZOMBIE) {
             String zt = "Normal";
-            if (((CraftZombie) e).getHandle().isVillager()) {
+            if (((Zombie)e).isVillager()) {
                 zt = "Villager";
             }
             message(p, ChatColor.GREEN + "  Zombie Type: " + ChatColor.WHITE + zt);
@@ -348,10 +344,10 @@ public class PetMain extends JavaPlugin {
         }
     }
 
-    public void teleportPetsOf(Player p, Location l, boolean msg) {
+    public void teleportPetsOf(Player p, Location l, boolean msg, boolean ev) {
         if (isPetOwner(p)) {
             for (Iterator i = getPetsOf(p).iterator(); i.hasNext();) {
-                teleportPet((Pet) i.next(), l, msg);
+                teleportPet((Pet) i.next(), l, msg, ev);
             }
         }
     }
@@ -394,7 +390,10 @@ public class PetMain extends JavaPlugin {
         }
     }
 
-    public void teleportPet(Pet pet, Location l, boolean msg) {
+    public void teleportPet(Pet pet, Location l, boolean msg, boolean ev) {
+        if (ev && !pet.followed) {
+            return;
+        }
         if (entityIds.containsKey(pet.entityId)) {
             Entity e = entityIds.get(pet.entityId);
             Player p = getServer().getPlayer(petList.get(e));
@@ -666,8 +665,9 @@ public class PetMain extends JavaPlugin {
         if (PetConfig.mcMMOSuport) {
             Plugin plmc = getServer().getPluginManager().getPlugin("mcMMO");
             if (plmc != null) {
-                if (Permissions.taming(p) && !e.hasMetadata("mcmmoSummoned") && PetConfig.mcMMOSuport) {
-                    ExperienceAPI.addXP(p, SkillType.TAMING, PetConfig.getTamingXP(e.getType()));
+                if (!e.hasMetadata("mcmmoSummoned") && PetConfig.mcMMOSuport) {
+                    //ExperienceAPI.addXP(p, SkillType.TAMING, PetConfig.getTamingXP(e.getType()));
+                    ExperienceAPI.addXP(p, "TAMING", PetConfig.getTamingXP(e.getType()));
                 }
             }
         }

@@ -37,8 +37,7 @@ public class PetListCommand implements CommandExecutor {
                     plugin.printPetListOf(p);
                 } else {
                     plugin.message(p, ChatColor.RED + "You don't own a pet.");
-                }
-                return true;
+                }                
             }
         }
         return true;

@@ -6,13 +6,13 @@ import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
 //import net.minecraft.server.Navigation;
-import net.minecraft.server.v1_4_6.Navigation;
+import net.minecraft.server.v1_4_R1.Navigation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 //import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,7 +22,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class PetPlayerListener implements Listener {
 
@@ -168,7 +167,7 @@ public class PetPlayerListener implements Listener {
         if (event.getPlayer().isInsideVehicle()) {
             return;
         }
-        this.plugin.teleportPetsOf(event.getPlayer(), event.getTo(), false);
+        this.plugin.teleportPetsOf(event.getPlayer(), event.getTo(), false, true);
     }
 
     @EventHandler

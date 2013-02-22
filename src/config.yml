@@ -76,6 +76,8 @@ DefaultPetAge: adult
 LockSpawnedBabies: false
 # Prevent the pet from dropping items when player does a /petkill
 NoDropOnKillCommand: false
+# Enable mcMMO taming XP
+mcMMOSuport: true
 mcMMOTamingXP:
   Bat: 10
   Blaze: 10
