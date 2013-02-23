@@ -5,11 +5,13 @@ import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 public final class PetConfig {
 
     private final Configuration config;
-    private static HashMap<String, Material> baitMap = new HashMap<String, Material>();
+    private final PetMain plugin;
+    private static HashMap<String, ItemStack> baitMap = new HashMap<String, ItemStack>();
     private static HashMap<String, Integer> tamingXPMap = new HashMap<String, Integer>();
     public static boolean provokable;
     public static boolean ridable;
@@ -35,42 +37,68 @@ public final class PetConfig {
     public static String defaultPetAge;
     public static boolean lockSpawnedBabies;
 
-    public PetConfig(PetMain plug) {
-        config = plug.getConfig();
+    public PetConfig(PetMain instance) {
+        this.plugin = instance;
+        this.config = plugin.getConfig();
         load();
     }
 
+    public ItemStack getMat(String matName) {
+        ItemStack item = new ItemStack(0);
+        Material mat = Material.AIR;
+        if (matName == null) {            
+            return item;
+        }         
+        byte byteCode = (byte)0;        
+        if (matName.contains(":")) {
+            String tmp[] = matName.split(":",2);
+            matName = tmp[0]; 
+            if (tmp[1].matches("\\d+")) {
+                byteCode = (byte)Integer.parseInt(tmp[1]);
+            }
+        } 
+        if (matName.matches("\\d+")) {
+            mat = Material.getMaterial(Integer.parseInt(matName));
+        } else if (Material.matchMaterial(matName) != null) {
+            mat = Material.matchMaterial(matName);
+        } else {
+            plugin.logInfo("Invalid bait: " + matName);
+        }  
+        item = new ItemStack(mat,1,byteCode);
+        return item;
+    }
+    
     public void load() {
-        baitMap.put("Bat", Material.getMaterial(config.getInt("Bat", 375)));
-        baitMap.put("Blaze", Material.getMaterial(config.getInt("Blaze", 369)));
-        baitMap.put("CaveSpider", Material.getMaterial(config.getInt("CaveSpider", 287)));
-        baitMap.put("Chicken", Material.getMaterial(config.getInt("Chicken", 295)));
-        baitMap.put("Cow", Material.getMaterial(config.getInt("Cow", 295)));
-        baitMap.put("Creeper", Material.getMaterial(config.getInt("Creeper", 318)));
-        baitMap.put("EnderDragon", Material.getMaterial(config.getInt("EnderDragon", 122)));
-        baitMap.put("Enderman", Material.getMaterial(config.getInt("Enderman", 381)));
-        baitMap.put("Ghast", Material.getMaterial(config.getInt("Ghast", 370)));
-        baitMap.put("Giant", Material.getMaterial(config.getInt("Giant", 41)));
-        baitMap.put("Golem", Material.getMaterial(config.getInt("Golem", 265)));
-        //baitMap.put("HumanEntity", Material.getMaterial(config.getInt("HumanEntity", 264)));
-        baitMap.put("LavaSlime", Material.getMaterial(config.getInt("MagmaCube", 378)));
-        baitMap.put("MushroomCow", Material.getMaterial(config.getInt("MushroomCow", 40)));
-        baitMap.put("Ozelot", Material.getMaterial(config.getInt("Ozelot", 357)));
-        baitMap.put("Pig", Material.getMaterial(config.getInt("Pig", 319)));
-        baitMap.put("PigZombie", Material.getMaterial(config.getInt("PigZombie", 319)));
-        baitMap.put("Sheep", Material.getMaterial(config.getInt("Sheep", 338)));
-        baitMap.put("Silverfish", Material.getMaterial(config.getInt("Silverfish", 280)));
-        baitMap.put("Skeleton", Material.getMaterial(config.getInt("Skeleton", 352)));
-        baitMap.put("Slime", Material.getMaterial(config.getInt("Slime", 341)));
-        baitMap.put("SnowMan", Material.getMaterial(config.getInt("SnowMan", 332)));
-        baitMap.put("Spider", Material.getMaterial(config.getInt("Spider", 287)));
-        baitMap.put("Squid", Material.getMaterial(config.getInt("Squid", 349)));
-        baitMap.put("Villager", Material.getMaterial(config.getInt("Villager", 38)));
-        baitMap.put("VillagerGolem", Material.getMaterial(config.getInt("VillagerGolem", 295)));
-        baitMap.put("Witch", Material.getMaterial(config.getInt("Witch", 115)));
-        baitMap.put("WitherBoss", Material.getMaterial(config.getInt("WitherBoss", 399)));
-        baitMap.put("Wolf", Material.getMaterial(config.getInt("Wolf", 319)));
-        baitMap.put("Zombie", Material.getMaterial(config.getInt("Zombie", 295)));
+        baitMap.put("Bat", getMat(config.getString("Bat", "375")));
+        baitMap.put("Blaze", getMat(config.getString("Blaze", "369")));
+        baitMap.put("CaveSpider", getMat(config.getString("CaveSpider", "287")));
+        baitMap.put("Chicken", getMat(config.getString("Chicken", "295")));
+        baitMap.put("Cow", getMat(config.getString("Cow", "295")));
+        baitMap.put("Creeper", getMat(config.getString("Creeper", "318")));
+        baitMap.put("EnderDragon", getMat(config.getString("EnderDragon", "122")));
+        baitMap.put("Enderman", getMat(config.getString("Enderman", "381")));
+        baitMap.put("Ghast", getMat(config.getString("Ghast", "370")));
+        baitMap.put("Giant", getMat(config.getString("Giant", "41")));
+        baitMap.put("Golem", getMat(config.getString("Golem", "265")));
+        //baitMap.put("HumanEntity", getMat(config.getString("HumanEntity", "264")));
+        baitMap.put("LavaSlime", getMat(config.getString("MagmaCube", "378")));
+        baitMap.put("MushroomCow", getMat(config.getString("MushroomCow", "40")));
+        baitMap.put("Ozelot", getMat(config.getString("Ozelot", "357")));
+        baitMap.put("Pig", getMat(config.getString("Pig", "319")));
+        baitMap.put("PigZombie", getMat(config.getString("PigZombie", "319")));
+        baitMap.put("Sheep", getMat(config.getString("Sheep", "338")));
+        baitMap.put("Silverfish", getMat(config.getString("Silverfish", "280")));
+        baitMap.put("Skeleton", getMat(config.getString("Skeleton", "352")));
+        baitMap.put("Slime", getMat(config.getString("Slime", "341")));
+        baitMap.put("SnowMan", getMat(config.getString("SnowMan", "332")));
+        baitMap.put("Spider", getMat(config.getString("Spider", "287")));
+        baitMap.put("Squid", getMat(config.getString("Squid", "349")));
+        baitMap.put("Villager", getMat(config.getString("Villager", "38")));
+        baitMap.put("VillagerGolem", getMat(config.getString("VillagerGolem", "295")));
+        baitMap.put("Witch", getMat(config.getString("Witch", "115")));
+        baitMap.put("WitherBoss", getMat(config.getString("WitherBoss", "399")));
+        baitMap.put("Wolf", getMat(config.getString("Wolf", "319")));
+        baitMap.put("Zombie", getMat(config.getString("Zombie", "295")));
         
         tamingXPMap.put("Bat", (config.getInt("mcMMOTamingXP.Bat", 10)));
         tamingXPMap.put("Blaze", (config.getInt("mcMMOTamingXP.Blaze", 10)));
@@ -129,11 +157,11 @@ public final class PetConfig {
         commandPrefix = config.getString("CommandPrefix", "pet");
     }
 
-    public static Material getBait(EntityType type) {        
+    public static ItemStack getBait(EntityType type) {        
         if (baitMap.containsKey(type.getName())) {
             return baitMap.get(type.getName());
         } else {
-            return Material.AIR;
+            return new ItemStack(0);
         }
     }
     

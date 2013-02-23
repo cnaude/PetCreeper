@@ -1,7 +1,6 @@
 package me.cnaude.plugin.PetCreeper;
 
 import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.util.Permissions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -116,6 +115,10 @@ public class PetMain extends JavaPlugin {
 
     public void logInfo(String s) {
         log.log(Level.INFO, String.format("%s %s", LOG_HEADER, s));
+    }
+    
+    public void logError(String s) {
+        log.log(Level.SEVERE, String.format("%s %s", LOG_HEADER, s));
     }
 
     public void message(Player p, String msg) {
@@ -581,7 +584,10 @@ public class PetMain extends JavaPlugin {
             ItemStack bait = p.getItemInHand();
             int amt = bait.getAmount();
 
-            if (((bait.getType() == PetConfig.getBait(et)) && (amt > 0)) || spawned) {
+            if (((bait.getType().equals(PetConfig.getBait(et).getType())) && (amt > 0)) || spawned) {                
+                if (!bait.getData().equals(PetConfig.getBait(et).getData())) {
+                    return false;
+                }
                 if (isPetOwner(p)) {
                     if (getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
                         p.sendMessage(ChatColor.RED + "You already have the maximum number of pets!");

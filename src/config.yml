@@ -1,34 +1,34 @@
-# Item IDs for bait for various monsters.
+# Item names or IDs for bait for various monsters. Supports material data (egg:2 etc...)
 # If you want to disable taming a certain mob set the code to 0 or adjust permissions.
-Bat: 375
-Blaze: 369
-CaveSpider: 287
-Chicken: 295
-Cow: 295
-Creeper: 318
-EnderDragon: 122
-Enderman: 381
-Ghast: 370
-Giant: 41
-Golem: 265
-MagmaCube: 378
-MushroomCow: 40
-Ozelot: 357
-Pig: 319
-PigZombie: 319
-Sheep: 338
-Silverfish: 280
-Skeleton: 352
-Slime: 341
-SnowMan: 332
-Spider: 287
-Squid: 349
-Villager: 38
-VillagerGolem: 265
-Witch: 115
-WitherBoss: 399
-Wolf: 319
-Zombie: 288
+Bat: Spider_Eye
+Blaze: Blaze_Rod
+CaveSpider: String
+Chicken: Seeds
+Cow: Seeds
+Creeper: Flint
+EnderDragon: Dragon_Egg
+Enderman: Eye_Of_Ender
+Ghast: Ghast_Tear
+Giant: Gold_Block
+Golem: Iron_Ingot
+MagmaCube: Magma_Cream
+MushroomCow: Red_Mushroom
+Ozelot: Cookie
+Pig: Pork
+PigZombie: Pork
+Sheep: Sugar_Cane
+Silverfish: Stick
+Skeleton: Bone
+Slime: Slime_Ball
+SnowMan: Snow_Ball
+Spider: String
+Squid: Raw_Fish
+Villager: Red_Rose
+VillagerGolem: Iron_Ingot
+Witch: Nether_Warts
+WitherBoss: Nether_Star
+Wolf: Pork
+Zombie: Feather
 # Other options
 # If Provokable is true then you are able to hurt your own pet. Your pet will get angry and run away or hurt you.
 Provokable: true
