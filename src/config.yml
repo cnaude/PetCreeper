@@ -1,4 +1,4 @@
-# Item names or IDs for bait for various monsters. Supports material data (egg:2 etc...)
+# Item names or IDs for bait for various monsters. Supports material data ('egg:2' etc... Use single quotes when doing this)
 # If you want to disable taming a certain mob set the code to 0 or adjust permissions.
 Bat: Spider_Eye
 Blaze: Blaze_Rod
