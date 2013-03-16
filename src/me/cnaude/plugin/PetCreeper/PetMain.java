@@ -24,12 +24,12 @@ import me.cnaude.plugin.PetCreeper.Commands.PetSaddleCommand;
 import me.cnaude.plugin.PetCreeper.Commands.PetSpawnCommand;
 import me.cnaude.plugin.PetCreeper.Listeners.PetEntityListener;
 import me.cnaude.plugin.PetCreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.v1_4_R1.Navigation;
+import net.minecraft.server.v1_5_R1.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -585,9 +585,9 @@ public class PetMain extends JavaPlugin {
             int amt = bait.getAmount();
 
             if (((bait.getType().equals(PetConfig.getBait(et).getType())) && (amt > 0)) || spawned) {                
-                if (!bait.getData().equals(PetConfig.getBait(et).getData())) {
-                    return false;
-                }
+                //if (!bait.getData().equals(PetConfig.getBait(et).getData())) {
+                //    return false;
+                //}
                 if (isPetOwner(p)) {
                     if (getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
                         p.sendMessage(ChatColor.RED + "You already have the maximum number of pets!");

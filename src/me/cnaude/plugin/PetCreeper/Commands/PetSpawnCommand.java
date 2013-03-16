@@ -10,10 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-//import org.bukkit.craftbukkit.entity.CraftSkeleton;
-//import org.bukkit.craftbukkit.entity.CraftZombie;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftSkeleton;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftZombie;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -118,6 +116,12 @@ public class PetSpawnCommand implements CommandExecutor {
                             p.sendMessage(ChatColor.GREEN + "You spawned a pet " + ChatColor.YELLOW 
                                     + et.getName() + ChatColor.GREEN + " named " + ChatColor.YELLOW 
                                     + plugin.getNameOfPet(e) + ChatColor.GREEN + "!");
+                        } else {                            
+                            p.sendMessage(ChatColor.RED + "Unable to spawn a pet!");
+                            if (e != null) {
+                                // We should never really get here...
+                                e.remove();
+                            }
                         }
                     }
                 } else {

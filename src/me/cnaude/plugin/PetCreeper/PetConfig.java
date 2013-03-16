@@ -109,7 +109,7 @@ public final class PetConfig {
         for (String s : mobs) {
             baitMap.put(s, getMat(config.getString(s),s));
             tamingXPMap.put(s, (config.getInt("mcMMOTamingXP." + s)));
-        }        
+        }
 
         provokable = config.getBoolean("Provokable", true);
         ridable = config.getBoolean("Ridable", true);
