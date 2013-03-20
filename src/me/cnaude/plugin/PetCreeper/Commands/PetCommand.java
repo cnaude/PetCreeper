@@ -7,6 +7,7 @@ package me.cnaude.plugin.PetCreeper.Commands;
 import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,9 +40,10 @@ public class PetCommand implements CommandExecutor {
                     return true;
                 }
             }
-            if (plugin.isPetOwner(p)) {
-                if (args.length == 1) {
-                    if (args[0].matches("\\d+")) {
+            
+            if (args.length == 1) {
+                if (args[0].matches("\\d+")) {
+                    if (plugin.isPetOwner(p)) {
                         int idx = Integer.parseInt(args[0]) - 1;
                         if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             Pet pet = plugin.getPetsOf(p).get(idx);
@@ -49,18 +51,33 @@ public class PetCommand implements CommandExecutor {
                         } else {
                             plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
-                    } else if (args[0].toString().equalsIgnoreCase("all")) {
+                    } else {
+                        plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                    }
+                } else if (args[0].toString().equalsIgnoreCase("all")) {
+                    if (plugin.isPetOwner(p)) {
                         plugin.teleportPetsOf(p, p.getLocation(), true, false);
                     } else {
-                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                        plugin.message(p, ChatColor.RED + "You have no pets. :(");
                     }
-                } else {
+                } else if (args[0].toString().equals("?")) {
                     plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                } else {
+                    dispatch(sender, args);
                 }
             } else {
-                plugin.message(p, ChatColor.RED + "You have no pets. :(");
+                dispatch(sender, args);
             }
         }
         return true;
+    }
+
+    public void dispatch(CommandSender sender, String args[]) {
+        String commandLine = "";
+        for (String s : args) {
+            commandLine = commandLine + " " + s;
+        }
+        commandLine = commandLine.replaceAll("^\\s+", "");
+        Bukkit.dispatchCommand(sender, "pet" + commandLine);
     }
 }

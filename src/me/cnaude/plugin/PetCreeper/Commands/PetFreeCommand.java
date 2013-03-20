@@ -5,10 +5,7 @@
 package me.cnaude.plugin.PetCreeper.Commands;
 
 import me.cnaude.plugin.PetCreeper.Pet;
-import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
-import me.cnaude.plugin.PetCreeper.PetConfig;
-import me.cnaude.plugin.PetCreeper.PetMain;
 import me.cnaude.plugin.PetCreeper.PetMain;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
