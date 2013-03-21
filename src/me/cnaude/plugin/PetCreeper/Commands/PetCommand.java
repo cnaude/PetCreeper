@@ -4,6 +4,8 @@
  */
 package me.cnaude.plugin.PetCreeper.Commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
@@ -21,9 +23,23 @@ import org.bukkit.entity.Player;
 public class PetCommand implements CommandExecutor {
 
     private final PetMain plugin;
+    
+    private static List<String> validCommands = new ArrayList<String>();
 
     public PetCommand(PetMain instance) {
         plugin = instance;
+        validCommands.add("age");
+        validCommands.add("color");
+        validCommands.add("free");
+        validCommands.add("give");
+        validCommands.add("info");
+        validCommands.add("kill");
+        validCommands.add("list");
+        validCommands.add("mode");
+        validCommands.add("name");
+        validCommands.add("reload");
+        validCommands.add("saddle");
+        validCommands.add("spawn");
     }
 
     @Override
@@ -64,7 +80,7 @@ public class PetCommand implements CommandExecutor {
                     plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
                 } else {
                     dispatch(sender, args);
-                }
+                } 
             } else {
                 dispatch(sender, args);
             }
@@ -73,11 +89,20 @@ public class PetCommand implements CommandExecutor {
     }
 
     public void dispatch(CommandSender sender, String args[]) {
-        String commandLine = "";
-        for (String s : args) {
-            commandLine = commandLine + " " + s;
+        if (args.length > 0) {
+            args[0] = args[0].replaceAll("^\\s+", "");
+            if (validCommands.contains(args[0])) {
+                String commandLine = "";
+                for (String s : args) {
+                    commandLine = commandLine + " " + s;
+                }                
+                commandLine = commandLine.replaceAll("^\\s+", "");
+                Bukkit.dispatchCommand(sender, "pet" + commandLine);
+            } else {                
+                Bukkit.dispatchCommand(sender, "help petcreeper");
+            }
+        } else {
+            Bukkit.dispatchCommand(sender, "help petcreeper");
         }
-        commandLine = commandLine.replaceAll("^\\s+", "");
-        Bukkit.dispatchCommand(sender, "pet" + commandLine);
     }
 }
