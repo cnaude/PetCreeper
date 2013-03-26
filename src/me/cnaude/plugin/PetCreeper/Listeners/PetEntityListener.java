@@ -1,17 +1,14 @@
 package me.cnaude.plugin.PetCreeper.Listeners;
 
-import java.util.List;
 import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
 import org.bukkit.ChatColor;
-//import org.bukkit.craftbukkit.entity.CraftFireball;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.inventory.ItemStack;
 
 public class PetEntityListener implements Listener {
 
@@ -22,8 +19,7 @@ public class PetEntityListener implements Listener {
     }
 
     private boolean attackCheck(Entity e, Entity t) {
-        if (t == null) {
-            //plugin.logInfo("C0");
+        if (t == null) {            
             return true;
         }
         if (this.plugin.isPet(e)) {
@@ -34,28 +30,22 @@ public class PetEntityListener implements Listener {
             if (p == t) {
                 if (p.getWorld() == e.getWorld()) {
                     if ((!this.plugin.isFollowing(e)) || (e.getPassenger() != null)
-                            || (e.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {
-                        //plugin.logInfo("C1");
+                            || (e.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                        
                         return true;
                     } else {
-                        //plugin.logInfo("C2");
                         return false;
                     }
                 } else {
-                    //plugin.logInfo("C3");
                     return true;
                 }
             } else {
                 if (t == null) {
-                    //plugin.logInfo("C6: NULL");
                     return true;
-                } else {
-                    //plugin.logInfo("C6: " + t.toString());
+                } else {                    
                     return false;
                 }
             }
         } else {
-            //plugin.logInfo("C9: " + e.toString());
             return false;
         }
     }
@@ -63,7 +53,6 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityTargetEvent(EntityTargetEvent event) {
         if (event.isCancelled()) {
-            //plugin.logInfo("C8.33");
             return;
         }
         Entity e = event.getEntity();
@@ -75,11 +64,8 @@ public class PetEntityListener implements Listener {
         }
         Entity t = event.getTarget();
         if (attackCheck(e, t)) {
-            //plugin.logInfo("C8.11");
             event.setCancelled(true);
-        } else {
-            //plugin.logInfo("C8.22");
-        }
+        } 
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

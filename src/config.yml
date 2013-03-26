@@ -76,6 +76,10 @@ DefaultPetAge: adult
 LockSpawnedBabies: false
 # Prevent the pet from dropping items when player does a /petkill
 NoDropOnKillCommand: false
+# Display pet names above pet
+CustomNamePlates: true
+# Default color for pet nameplates
+NamePlateColor: GREEN
 # Enable mcMMO taming XP
 mcMMOSuport: true
 mcMMOTamingXP:

@@ -36,6 +36,8 @@ public final class PetConfig {
     public static boolean noDropOnKillCommand;
     public static String defaultPetAge;
     public static boolean lockSpawnedBabies;
+    public static boolean customNamePlates;
+    public static String namePlateColor;
     public static final String mobs[] = {
         "Bat",
         "Blaze",
@@ -133,6 +135,8 @@ public final class PetConfig {
         noDropOnKillCommand = config.getBoolean("NoDropOnKillCommand", false);
         defaultPetAge = config.getString("DefaultPetAge", "adult");
         lockSpawnedBabies = config.getBoolean("LockSpawnedBabies",false);
+        customNamePlates = config.getBoolean("CustomNamePlates",true);
+        namePlateColor = config.getString("NamePlateColor","GREEN");
         
         commandPrefix = config.getString("CommandPrefix", "pet");
     }

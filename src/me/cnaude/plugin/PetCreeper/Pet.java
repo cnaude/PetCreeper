@@ -1,11 +1,7 @@
 package me.cnaude.plugin.PetCreeper;
 
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
-import org.bukkit.Location;
-//import org.bukkit.craftbukkit.v1_4_5.entity.CraftWolf;
-//import org.bukkit.craftbukkit.v1_4_5.entity.CraftSkeleton;
-//import org.bukkit.craftbukkit.v1_4_5.entity.CraftWolf;
-//import org.bukkit.craftbukkit.v1_4_5.entity.CraftZombie;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Creeper;
@@ -85,11 +81,9 @@ public final class Pet {
             ((Villager) e).setProfession(this.prof);
         }
         if (this.type == EntityType.SKELETON) {
-            ((Skeleton)e).setSkeletonType(SkeletonType.getType(this.skelType));
-            //((CraftSkeleton) e).getHandle().setSkeletonType(this.skelType);
+            ((Skeleton)e).setSkeletonType(SkeletonType.getType(this.skelType));            
         }
-        if (this.type == EntityType.ZOMBIE) {
-            //((CraftZombie)e).getHandle().setVillager(this.zombieVillager);
+        if (this.type == EntityType.ZOMBIE) {            
             ((Zombie)e).setVillager(this.zombieVillager);
         }
         if (e instanceof Ageable) {
@@ -113,8 +107,7 @@ public final class Pet {
             } else {
                 ((Wolf)e).setSitting(true);
             }  
-            if (!color.isEmpty()) {
-                //((CraftWolf)e).getHandle().setCollarColor(DyeColor.valueOf(this.color).getData());
+            if (!color.isEmpty()) {                
                 ((Wolf)e).setCollarColor(DyeColor.valueOf(this.color));
             }
         }
@@ -125,6 +118,10 @@ public final class Pet {
             } else {
                 ((Ocelot)e).setSitting(true);
             }
+        }
+        if (PetConfig.customNamePlates) {
+            ((LivingEntity)e).setCustomName(ChatColor.translateAlternateColorCodes('&', petName));
+            ((LivingEntity)e).setCustomNameVisible(true);
         }
     }
 
@@ -152,11 +149,9 @@ public final class Pet {
         } else if (et == EntityType.ENDERMAN) {
             Enderman enderman = (Enderman) e;
             this.carriedMat = enderman.getCarriedMaterial();
-        } else if (et == EntityType.SKELETON) {
-            //this.skelType = ((CraftSkeleton) e).getHandle().getSkeletonType();
+        } else if (et == EntityType.SKELETON) {            
             this.skelType = ((Skeleton) e).getSkeletonType().getId();
-        } else if (et == EntityType.ZOMBIE) {
-            //this.zombieVillager = ((CraftZombie)e).getHandle().isVillager();
+        } else if (et == EntityType.ZOMBIE) {            
             this.zombieVillager = ((Zombie)e).isVillager();
         } else if (et == EntityType.OCELOT) {
             this.catType = ((Ocelot)e).getCatType().name();
@@ -166,8 +161,7 @@ public final class Pet {
             } else {
                 this.followed = true;
             }
-        } else if (et == EntityType.WOLF) {
-            //this.color = (DyeColor.getByData((byte) ((CraftWolf)e).getHandle().getCollarColor())).name();                      
+        } else if (et == EntityType.WOLF) {                                 
             this.color = ((Wolf)e).getCollarColor().name(); 
             this.sitting = ((Wolf)e).isSitting();
             if (this.sitting) {
@@ -189,6 +183,11 @@ public final class Pet {
         }
         if (PetConfig.randomizePetNames) {
             this.petName = PetMain.get().getRandomName();
+        }
+        this.petName = PetMain.get().colorizePetname(petName);
+        if (PetConfig.customNamePlates) {            
+            ((LivingEntity)e).setCustomName(petName);
+            ((LivingEntity)e).setCustomNameVisible(true);            
         }
         this.x = e.getLocation().getX();
         this.y = e.getLocation().getY();

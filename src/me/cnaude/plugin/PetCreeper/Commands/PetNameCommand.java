@@ -12,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 /**
@@ -51,11 +52,16 @@ public class PetNameCommand implements CommandExecutor {
                                 }
                             } else {
                                 pet.petName = s;
-                            }                            
+                            }
+                            pet.petName = plugin.colorizePetname(pet.petName);                                                        
                             if (plugin.petNameList.containsKey(e)) {
                                 plugin.petNameList.remove(e);
                                 plugin.petNameList.put(e, pet.petName);
-                            }                            
+                            } 
+                            if (PetConfig.customNamePlates) {
+                                ((LivingEntity)e).setCustomName(pet.petName);
+                                ((LivingEntity)e).setCustomNameVisible(true);
+                            }
                             plugin.message(p, ChatColor.GREEN + "You named your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + "!");
                         } else {
                             plugin.message(p, ChatColor.RED + "Invalid pet name.");

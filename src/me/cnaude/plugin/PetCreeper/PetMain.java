@@ -276,6 +276,20 @@ public class PetMain extends JavaPlugin {
             return false;
         }
     }
+    
+    public String colorizePetname(String s) {
+        String petName = s;
+        if (petName.startsWith("&")) {
+            petName = ChatColor.translateAlternateColorCodes('&', petName);
+        } else if (!petName.startsWith("§")) {
+            try {
+                petName = ChatColor.valueOf(PetConfig.namePlateColor) + petName;
+            } catch (Exception ex) {
+                logInfo("Invalid NamePlateColor: " + PetConfig.namePlateColor);
+            }
+        } 
+        return petName;
+    }
 
     public boolean spawnPet(Pet pet, Player p, Location l, boolean msg) {
         boolean spawned = false;
@@ -585,9 +599,6 @@ public class PetMain extends JavaPlugin {
             int amt = bait.getAmount();
 
             if (((bait.getType().equals(PetConfig.getBait(et).getType())) && (amt > 0)) || spawned) {                
-                //if (!bait.getData().equals(PetConfig.getBait(et).getData())) {
-                //    return false;
-                //}
                 if (isPetOwner(p)) {
                     if (getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
                         p.sendMessage(ChatColor.RED + "You already have the maximum number of pets!");
@@ -736,6 +747,10 @@ public class PetMain extends JavaPlugin {
                     }
                     if (e instanceof Wolf) {
                         ((Wolf) e).setAngry(false);
+                    }
+                    if (PetConfig.customNamePlates) {
+                        ((LivingEntity)e).setCustomName(null);
+                        ((LivingEntity)e).setCustomNameVisible(false);
                     }
                     iterator.remove();
                     if (msg) {
