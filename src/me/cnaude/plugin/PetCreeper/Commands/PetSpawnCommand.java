@@ -78,7 +78,8 @@ public class PetSpawnCommand implements CommandExecutor {
                         return true;
                     }
                     if (!plugin.hasPerm(p, "petcreeper.spawn." + et.getName()) && !plugin.hasPerm(p, "petcreeper.spawn.All")) {
-                        p.sendMessage(ChatColor.RED + "You don't have permission to spawn a " + et.getName() + ".");
+                        p.sendMessage(ChatColor.RED + "You don't have permission to spawn a " + ChatColor.WHITE 
+                                + et.getName() + ChatColor.RED + ".");
                         return true;
                     }
                     for (int x = 1; x <= spawnCount; x++) {

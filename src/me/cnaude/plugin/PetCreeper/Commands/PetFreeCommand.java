@@ -30,6 +30,10 @@ public class PetFreeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
+            if (!plugin.hasPerm(p, "petcreeper.free")) {
+                plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
+                return true;
+            }
             if (plugin.isPetOwner(p)) {
                 if (args.length == 1) {
                     if (args[0].matches("\\d+")) {

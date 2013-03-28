@@ -175,7 +175,6 @@ public class PetPlayerListener implements Listener {
             return;
         }
         Action action = event.getAction();
-//        ItemStack item = p.getItemInHand();
         if (action == Action.LEFT_CLICK_AIR) {
             Block targetBlock = p.getTargetBlock(null, 100);
             Location blockLoc = targetBlock.getLocation();
