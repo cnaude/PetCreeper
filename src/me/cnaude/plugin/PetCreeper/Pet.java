@@ -49,6 +49,7 @@ public final class Pet {
     public double x, y, z;
     public String world;
     public boolean sitting = false;
+    public boolean baby = false;
 
     public enum modes {
 
@@ -84,7 +85,8 @@ public final class Pet {
             ((Skeleton)e).setSkeletonType(SkeletonType.getType(this.skelType));            
         }
         if (this.type == EntityType.ZOMBIE) {            
-            ((Zombie)e).setVillager(this.zombieVillager);
+            ((Zombie)e).setVillager(this.zombieVillager);            
+            ((Zombie)e).setBaby(baby);            
         }
         if (e instanceof Ageable) {
             ((Ageable) e).setAge(this.age);
@@ -153,6 +155,7 @@ public final class Pet {
             this.skelType = ((Skeleton) e).getSkeletonType().getId();
         } else if (et == EntityType.ZOMBIE) {            
             this.zombieVillager = ((Zombie)e).isVillager();
+            this.baby = ((Zombie)e).isBaby();
         } else if (et == EntityType.OCELOT) {
             this.catType = ((Ocelot)e).getCatType().name();
             this.sitting = ((Ocelot)e).isSitting();

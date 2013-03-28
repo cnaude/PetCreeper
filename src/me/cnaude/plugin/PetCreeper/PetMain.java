@@ -570,6 +570,8 @@ public class PetMain extends JavaPlugin {
         if (e instanceof Ageable) {
             ((Ageable) e).setBaby();
             pet.age = ((Ageable) e).getAge();
+        } else if (e instanceof Zombie) {
+            ((Zombie)e).setBaby(true);            
         }
     }
 

@@ -107,6 +107,9 @@ public class PetSpawnCommand implements CommandExecutor {
                             if (subType.equalsIgnoreCase("villager")) {
                                 ((CraftZombie)e).getHandle().setVillager(true);
                             }
+                            if (PetConfig.defaultPetAge.equalsIgnoreCase("baby")) {
+                                ((Zombie)e).setBaby(true);                                
+                            }
                         }
                         if (e instanceof Ocelot) {
                             if (!subType.isEmpty()) {
