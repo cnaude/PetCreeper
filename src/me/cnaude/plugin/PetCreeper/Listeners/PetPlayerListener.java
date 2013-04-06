@@ -1,7 +1,5 @@
 package me.cnaude.plugin.PetCreeper.Listeners;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import me.cnaude.plugin.PetCreeper.Pet;
 import me.cnaude.plugin.PetCreeper.PetConfig;
 import me.cnaude.plugin.PetCreeper.PetMain;
@@ -29,25 +27,18 @@ public class PetPlayerListener implements Listener {
         this.plugin = instance;
     }
 
-    class petSpawnTask extends TimerTask {
-
-        Player p;
-
-        @Override
-        public void run() {
-            plugin.spawnPetsOf(p);
-        }
-
-        public petSpawnTask(Player p) {
-            this.p = p;
-        }
+    public void delayedPetSpawnTask(final Player p) {        
+        plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+            @Override
+            public void run() {                
+                plugin.spawnPetsOf(p);
+            }
+        }, 20 );  
     }
-
+    
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Timer timer = new Timer();
-        long delay = 1 * 1000;
-        timer.schedule(new petSpawnTask(event.getPlayer()), delay);
+        delayedPetSpawnTask(event.getPlayer());              
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

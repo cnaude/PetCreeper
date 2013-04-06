@@ -364,7 +364,7 @@ public class PetMain extends JavaPlugin {
     public void teleportPetsOf(Player p, Location l, boolean msg, boolean ev) {
         if (isPetOwner(p)) {
             for (Iterator i = getPetsOf(p).iterator(); i.hasNext();) {
-                teleportPet((Pet) i.next(), l, msg, ev);
+                teleportPet((Pet) i.next(), l.clone(), msg, ev);
             }
         }
     }
@@ -415,6 +415,8 @@ public class PetMain extends JavaPlugin {
             Entity e = entityIds.get(pet.entityId);
             Player p = getServer().getPlayer(petList.get(e));
             this.despawnPet(pet);
+            Location loc = l.clone();
+            loc.setY(l.getY() + 2);
             this.spawnPet(pet, p, l, false);
             if (msg) {
                 p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + getNameOfPet(e) + ChatColor.GREEN + " teleported to you.");
