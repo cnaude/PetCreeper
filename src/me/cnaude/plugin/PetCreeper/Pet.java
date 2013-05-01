@@ -55,7 +55,8 @@ public final class Pet {
 
         PASSIVE,
         DEFENSIVE,
-        AGGRESSIVE,}
+        AGGRESSIVE,
+    }
 
     public Pet(Entity e) {
         this.initPet(e);
@@ -82,15 +83,15 @@ public final class Pet {
             ((Villager) e).setProfession(this.prof);
         }
         if (this.type == EntityType.SKELETON) {
-            ((Skeleton)e).setSkeletonType(SkeletonType.getType(this.skelType));            
+            ((Skeleton) e).setSkeletonType(SkeletonType.getType(this.skelType));
         }
-        if (this.type == EntityType.ZOMBIE) {            
-            ((Zombie)e).setVillager(this.zombieVillager);            
-            ((Zombie)e).setBaby(baby);            
+        if (this.type == EntityType.ZOMBIE) {
+            ((Zombie) e).setVillager(this.zombieVillager);
+            ((Zombie) e).setBaby(baby);
         }
         if (e instanceof Ageable) {
             ((Ageable) e).setAge(this.age);
-            ((Ageable) e).setAgeLock(this.ageLocked);        
+            ((Ageable) e).setAgeLock(this.ageLocked);
         }
         if (e instanceof LivingEntity) {
             ((LivingEntity) e).setHealth(this.hp);
@@ -105,25 +106,25 @@ public final class Pet {
         }
         if (e instanceof Wolf) {
             if (this.followed || !this.sitting) {
-                ((Wolf)e).setSitting(false);
+                ((Wolf) e).setSitting(false);
             } else {
-                ((Wolf)e).setSitting(true);
-            }  
-            if (!color.isEmpty()) {                
-                ((Wolf)e).setCollarColor(DyeColor.valueOf(this.color));
+                ((Wolf) e).setSitting(true);
+            }
+            if (!color.isEmpty()) {
+                ((Wolf) e).setCollarColor(DyeColor.valueOf(this.color));
             }
         }
         if (e instanceof Ocelot) {
-            ((Ocelot)e).setCatType(Ocelot.Type.valueOf(this.catType));
+            ((Ocelot) e).setCatType(Ocelot.Type.valueOf(this.catType));
             if (this.followed || !this.sitting) {
-                ((Ocelot)e).setSitting(false);
+                ((Ocelot) e).setSitting(false);
             } else {
-                ((Ocelot)e).setSitting(true);
+                ((Ocelot) e).setSitting(true);
             }
         }
         if (PetConfig.customNamePlates) {
-            ((LivingEntity)e).setCustomName(ChatColor.translateAlternateColorCodes('&', petName));
-            ((LivingEntity)e).setCustomNameVisible(true);
+            ((LivingEntity) e).setCustomName(ChatColor.translateAlternateColorCodes('&', petName));
+            ((LivingEntity) e).setCustomNameVisible(true);
         }
     }
 
@@ -151,22 +152,22 @@ public final class Pet {
         } else if (et == EntityType.ENDERMAN) {
             Enderman enderman = (Enderman) e;
             this.carriedMat = enderman.getCarriedMaterial();
-        } else if (et == EntityType.SKELETON) {            
+        } else if (et == EntityType.SKELETON) {
             this.skelType = ((Skeleton) e).getSkeletonType().getId();
-        } else if (et == EntityType.ZOMBIE) {            
-            this.zombieVillager = ((Zombie)e).isVillager();
-            this.baby = ((Zombie)e).isBaby();
+        } else if (et == EntityType.ZOMBIE) {
+            this.zombieVillager = ((Zombie) e).isVillager();
+            this.baby = ((Zombie) e).isBaby();
         } else if (et == EntityType.OCELOT) {
-            this.catType = ((Ocelot)e).getCatType().name();
-            this.sitting = ((Ocelot)e).isSitting();
+            this.catType = ((Ocelot) e).getCatType().name();
+            this.sitting = ((Ocelot) e).isSitting();
             if (this.sitting) {
                 this.followed = false;
             } else {
                 this.followed = true;
             }
-        } else if (et == EntityType.WOLF) {                                 
-            this.color = ((Wolf)e).getCollarColor().name(); 
-            this.sitting = ((Wolf)e).isSitting();
+        } else if (et == EntityType.WOLF) {
+            this.color = ((Wolf) e).getCollarColor().name();
+            this.sitting = ((Wolf) e).isSitting();
             if (this.sitting) {
                 this.followed = false;
             } else {
@@ -188,9 +189,9 @@ public final class Pet {
             this.petName = PetMain.get().getRandomName();
         }
         this.petName = PetMain.get().colorizePetname(petName);
-        if (PetConfig.customNamePlates) {            
-            ((LivingEntity)e).setCustomName(petName);
-            ((LivingEntity)e).setCustomNameVisible(true);            
+        if (PetConfig.customNamePlates) {
+            ((LivingEntity) e).setCustomName(petName);
+            ((LivingEntity) e).setCustomNameVisible(true);
         }
         this.x = e.getLocation().getX();
         this.y = e.getLocation().getY();

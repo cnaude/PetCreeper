@@ -10,14 +10,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftSkeleton;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftZombie;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Zombie;
 
 /**
@@ -100,12 +99,12 @@ public class PetSpawnCommand implements CommandExecutor {
                         }
                         if (e instanceof Skeleton) {
                             if (subType.equalsIgnoreCase("wither")) {
-                                ((CraftSkeleton) e).getHandle().setSkeletonType(1);
+                                ((Skeleton) e).setSkeletonType(SkeletonType.WITHER);
                             }
                         }
                         if (e instanceof Zombie) {
                             if (subType.equalsIgnoreCase("villager")) {
-                                ((CraftZombie)e).getHandle().setVillager(true);
+                                ((Zombie)e).setVillager(true);
                             }
                             if (PetConfig.defaultPetAge.equalsIgnoreCase("baby")) {
                                 ((Zombie)e).setBaby(true);                                
