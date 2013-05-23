@@ -1,7 +1,8 @@
-package me.cnaude.plugin.PetCreeper;
+package com.cnaude.petcreeper;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
+import org.bukkit.craftbukkit.libs.com.google.gson.annotations.Expose;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Creeper;
@@ -26,30 +27,31 @@ import org.bukkit.material.MaterialData;
 
 public final class Pet {
 
-    public EntityType type = EntityType.UNKNOWN;
-    public Profession prof = Profession.FARMER;
-    public String catType = "BLACK_CAT";
-    public int entityId = -1;
-    public int hp = 0;
-    public int size = 0;
-    public boolean sheared = false;
-    public String color = "";
-    public boolean saddled = false;
-    public String petName = "";
-    public boolean followed = true;
-    public int age = 0;
-    boolean powered = false;
-    MaterialData carriedMat = new MaterialData(0);
-    public modes mode = modes.PASSIVE;
-    public int level = 1;
-    public int exp = 0;
-    public int skelType = 0;
-    public boolean ageLocked = false;
-    public boolean zombieVillager = false;
-    public double x, y, z;
-    public String world;
-    public boolean sitting = false;
-    public boolean baby = false;
+    private final PetCreeper plugin;
+    @Expose public EntityType type = EntityType.UNKNOWN;
+    @Expose public Profession prof = Profession.FARMER;
+    @Expose public String catType = "BLACK_CAT";
+    @Expose public int entityId = -1;
+    @Expose public int hp = 0;
+    @Expose public int size = 0;
+    @Expose public boolean sheared = false;
+    @Expose public String color = "";
+    @Expose public boolean saddled = false;
+    @Expose public String petName = "";
+    @Expose public boolean followed = true;
+    @Expose public int age = 0;
+    @Expose boolean powered = false;
+    @Expose MaterialData carriedMat = new MaterialData(0);
+    @Expose public modes mode = modes.PASSIVE;
+    @Expose public int level = 1;
+    @Expose public int exp = 0;
+    @Expose public int skelType = 0;
+    @Expose public boolean ageLocked = false;
+    @Expose public boolean zombieVillager = false;
+    @Expose public double x, y, z;
+    @Expose public String world;
+    @Expose public boolean sitting = false;
+    @Expose public boolean baby = false;
 
     public enum modes {
 
@@ -58,8 +60,13 @@ public final class Pet {
         AGGRESSIVE,
     }
 
-    public Pet(Entity e) {
+    public Pet(PetCreeper plugin, Entity e) {
+        this.plugin = plugin;
         this.initPet(e);
+    }
+    
+    public Pet(PetCreeper plugin) {
+        this.plugin = plugin;
     }
 
     public void initEntity(Entity e, Player p) {
@@ -186,9 +193,9 @@ public final class Pet {
             this.petName = "Wither" + this.petName;
         }
         if (PetConfig.randomizePetNames) {
-            this.petName = PetMain.get().getRandomName();
+            this.petName = plugin.getRandomName();
         }
-        this.petName = PetMain.get().colorizePetname(petName);
+        this.petName = plugin.colorizePetname(petName);
         if (PetConfig.customNamePlates) {
             ((LivingEntity) e).setCustomName(petName);
             ((LivingEntity) e).setCustomNameVisible(true);
@@ -197,8 +204,5 @@ public final class Pet {
         this.y = e.getLocation().getY();
         this.z = e.getLocation().getZ();
         this.world = e.getLocation().getWorld().getName();
-    }
-
-    public Pet() {
     }
 }

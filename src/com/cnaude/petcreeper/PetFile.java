@@ -1,4 +1,4 @@
-package me.cnaude.plugin.PetCreeper;
+package com.cnaude.petcreeper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,10 +9,9 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-//import com.google.gson.Gson;
+import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
 
 /**
  *
@@ -20,7 +19,7 @@ import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
  */
 public class PetFile {
     
-    private final PetMain plugin;
+    private final PetCreeper plugin;
     private File dataFolder;
 
     private boolean dataFolderExists() {
@@ -31,7 +30,7 @@ public class PetFile {
         return this.dataFolder.exists();
     }
     
-    public PetFile(PetMain instance) {
+    public PetFile(PetCreeper instance) {
         this.plugin = instance;
     }
     
@@ -45,10 +44,9 @@ public class PetFile {
             File petFile = new File(this.dataFolder, "pets.json");            
             BufferedWriter out = new BufferedWriter(new FileWriter(petFile));
             for (Map.Entry<String, ArrayList<Pet>> entry : this.plugin.playersWithPets.entrySet()) {                           
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
                 ArrayList<Pet> pets = entry.getValue();
-                for(Iterator i = pets.iterator();i.hasNext();) {                    
-                    Pet pet = (Pet)i.next();                    
+                for (Pet pet : pets) {                    
                     String json = gson.toJson((Object)pet);
                     out.write(entry.getKey() + "=" + json + "\n");
                 }                
@@ -70,7 +68,7 @@ public class PetFile {
         File creeperFileJson = new File(this.dataFolder, "pets.json");
         if (creeperFileJson.exists()) {
             plugin.logInfo("Found pets.json. Attempting to load pets.");
-            Gson gson = new Gson();        
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             try {             
                 BufferedReader in = new BufferedReader(new FileReader(creeperFileJson));
                 String line;
@@ -102,7 +100,7 @@ public class PetFile {
             File file = new File(this.dataFolder + "/" + fileName);
             if (!file.exists()) {
                 try {
-                    InputStream in = PetMain.class.getResourceAsStream("/me/cnaude/plugin/PetCreeper/PetNameFiles/" + fileName);
+                    InputStream in = PetCreeper.class.getResourceAsStream("/" + fileName);
                     byte[] buf = new byte[1024];
                     int len;
                     OutputStream out = new FileOutputStream(file);

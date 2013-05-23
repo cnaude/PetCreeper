@@ -1,16 +1,14 @@
-package me.cnaude.plugin.PetCreeper;
+package com.cnaude.petcreeper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.bukkit.Material;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public final class PetConfig {
-
-    private final Configuration config;
-    private final PetMain plugin;
+    
+    private final PetCreeper plugin;
     private static HashMap<String, ItemStack> baitMap = new HashMap<String, ItemStack>();
     private static HashMap<String, Integer> tamingXPMap = new HashMap<String, Integer>();
     public static boolean provokable;
@@ -70,9 +68,8 @@ public final class PetConfig {
         "Zombie"
     };
 
-    public PetConfig(PetMain instance) {
-        this.plugin = instance;
-        this.config = plugin.getConfig();
+    public PetConfig(final PetCreeper plugin) {
+        this.plugin = plugin;
         load();
     }
 
@@ -109,36 +106,36 @@ public final class PetConfig {
     
     public void load() {
         for (String s : mobs) {
-            baitMap.put(s, getMat(config.getString(s),s));
-            tamingXPMap.put(s, (config.getInt("mcMMOTamingXP." + s)));
+            baitMap.put(s, getMat(plugin.getConfig().getString(s),s));
+            tamingXPMap.put(s, (plugin.getConfig().getInt("mcMMOTamingXP." + s)));
         }
 
-        provokable = config.getBoolean("Provokable", true);
-        ridable = config.getBoolean("Ridable", true);
-        attackTame = config.getBoolean("AttackTame", false);
-        idleDistance = config.getInt("IdleDistance", 5);
-        attackDistance = config.getInt("AttackDistance", 10);
-        maxPetsPerPlayer = config.getInt("MaxPetsPerPlayer", 1);
-        opsBypassPerms = config.getBoolean("OpsBypassPerms", false);
-        PetsAttackPlayers = config.getBoolean("PetsAttackPets", true);
-        petsAttackPets = config.getBoolean("PetsAttackPets", true);
-        mainLoop = config.getLong("MainLoop", 1000L);
-        disablePermissions = config.getBoolean("DisablePermissions", false);
-        defaultPetMode = config.getString("DefaultPetMode", "P").toUpperCase();
-        invinciblePets = config.getBoolean("InvinciblePets", true);
-        maxSpawnCount = config.getInt("MaxSpawnCount", 1);
-        overrideDefaultTaming = config.getBoolean("OverrideDefaultTaming", true);
-        nameFiles = (ArrayList)config.getStringList("NameFiles");
-        randomizePetNames = config.getBoolean("RandomizePetNames", true);
-        mcMMOSuport = config.getBoolean("mcMMOSuport", true);     
-        rememberPetLocation = config.getBoolean("RememberPetLocation", false);
-        noDropOnKillCommand = config.getBoolean("NoDropOnKillCommand", false);
-        defaultPetAge = config.getString("DefaultPetAge", "adult");
-        lockSpawnedBabies = config.getBoolean("LockSpawnedBabies",false);
-        customNamePlates = config.getBoolean("CustomNamePlates",true);
-        namePlateColor = config.getString("NamePlateColor","GREEN");
+        provokable = plugin.getConfig().getBoolean("Provokable", true);
+        ridable = plugin.getConfig().getBoolean("Ridable", true);
+        attackTame = plugin.getConfig().getBoolean("AttackTame", false);
+        idleDistance = plugin.getConfig().getInt("IdleDistance", 5);
+        attackDistance = plugin.getConfig().getInt("AttackDistance", 10);
+        maxPetsPerPlayer = plugin.getConfig().getInt("MaxPetsPerPlayer", 1);
+        opsBypassPerms = plugin.getConfig().getBoolean("OpsBypassPerms", false);
+        PetsAttackPlayers = plugin.getConfig().getBoolean("PetsAttackPets", true);
+        petsAttackPets = plugin.getConfig().getBoolean("PetsAttackPets", true);
+        mainLoop = plugin.getConfig().getLong("MainLoop", 1000L);
+        disablePermissions = plugin.getConfig().getBoolean("DisablePermissions", false);
+        defaultPetMode = plugin.getConfig().getString("DefaultPetMode", "P").toUpperCase();
+        invinciblePets = plugin.getConfig().getBoolean("InvinciblePets", true);
+        maxSpawnCount = plugin.getConfig().getInt("MaxSpawnCount", 1);
+        overrideDefaultTaming = plugin.getConfig().getBoolean("OverrideDefaultTaming", true);
+        nameFiles = (ArrayList)plugin.getConfig().getStringList("NameFiles");
+        randomizePetNames = plugin.getConfig().getBoolean("RandomizePetNames", true);
+        mcMMOSuport = plugin.getConfig().getBoolean("mcMMOSuport", true);     
+        rememberPetLocation = plugin.getConfig().getBoolean("RememberPetLocation", false);
+        noDropOnKillCommand = plugin.getConfig().getBoolean("NoDropOnKillCommand", false);
+        defaultPetAge = plugin.getConfig().getString("DefaultPetAge", "adult");
+        lockSpawnedBabies = plugin.getConfig().getBoolean("LockSpawnedBabies",false);
+        customNamePlates = plugin.getConfig().getBoolean("CustomNamePlates",true);
+        namePlateColor = plugin.getConfig().getString("NamePlateColor","GREEN");
         
-        commandPrefix = config.getString("CommandPrefix", "pet");
+        commandPrefix = plugin.getConfig().getString("CommandPrefix", "pet");
     }
 
     public static ItemStack getBait(EntityType type) {        

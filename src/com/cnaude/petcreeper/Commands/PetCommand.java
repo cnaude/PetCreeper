@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.cnaude.plugin.PetCreeper.Commands;
+package com.cnaude.petcreeper.Commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import me.cnaude.plugin.PetCreeper.Pet;
-import me.cnaude.plugin.PetCreeper.PetConfig;
-import me.cnaude.plugin.PetCreeper.PetMain;
+import com.cnaude.petcreeper.Pet;
+import com.cnaude.petcreeper.PetConfig;
+import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,11 +22,11 @@ import org.bukkit.entity.Player;
  */
 public class PetCommand implements CommandExecutor {
 
-    private final PetMain plugin;
+    private final PetCreeper plugin;
     
     private static List<String> validCommands = new ArrayList<String>();
 
-    public PetCommand(PetMain instance) {
+    public PetCommand(PetCreeper instance) {
         plugin = instance;
         validCommands.add("age");
         validCommands.add("color");
@@ -46,6 +46,9 @@ public class PetCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
+            if (args.length == 0) {
+                return false;
+            }
             if (!plugin.hasPerm(p, "petcreeper.pet")) {
                 plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
                 return true;
@@ -56,7 +59,6 @@ public class PetCommand implements CommandExecutor {
                     return true;
                 }
             }
-            
             if (args.length == 1) {
                 if (args[0].matches("\\d+")) {
                     if (plugin.isPetOwner(p)) {
@@ -76,13 +78,20 @@ public class PetCommand implements CommandExecutor {
                     } else {
                         plugin.message(p, ChatColor.RED + "You have no pets. :(");
                     }
-                } else if (args[0].toString().equals("?")) {
-                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                } else if (args[0].toString().equals("?") || args[0].toString().equalsIgnoreCase("help")) {
+                    //plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                    return false;
                 } else {
                     dispatch(sender, args);
                 } 
             } else {
                 dispatch(sender, args);
+            }
+        } else {
+            if (args.length == 1) {
+                if (args[0].matches("reload")) {
+                    Bukkit.dispatchCommand(sender, "petreload");
+                }
             }
         }
         return true;

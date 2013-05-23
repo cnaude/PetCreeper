@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.cnaude.plugin.PetCreeper.Commands;
+package com.cnaude.petcreeper.Commands;
 
-import me.cnaude.plugin.PetCreeper.Pet;
-import me.cnaude.plugin.PetCreeper.PetConfig;
-import me.cnaude.plugin.PetCreeper.PetMain;
+import com.cnaude.petcreeper.Pet;
+import com.cnaude.petcreeper.PetConfig;
+import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,9 +25,9 @@ import org.bukkit.inventory.ItemStack;
  */
 public class PetSaddleCommand implements CommandExecutor {
 
-    private final PetMain plugin;
+    private final PetCreeper plugin;
 
-    public PetSaddleCommand(PetMain instance) {
+    public PetSaddleCommand(PetCreeper instance) {
         plugin = instance;
     }
 

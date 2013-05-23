@@ -1,8 +1,8 @@
-package me.cnaude.plugin.PetCreeper.Listeners;
+package com.cnaude.petcreeper.Listeners;
 
-import me.cnaude.plugin.PetCreeper.Pet;
-import me.cnaude.plugin.PetCreeper.PetConfig;
-import me.cnaude.plugin.PetCreeper.PetMain;
+import com.cnaude.petcreeper.Pet;
+import com.cnaude.petcreeper.PetConfig;
+import com.cnaude.petcreeper.PetCreeper;
 import net.minecraft.server.v1_5_R3.Navigation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,9 +21,9 @@ import org.bukkit.event.player.*;
 
 public class PetPlayerListener implements Listener {
 
-    private final PetMain plugin;
+    private final PetCreeper plugin;
 
-    public PetPlayerListener(PetMain instance) {
+    public PetPlayerListener(PetCreeper instance) {
         this.plugin = instance;
     }
 

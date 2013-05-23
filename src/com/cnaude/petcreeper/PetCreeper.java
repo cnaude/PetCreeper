@@ -1,4 +1,4 @@
-package me.cnaude.plugin.PetCreeper;
+package com.cnaude.petcreeper;
 
 import com.gmail.nossr50.api.ExperienceAPI;
 import java.util.ArrayList;
@@ -9,39 +9,40 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ThaH3lper.com.EpicBoss;
-import me.cnaude.plugin.PetCreeper.Commands.PetAgeCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetColorCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetFreeCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetGiveCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetInfoCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetKillCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetListCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetModeCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetNameCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetReloadCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetSaddleCommand;
-import me.cnaude.plugin.PetCreeper.Commands.PetSpawnCommand;
-import me.cnaude.plugin.PetCreeper.Listeners.PetEntityListener;
-import me.cnaude.plugin.PetCreeper.Listeners.PetPlayerListener;
+import com.cnaude.petcreeper.Commands.PetAgeCommand;
+import com.cnaude.petcreeper.Commands.PetColorCommand;
+import com.cnaude.petcreeper.Commands.PetCommand;
+import com.cnaude.petcreeper.Commands.PetFreeCommand;
+import com.cnaude.petcreeper.Commands.PetGiveCommand;
+import com.cnaude.petcreeper.Commands.PetInfoCommand;
+import com.cnaude.petcreeper.Commands.PetKillCommand;
+import com.cnaude.petcreeper.Commands.PetListCommand;
+import com.cnaude.petcreeper.Commands.PetModeCommand;
+import com.cnaude.petcreeper.Commands.PetNameCommand;
+import com.cnaude.petcreeper.Commands.PetReloadCommand;
+import com.cnaude.petcreeper.Commands.PetSaddleCommand;
+import com.cnaude.petcreeper.Commands.PetSpawnCommand;
+import com.cnaude.petcreeper.Listeners.PetEntityListener;
+import com.cnaude.petcreeper.Listeners.PetPlayerListener;
 import net.minecraft.server.v1_5_R3.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PetMain extends JavaPlugin {
+public class PetCreeper extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "PetCreeper";
     public static final String LOG_HEADER = "[" + PLUGIN_NAME + "]";
     private final PetPlayerListener playerListener = new PetPlayerListener(this);
     private final PetEntityListener entityListener = new PetEntityListener(this);
-    private static PetMain instance = null;
+    private static PetCreeper instance = null;
     public ConcurrentHashMap<String, ArrayList<Pet>> playersWithPets = new ConcurrentHashMap<String, ArrayList<Pet>>();
     public ConcurrentHashMap<Entity, String> petList = new ConcurrentHashMap<Entity, String>();
     public ConcurrentHashMap<Entity, String> petNameList = new ConcurrentHashMap<Entity, String>();
@@ -59,16 +60,16 @@ public class PetMain extends JavaPlugin {
     @Override
     public void onEnable() {
         loadConfig();
-
+        petFile.loadNames();
+        
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(entityListener, this);
-
+        
         if (petFile.loadPets()) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 spawnPetsOf(p);
             }
-        }
-        petFile.loadNames();
+        }    
 
         petFollowTask();
 
@@ -116,7 +117,7 @@ public class PetMain extends JavaPlugin {
     public void logInfo(String s) {
         log.log(Level.INFO, String.format("%s %s", LOG_HEADER, s));
     }
-    
+
     public void logError(String s) {
         log.log(Level.SEVERE, String.format("%s %s", LOG_HEADER, s));
     }
@@ -132,19 +133,18 @@ public class PetMain extends JavaPlugin {
     }
 
     public void loadConfig() {
-        if (!this.configLoaded) {
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-            logInfo("Configuration loaded.");
-            config = new PetConfig(this);
-        } else {
-            reloadConfig();
-            getConfig().options().copyDefaults(false);
-            config = new PetConfig(this);
-            logInfo("Configuration reloaded.");
-        }
-        instance = this;
-        configLoaded = true;
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+        logInfo("Configuration loaded.");
+        config = new PetConfig(this);
+    }
+
+    public void reloadPetConfig(CommandSender sender) {
+        sender.sendMessage("Reloading PetCreeper config.yml...");
+        reloadConfig();
+        getConfig().options().copyDefaults(false);        
+        config = new PetConfig(this);
+        sender.sendMessage("Done");
     }
 
     public boolean hasPerm(Player p, String s) {
@@ -245,11 +245,11 @@ public class PetMain extends JavaPlugin {
             message(p, ChatColor.GREEN + "  Age Lock: " + ChatColor.WHITE + ((Ageable) e).getAgeLock());
         }
         if (e.getType() == EntityType.WOLF) {
-            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + ((Wolf)e).getCollarColor().name());
+            message(p, ChatColor.GREEN + "  Collar: " + ChatColor.WHITE + ((Wolf) e).getCollarColor().name());
         }
         if (e.getType() == EntityType.ZOMBIE) {
             String zt = "Normal";
-            if (((Zombie)e).isVillager()) {
+            if (((Zombie) e).isVillager()) {
                 zt = "Villager";
             }
             message(p, ChatColor.GREEN + "  Zombie Type: " + ChatColor.WHITE + zt);
@@ -276,7 +276,7 @@ public class PetMain extends JavaPlugin {
             return false;
         }
     }
-    
+
     public String colorizePetname(String s) {
         String petName = s;
         if (petName.startsWith("&")) {
@@ -287,7 +287,7 @@ public class PetMain extends JavaPlugin {
             } catch (Exception ex) {
                 logInfo("Invalid NamePlateColor: " + PetConfig.namePlateColor);
             }
-        } 
+        }
         return petName;
     }
 
@@ -573,7 +573,7 @@ public class PetMain extends JavaPlugin {
             ((Ageable) e).setBaby();
             pet.age = ((Ageable) e).getAge();
         } else if (e instanceof Zombie) {
-            ((Zombie)e).setBaby(true);            
+            ((Zombie) e).setBaby(true);
         }
     }
 
@@ -602,7 +602,7 @@ public class PetMain extends JavaPlugin {
             ItemStack bait = p.getItemInHand();
             int amt = bait.getAmount();
 
-            if (((bait.getType().equals(PetConfig.getBait(et).getType())) && (amt > 0)) || spawned) {                
+            if (((bait.getType().equals(PetConfig.getBait(et).getType())) && (amt > 0)) || spawned) {
                 if (isPetOwner(p)) {
                     if (getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
                         p.sendMessage(ChatColor.RED + "You already have the maximum number of pets!");
@@ -630,7 +630,7 @@ public class PetMain extends JavaPlugin {
                 } else {
                     pe = e;
                 }
-                Pet pet = new Pet(pe);
+                Pet pet = new Pet(this, pe);
                 this.playersWithPets.get(p.getName()).add(pet);
                 tamed = true;
                 pe.setFireTicks(0);
@@ -713,7 +713,7 @@ public class PetMain extends JavaPlugin {
     }
 
     public Pet getPet(Entity e) {
-        Pet returnPet = new Pet();
+        Pet returnPet = new Pet(this);
         if (petList.containsKey(e)) {
             for (Pet pet : getPetsOf(getServer().getPlayer(petList.get(e)))) {
                 if (pet.entityId == e.getEntityId()) {
@@ -753,8 +753,8 @@ public class PetMain extends JavaPlugin {
                         ((Wolf) e).setAngry(false);
                     }
                     if (PetConfig.customNamePlates) {
-                        ((LivingEntity)e).setCustomName(null);
-                        ((LivingEntity)e).setCustomNameVisible(false);
+                        ((LivingEntity) e).setCustomName(null);
+                        ((LivingEntity) e).setCustomNameVisible(false);
                     }
                     iterator.remove();
                     if (msg) {
@@ -787,10 +787,6 @@ public class PetMain extends JavaPlugin {
         pet.followed = f;
     }
 
-    public static PetMain get() {
-        return instance;
-    }
-
     public void setupEpicBossHandler() {
         Plugin epicBossPlugin = getServer().getPluginManager().getPlugin("EpicBossRecoded");
 
@@ -798,8 +794,8 @@ public class PetMain extends JavaPlugin {
             return;
         }
 
-        epicboss = ((EpicBoss)epicBossPlugin);
-        logInfo("EpicBoss detected. Players will not be able to tame bosses. [" + epicboss.toString() +"]");
+        epicboss = ((EpicBoss) epicBossPlugin);
+        logInfo("EpicBoss detected. Players will not be able to tame bosses. [" + epicboss.toString() + "]");
     }
 
     public String getRandomName() {

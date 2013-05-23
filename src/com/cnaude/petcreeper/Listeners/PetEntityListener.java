@@ -1,8 +1,8 @@
-package me.cnaude.plugin.PetCreeper.Listeners;
+package com.cnaude.petcreeper.Listeners;
 
-import me.cnaude.plugin.PetCreeper.Pet;
-import me.cnaude.plugin.PetCreeper.PetConfig;
-import me.cnaude.plugin.PetCreeper.PetMain;
+import com.cnaude.petcreeper.Pet;
+import com.cnaude.petcreeper.PetConfig;
+import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -12,9 +12,9 @@ import org.bukkit.event.entity.*;
 
 public class PetEntityListener implements Listener {
 
-    private final PetMain plugin;
+    private final PetCreeper plugin;
 
-    public PetEntityListener(PetMain instance) {
+    public PetEntityListener(PetCreeper instance) {
         this.plugin = instance;
     }
 
