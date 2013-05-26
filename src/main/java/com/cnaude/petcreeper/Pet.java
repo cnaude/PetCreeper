@@ -54,7 +54,6 @@ public final class Pet {
     @Expose public boolean baby = false;
 
     public enum modes {
-
         PASSIVE,
         DEFENSIVE,
         AGGRESSIVE,

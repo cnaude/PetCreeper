@@ -1,6 +1,6 @@
 name: PetCreeper
 main: com.cnaude.petcreeper.PetCreeper
-version: 1.12.5
+version: 1.12.6
 description: Tame those mobs!
 author: Chris Naude
 softdepends: [mcMMO,EpicBossRecoded]
