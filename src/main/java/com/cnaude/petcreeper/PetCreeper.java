@@ -42,7 +42,6 @@ public class PetCreeper extends JavaPlugin {
     public static final String LOG_HEADER = "[" + PLUGIN_NAME + "]";
     private final PetPlayerListener playerListener = new PetPlayerListener(this);
     private final PetEntityListener entityListener = new PetEntityListener(this);
-    private static PetCreeper instance = null;
     public ConcurrentHashMap<String, ArrayList<Pet>> playersWithPets = new ConcurrentHashMap<String, ArrayList<Pet>>();
     public ConcurrentHashMap<Entity, String> petList = new ConcurrentHashMap<Entity, String>();
     public ConcurrentHashMap<Entity, String> petNameList = new ConcurrentHashMap<Entity, String>();
@@ -128,7 +127,7 @@ public class PetCreeper extends JavaPlugin {
         p.sendMessage(msg);
     }
 
-    public static PetConfig getPConfig() {
+    public PetConfig getPConfig() {
         return config;
     }
 
@@ -294,7 +293,11 @@ public class PetCreeper extends JavaPlugin {
     public boolean spawnPet(Pet pet, Player p, Location l, boolean msg) {
         boolean spawned = false;
         Location pos = l.clone();
-        pos.setY(pos.getY() + 1.0D);
+        if (pet.type.equals(EntityType.ENDER_DRAGON)) {
+            pos.setY(pos.getY() + 15.0D);
+        } else {
+            pos.setY(pos.getY() + 1.0D);
+        }
         if (pos instanceof Location) {
             try {
                 Entity e = p.getWorld().spawnEntity(pos, pet.type);

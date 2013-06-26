@@ -5,7 +5,7 @@
 
     <groupId>com.cnaude</groupId>
     <artifactId>PetCreeper</artifactId>
-    <version>1.12.5</version>
+    <version>1.12.8</version>
     <name>PetCreeper</name>
     <description>CraftBukkit plugin that allows players to get any mob as a pet.</description>
     <url>http://dev.bukkit.org/server-mods/petcreeper/</url>
@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Bukkit API Version, change if out dated -->
-        <bukkit.version>1.5.2-R0.1</bukkit.version>
+        <bukkit.version>1.5.2-R1.0</bukkit.version>
     </properties>
 
     <repositories>

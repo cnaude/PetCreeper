@@ -59,12 +59,12 @@ public final class Pet {
         AGGRESSIVE,
     }
 
-    public Pet(PetCreeper plugin, Entity e) {
+    public Pet(final PetCreeper plugin, Entity e) {
         this.plugin = plugin;
         this.initPet(e);
     }
     
-    public Pet(PetCreeper plugin) {
+    public Pet(final PetCreeper plugin) {
         this.plugin = plugin;
     }
 
@@ -191,10 +191,12 @@ public final class Pet {
         if (this.skelType == 1 && !PetConfig.randomizePetNames) {
             this.petName = "Wither" + this.petName;
         }
-        if (PetConfig.randomizePetNames) {
-            this.petName = plugin.getRandomName();
+        if (plugin != null) {
+            if (PetConfig.randomizePetNames) {
+                this.petName = plugin.getRandomName();
+            }
+            this.petName = plugin.colorizePetname(petName);
         }
-        this.petName = plugin.colorizePetname(petName);
         if (PetConfig.customNamePlates) {
             ((LivingEntity) e).setCustomName(petName);
             ((LivingEntity) e).setCustomNameVisible(true);

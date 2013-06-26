@@ -7,6 +7,7 @@ package com.cnaude.petcreeper.Commands;
 import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -88,7 +89,13 @@ public class PetSpawnCommand implements CommandExecutor {
                                 return true;
                             }
                         }
-                        Entity e = p.getWorld().spawnEntity(p.getLocation(), et);
+                        Location pos = p.getLocation().clone();
+                        if (et.equals(EntityType.ENDER_DRAGON)) {
+                            pos.setY(pos.getY() + 15.0D);
+                        } else {
+                            pos.setY(pos.getY() + 1.0D);
+                        }
+                        Entity e = p.getWorld().spawnEntity(pos, et);
                         if (e instanceof Ageable) {
                             if (PetConfig.defaultPetAge.equalsIgnoreCase("baby")) {
                                 ((Ageable)e).setBaby();
