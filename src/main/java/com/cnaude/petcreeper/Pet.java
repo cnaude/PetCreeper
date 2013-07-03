@@ -32,7 +32,7 @@ public final class Pet {
     @Expose public Profession prof = Profession.FARMER;
     @Expose public String catType = "BLACK_CAT";
     @Expose public int entityId = -1;
-    @Expose public int hp = 0;
+    @Expose public double hp = 0;
     @Expose public int size = 0;
     @Expose public boolean sheared = false;
     @Expose public String color = "";
@@ -136,7 +136,7 @@ public final class Pet {
 
     public void initPet(Entity e) {
         EntityType et = e.getType();
-        int health = ((LivingEntity) e).getHealth();
+        double health = ((LivingEntity) e).getHealth();
         if (et == EntityType.CREEPER) {
             this.powered = ((Creeper) e).isPowered();
         } else if (et == EntityType.SHEEP) {

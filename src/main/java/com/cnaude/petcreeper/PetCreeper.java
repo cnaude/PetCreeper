@@ -24,13 +24,24 @@ import com.cnaude.petcreeper.Commands.PetSaddleCommand;
 import com.cnaude.petcreeper.Commands.PetSpawnCommand;
 import com.cnaude.petcreeper.Listeners.PetEntityListener;
 import com.cnaude.petcreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.v1_5_R3.Navigation;
+import net.minecraft.server.v1_6_R1.EntityCow;
+import net.minecraft.server.v1_6_R1.EntityHorse;
+import net.minecraft.server.v1_6_R1.EntityInsentient;
+import net.minecraft.server.v1_6_R1.EntityIronGolem;
+import net.minecraft.server.v1_6_R1.EntityOcelot;
+import net.minecraft.server.v1_6_R1.EntityPig;
+import net.minecraft.server.v1_6_R1.EntitySheep;
+import net.minecraft.server.v1_6_R1.EntitySnowman;
+import net.minecraft.server.v1_6_R1.EntityVillager;
+import net.minecraft.server.v1_6_R1.EntityWither;
+import net.minecraft.server.v1_6_R1.EntityWolf;
+import net.minecraft.server.v1_6_R1.EntityZombie;
+import net.minecraft.server.v1_6_R1.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -438,7 +449,7 @@ public class PetCreeper extends JavaPlugin {
             return;
         }
 
-        // Movoing the dragon is too buggy
+        // Moving the dragon is too buggy
         if (e instanceof EnderDragon) {
             return;
         }
@@ -449,7 +460,36 @@ public class PetCreeper extends JavaPlugin {
         if (e.getLocation().distance(p.getLocation()) > 15) {
             e.teleport(p);
         } else {
-            Navigation n = ((CraftLivingEntity) e).getHandle().getNavigation();
+            Navigation n;
+            if (e instanceof EntityCow) {
+                n = ((EntityCow) e).getNavigation();
+            } else if (e instanceof EntityHorse) {
+                n = ((EntityHorse) e).getNavigation();
+            } else if (e instanceof EntityInsentient) {
+                n = ((EntityInsentient) e).getNavigation();
+            } else if (e instanceof EntityIronGolem) {
+                n = ((EntityIronGolem) e).getNavigation();
+            } else if (e instanceof EntityOcelot) {
+                n = ((EntityOcelot) e).getNavigation();
+            }else if (e instanceof EntityOcelot) {
+                n = ((EntityOcelot) e).getNavigation();
+            }else if (e instanceof EntityPig) {
+                n = ((EntityPig) e).getNavigation();
+            }else if (e instanceof EntitySheep) {
+                n = ((EntitySheep) e).getNavigation();
+            }else if (e instanceof EntitySnowman) {
+                n = ((EntitySnowman) e).getNavigation();
+            }else if (e instanceof EntityVillager) {
+                n = ((EntityVillager) e).getNavigation();
+            }else if (e instanceof EntityWither) {
+                n = ((EntityWither) e).getNavigation();
+            }else if (e instanceof EntityWolf) {
+                n = ((EntityWolf) e).getNavigation();
+            }else if (e instanceof EntityZombie) {
+                n = ((EntityZombie) e).getNavigation();
+            }else {
+                return;
+            }
             n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.5f);
         }
     }
