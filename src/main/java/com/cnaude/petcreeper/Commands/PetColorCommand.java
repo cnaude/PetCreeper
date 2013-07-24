@@ -5,7 +5,6 @@
 package com.cnaude.petcreeper.Commands;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -71,7 +70,7 @@ public class PetColorCommand implements CommandExecutor {
                         plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                     }
                 } else {
-                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "color [id] [color]");
+                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "color [id] [color]");
                 }
             } else {
                 plugin.message(p, ChatColor.RED + "You have no pets. :(");

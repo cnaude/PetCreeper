@@ -9,34 +9,35 @@ import org.bukkit.inventory.ItemStack;
 public final class PetConfig {
     
     private final PetCreeper plugin;
-    private static HashMap<String, ItemStack> baitMap = new HashMap<String, ItemStack>();
-    private static HashMap<String, Integer> tamingXPMap = new HashMap<String, Integer>();
-    public static boolean provokable;
-    public static boolean ridable;
-    public static boolean attackTame;
-    public static int idleDistance;
-    public static int attackDistance;
-    public static int maxPetsPerPlayer;
-    public static boolean opsBypassPerms;
-    public static boolean PetsAttackPlayers;
-    public static boolean petsAttackPets;
-    public static boolean invinciblePets;
-    public static long mainLoop;
-    public static boolean disablePermissions;
-    public static String defaultPetMode;
-    public static String commandPrefix;
-    public static int maxSpawnCount;
-    public static boolean overrideDefaultTaming;
-    public static ArrayList<String> nameFiles = new ArrayList<String>();
-    public static boolean randomizePetNames;
-    public static boolean mcMMOSuport;    
-    public static boolean rememberPetLocation;
-    public static boolean noDropOnKillCommand;
-    public static String defaultPetAge;
-    public static boolean lockSpawnedBabies;
-    public static boolean customNamePlates;
-    public static String namePlateColor;
-    public static final String mobs[] = {
+    private HashMap<String, ItemStack> baitMap = new HashMap<String, ItemStack>();
+    private HashMap<String, Integer> tamingXPMap = new HashMap<String, Integer>();
+    public boolean provokable;
+    public boolean ridable;
+    public boolean attackTame;
+    public int idleDistance;
+    public int attackDistance;
+    public int maxPetsPerPlayer;
+    public boolean opsBypassPerms;
+    public boolean PetsAttackPlayers;
+    public boolean petsAttackPets;
+    public boolean invinciblePets;
+    public long mainLoop;
+    public boolean disablePermissions;
+    public String defaultPetMode;
+    public String commandPrefix;
+    public int maxSpawnCount;
+    public boolean overrideDefaultTaming;
+    public ArrayList<String> nameFiles = new ArrayList<String>();
+    public boolean randomizePetNames;
+    public boolean mcMMOSuport;    
+    public boolean rememberPetLocation;
+    public boolean noDropOnKillCommand;
+    public String defaultPetAge;
+    public boolean lockSpawnedBabies;
+    public boolean customNamePlates;
+    public String namePlateColor;
+    public boolean debugEnabled;
+    public final String mobs[] = {
         "Bat",
         "Blaze",
         "CaveSpider",
@@ -48,6 +49,7 @@ public final class PetConfig {
         "Ghast",
         "Giant",
         "Golem",
+        "Horse",
         "MagmaCube",
         "MushroomCow",
         "Ozelot",
@@ -70,7 +72,7 @@ public final class PetConfig {
 
     public PetConfig(final PetCreeper plugin) {
         this.plugin = plugin;
-        load();
+        this.load();
     }
 
     public ItemStack getMat(String s, String mobName) {
@@ -134,11 +136,13 @@ public final class PetConfig {
         lockSpawnedBabies = plugin.getConfig().getBoolean("LockSpawnedBabies",false);
         customNamePlates = plugin.getConfig().getBoolean("CustomNamePlates",true);
         namePlateColor = plugin.getConfig().getString("NamePlateColor","GREEN");
+        debugEnabled = plugin.getConfig().getBoolean("Debug", false);
         
         commandPrefix = plugin.getConfig().getString("CommandPrefix", "pet");
     }
 
-    public static ItemStack getBait(EntityType type) {        
+    public ItemStack getBait(EntityType type) {     
+        //plugin.logInfo("getBait: " + type.getName());
         if (baitMap.containsKey(type.getName())) {
             return baitMap.get(type.getName());
         } else {
@@ -146,7 +150,7 @@ public final class PetConfig {
         }
     }
     
-    public static Integer getTamingXP(EntityType type) {        
+    public Integer getTamingXP(EntityType type) {        
         if (tamingXPMap.containsKey(type.getName())) {
             return tamingXPMap.get(type.getName());
         } else {

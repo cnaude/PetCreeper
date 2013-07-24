@@ -5,7 +5,6 @@
 package com.cnaude.petcreeper.Commands;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -39,7 +38,7 @@ public class PetKillCommand implements CommandExecutor {
                         int idx = Integer.parseInt(args[0]) - 1;
                         if (idx >= 0 && idx < plugin.getPetsOf(p).size()) {
                             Pet pet = plugin.getPetsOf(p).get(idx);
-                            if (PetConfig.noDropOnKillCommand) {
+                            if (plugin.config.noDropOnKillCommand) {
                                 plugin.petNoItemDrop.add(pet.entityId);
                             }
                             plugin.killPet(pet);
@@ -49,10 +48,10 @@ public class PetKillCommand implements CommandExecutor {
                     } else if (args[0].toString().equalsIgnoreCase("all")) {
                         plugin.killPetsOf(p);
                     } else {
-                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "kill [id|all]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "kill [id|all]");
                     }
                 } else {
-                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "kill [id|all]");
+                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "kill [id|all]");
                 }
             } else {
                 plugin.message(p, ChatColor.RED + "You have no pets. :(");

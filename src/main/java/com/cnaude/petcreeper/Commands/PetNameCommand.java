@@ -5,7 +5,6 @@
 package com.cnaude.petcreeper.Commands;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -31,6 +30,10 @@ public class PetNameCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
+            if (!plugin.hasPerm(p, "petcreeper.name")) {
+                plugin.message(p, ChatColor.RED + "You do not have permission to use this command.");
+                return true;
+            }
             if (plugin.isPetOwner(p)) {
                 if (args.length > 1 && args[0].matches("\\d+")) {
                     int idx = Integer.parseInt(args[0]) - 1;
@@ -58,7 +61,7 @@ public class PetNameCommand implements CommandExecutor {
                                 plugin.petNameList.remove(e);
                                 plugin.petNameList.put(e, pet.petName);
                             } 
-                            if (PetConfig.customNamePlates) {
+                            if (plugin.config.customNamePlates) {
                                 ((LivingEntity)e).setCustomName(pet.petName);
                                 ((LivingEntity)e).setCustomNameVisible(true);
                             }
@@ -70,7 +73,7 @@ public class PetNameCommand implements CommandExecutor {
                         plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                     }
                 } else {
-                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "name [id] [name]");
+                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "name [id] [name]");
                 }
             } else {
                 plugin.message(p, ChatColor.RED + "You have no pets. :(");

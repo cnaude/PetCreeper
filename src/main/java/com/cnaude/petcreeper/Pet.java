@@ -25,9 +25,8 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.material.MaterialData;
 
-public final class Pet {
-
-    private final PetCreeper plugin;
+public class Pet {
+    
     @Expose public EntityType type = EntityType.UNKNOWN;
     @Expose public Profession prof = Profession.FARMER;
     @Expose public String catType = "BLACK_CAT";
@@ -59,13 +58,11 @@ public final class Pet {
         AGGRESSIVE,
     }
 
-    public Pet(final PetCreeper plugin, Entity e) {
-        this.plugin = plugin;
+    public Pet(Entity e) {
         this.initPet(e);
     }
     
-    public Pet(final PetCreeper plugin) {
-        this.plugin = plugin;
+    public Pet() {        
     }
 
     public void initEntity(Entity e, Player p) {
@@ -128,13 +125,13 @@ public final class Pet {
                 ((Ocelot) e).setSitting(true);
             }
         }
-        if (PetConfig.customNamePlates) {
+        if (PetCreeper.get().config.customNamePlates) {
             ((LivingEntity) e).setCustomName(ChatColor.translateAlternateColorCodes('&', petName));
             ((LivingEntity) e).setCustomNameVisible(true);
         }
     }
 
-    public void initPet(Entity e) {
+    public final void initPet(Entity e) {
         EntityType et = e.getType();
         double health = ((LivingEntity) e).getHealth();
         if (et == EntityType.CREEPER) {
@@ -179,7 +176,7 @@ public final class Pet {
             } else {
                 this.followed = true;
             }
-        }
+        } 
         if (e instanceof Ageable) {
             this.age = ((Ageable) e).getAge();
             this.ageLocked = ((Ageable) e).getAgeLock();
@@ -188,16 +185,15 @@ public final class Pet {
         this.hp = health;
         this.entityId = e.getEntityId();
         this.petName = et.getName();
-        if (this.skelType == 1 && !PetConfig.randomizePetNames) {
+        if (this.skelType == 1 && !PetCreeper.get().config.randomizePetNames) {
             this.petName = "Wither" + this.petName;
         }
-        if (plugin != null) {
-            if (PetConfig.randomizePetNames) {
-                this.petName = plugin.getRandomName();
+            if (PetCreeper.get().config.randomizePetNames) {
+                this.petName = PetCreeper.get().getRandomName();
             }
-            this.petName = plugin.colorizePetname(petName);
-        }
-        if (PetConfig.customNamePlates) {
+            this.petName = PetCreeper.get().colorizePetname(petName);
+        
+        if (PetCreeper.get().config.customNamePlates) {
             ((LivingEntity) e).setCustomName(petName);
             ((LivingEntity) e).setCustomNameVisible(true);
         }

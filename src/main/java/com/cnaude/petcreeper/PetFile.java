@@ -84,7 +84,7 @@ public class PetFile {
 
     public void loadNames() {
         int count = 0;
-        for (String fileName : PetConfig.nameFiles) {
+        for (String fileName : plugin.config.nameFiles) {
             File file = new File(this.dataFolder + "/" + fileName);
             if (!file.exists()) {
                 try {
@@ -101,7 +101,7 @@ public class PetFile {
                 }
             }
         }
-        for (String fileName : PetConfig.nameFiles) {
+        for (String fileName : plugin.config.nameFiles) {
             try {                
                 File nameFile = new File(this.dataFolder, fileName);
                 BufferedReader br = new BufferedReader(new FileReader(nameFile));

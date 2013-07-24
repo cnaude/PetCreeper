@@ -1,7 +1,6 @@
 package com.cnaude.petcreeper.Listeners;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.*;
@@ -30,7 +29,7 @@ public class PetEntityListener implements Listener {
             if (p == t) {
                 if (p.getWorld() == e.getWorld()) {
                     if ((!this.plugin.isFollowing(e)) || (e.getPassenger() != null)
-                            || (e.getLocation().distance(p.getLocation()) < PetConfig.idleDistance)) {                        
+                            || (e.getLocation().distance(p.getLocation()) < plugin.config.idleDistance)) {                        
                         return true;
                     } else {
                         return false;
@@ -86,7 +85,11 @@ public class PetEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityTameEvent(EntityTameEvent event) {
-        if (PetConfig.overrideDefaultTaming) {
+        // Completely ignore horses for now.
+        if (event.getEntityType().equals(EntityType.HORSE)) {
+            return;
+        }
+        if (plugin.config.overrideDefaultTaming) {
             Entity e = event.getEntity();
             Player p = (Player) event.getOwner();
             if (this.plugin.getPet(e).type != EntityType.UNKNOWN) {
@@ -95,7 +98,7 @@ public class PetEntityListener implements Listener {
                 return;
             }
             if (this.plugin.isPetOwner(p)) {
-                if (this.plugin.getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
+                if (this.plugin.getPetsOf(p).size() >= plugin.config.maxPetsPerPlayer) {
                     event.setCancelled(true);
                     p.sendMessage(ChatColor.RED + "You have too many pets!");
                     return;
@@ -166,7 +169,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamageEvent(EntityDamageEvent event) {
         Entity e = event.getEntity();
-        if (plugin.isPet(e) && PetConfig.invinciblePets) {
+        if (plugin.isPet(e) && plugin.config.invinciblePets) {
             event.setCancelled(true);
         }
     }
@@ -213,11 +216,11 @@ public class PetEntityListener implements Listener {
             }
         } else if (e.getType().isAlive()) {
             if (this.plugin.isPet(e)) {
-                if (PetConfig.invinciblePets) {
+                if (plugin.config.invinciblePets) {
                     event.setCancelled(true);
                     return;
                 }
-                if (!PetConfig.provokable && this.plugin.getPet(e).mode == Pet.modes.PASSIVE) {
+                if (!plugin.config.provokable && this.plugin.getPet(e).mode == Pet.modes.PASSIVE) {
                     event.setCancelled(true);
                     return;
                 }
@@ -228,7 +231,7 @@ public class PetEntityListener implements Listener {
                         this.plugin.untamePetOf(p, e, true);
                     }
                 }
-            } else if (PetConfig.attackTame) {
+            } else if (plugin.config.attackTame) {
                 if ((d != null) && ((d instanceof Player))) {
                     Player p = (Player) d;
                     if (this.plugin.tamePetOf(p, e, false)) {

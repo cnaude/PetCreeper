@@ -7,7 +7,6 @@ package com.cnaude.petcreeper.Commands;
 import java.util.ArrayList;
 import java.util.List;
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,7 +23,7 @@ public class PetCommand implements CommandExecutor {
 
     private final PetCreeper plugin;
     
-    private static List<String> validCommands = new ArrayList<String>();
+    private List<String> validCommands = new ArrayList<String>();
 
     public PetCommand(PetCreeper instance) {
         plugin = instance;
@@ -55,7 +54,7 @@ public class PetCommand implements CommandExecutor {
             }
             if (p.isInsideVehicle()) {
                 if (p.getVehicle().getType().isAlive()) {
-                    plugin.message(p, ChatColor.RED + "You can't use /" + PetConfig.commandPrefix + " when riding this " + p.getVehicle().getType().getName() + ".");
+                    plugin.message(p, ChatColor.RED + "You can't use /" + plugin.config.commandPrefix + " when riding this " + p.getVehicle().getType().getName() + ".");
                     return true;
                 }
             }
@@ -79,7 +78,7 @@ public class PetCommand implements CommandExecutor {
                         plugin.message(p, ChatColor.RED + "You have no pets. :(");
                     }
                 } else if (args[0].toString().equals("?") || args[0].toString().equalsIgnoreCase("help")) {
-                    //plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + " [id|all]");
+                    //plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + " [id|all]");
                     return false;
                 } else {
                     dispatch(sender, args);

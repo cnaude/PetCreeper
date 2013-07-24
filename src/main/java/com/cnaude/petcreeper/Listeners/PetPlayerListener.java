@@ -1,18 +1,17 @@
 package com.cnaude.petcreeper.Listeners;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
-import net.minecraft.server.v1_6_R1.EntityCreature;
-import net.minecraft.server.v1_6_R1.Navigation;
-import net.minecraft.server.v1_6_R1.PathEntity;
+import net.minecraft.server.v1_6_R2.EntityCreature;
+import net.minecraft.server.v1_6_R2.Navigation;
+import net.minecraft.server.v1_6_R2.PathEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_6_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftCreature;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -99,7 +98,7 @@ public class PetPlayerListener implements Listener {
                     Entity passenger = e.getPassenger();
                     if ((!(et == EntityType.PIG)) && (passenger == p)) {
                         e.eject();
-                    } else if ((PetConfig.ridable) && (p.getItemInHand().getType() == Material.SADDLE) && (passenger == null)) {
+                    } else if ((plugin.config.ridable) && (p.getItemInHand().getType() == Material.SADDLE) && (passenger == null)) {
                         if ((et == EntityType.PIG)) {
                             return;
                         }
@@ -142,7 +141,7 @@ public class PetPlayerListener implements Listener {
                 }
 
             } else {
-                if (PetConfig.overrideDefaultTaming) {
+                if (plugin.config.overrideDefaultTaming) {
                     if (p.getItemInHand().getType() == Material.BONE) {
                         event.setCancelled(true);
                     }

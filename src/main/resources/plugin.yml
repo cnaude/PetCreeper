@@ -1,8 +1,8 @@
-name: PetCreeper
-main: com.cnaude.petcreeper.PetCreeper
-version: 1.12.7
-description: Tame those mobs!
+name: ${project.name}
+version: ${project.version}
+description: ${project.description}
 author: Chris Naude
+main: com.cnaude.petcreeper.PetCreeper
 softdepends: [mcMMO,EpicBossRecoded]
 commands:
     pet:
@@ -85,6 +85,9 @@ permissions:
   petcreeper.age:
     description: Allows players to use /petage command.
     default: false 
+  petcreeper.name:
+    description: Allows players to use /petname command.
+    default: false
   petcreeper.control:
     description: Allows players to control a pet while riding.
     default: false

@@ -5,7 +5,6 @@
 package com.cnaude.petcreeper.Commands;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -48,10 +47,10 @@ public class PetFreeCommand implements CommandExecutor {
                     } else if (args[0].toString().equalsIgnoreCase("all")) {
                         plugin.untameAllPetsOf(p);
                     } else {
-                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "free [id|all]");
                     }
                 } else {
-                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "free [id|all]");
+                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "free [id|all]");
                 }
             } else {
                 plugin.message(p, ChatColor.RED + "You have no pets. :(");

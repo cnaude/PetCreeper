@@ -11,6 +11,7 @@ Enderman: Eye_Of_Ender
 Ghast: Ghast_Tear
 Giant: Gold_Block
 Golem: Iron_Ingot
+#Horse: Wheat
 MagmaCube: Magma_Cream
 MushroomCow: Red_Mushroom
 Ozelot: Cookie
@@ -80,6 +81,8 @@ NoDropOnKillCommand: false
 CustomNamePlates: true
 # Default color for pet nameplates
 NamePlateColor: GREEN
+# Nothing to see here
+Debug: false
 # Enable mcMMO taming XP
 mcMMOSuport: true
 mcMMOTamingXP:
@@ -94,6 +97,7 @@ mcMMOTamingXP:
   Ghast: 10
   Giant: 10
   Golem: 10
+  #Horse: 10
   MagmaCube: 10
   MushroomCow: 10
   Ozelot: 10

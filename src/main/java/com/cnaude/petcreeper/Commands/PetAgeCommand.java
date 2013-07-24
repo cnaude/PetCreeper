@@ -5,7 +5,6 @@
 package com.cnaude.petcreeper.Commands;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -58,7 +57,7 @@ public class PetAgeCommand implements CommandExecutor {
                         plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                     }
                 } else {
-                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "age [id] [baby|adult]");
+                    plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "age [id] [baby|adult]");
                 }
             } else {
                 plugin.message(p, ChatColor.RED + "You have no pets. :(");

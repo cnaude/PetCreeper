@@ -4,7 +4,6 @@
  */
 package com.cnaude.petcreeper.Commands;
 
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,7 +27,7 @@ public class PetListCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (commandLabel.equalsIgnoreCase(PetConfig.commandPrefix + "list")) {
+            if (commandLabel.equalsIgnoreCase(plugin.config.commandPrefix + "list")) {
                 if (plugin.isPetOwner(p)) {
                     plugin.printPetListOf(p);
                 } else {

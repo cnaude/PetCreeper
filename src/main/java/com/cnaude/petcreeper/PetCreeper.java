@@ -24,19 +24,19 @@ import com.cnaude.petcreeper.Commands.PetSaddleCommand;
 import com.cnaude.petcreeper.Commands.PetSpawnCommand;
 import com.cnaude.petcreeper.Listeners.PetEntityListener;
 import com.cnaude.petcreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.v1_6_R1.EntityCow;
-import net.minecraft.server.v1_6_R1.EntityHorse;
-import net.minecraft.server.v1_6_R1.EntityInsentient;
-import net.minecraft.server.v1_6_R1.EntityIronGolem;
-import net.minecraft.server.v1_6_R1.EntityOcelot;
-import net.minecraft.server.v1_6_R1.EntityPig;
-import net.minecraft.server.v1_6_R1.EntitySheep;
-import net.minecraft.server.v1_6_R1.EntitySnowman;
-import net.minecraft.server.v1_6_R1.EntityVillager;
-import net.minecraft.server.v1_6_R1.EntityWither;
-import net.minecraft.server.v1_6_R1.EntityWolf;
-import net.minecraft.server.v1_6_R1.EntityZombie;
-import net.minecraft.server.v1_6_R1.Navigation;
+import net.minecraft.server.v1_6_R2.EntityCow;
+import net.minecraft.server.v1_6_R2.EntityHorse;
+import net.minecraft.server.v1_6_R2.EntityInsentient;
+import net.minecraft.server.v1_6_R2.EntityIronGolem;
+import net.minecraft.server.v1_6_R2.EntityOcelot;
+import net.minecraft.server.v1_6_R2.EntityPig;
+import net.minecraft.server.v1_6_R2.EntitySheep;
+import net.minecraft.server.v1_6_R2.EntitySnowman;
+import net.minecraft.server.v1_6_R2.EntityVillager;
+import net.minecraft.server.v1_6_R2.EntityWither;
+import net.minecraft.server.v1_6_R2.EntityWolf;
+import net.minecraft.server.v1_6_R2.EntityZombie;
+import net.minecraft.server.v1_6_R2.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,14 +61,16 @@ public class PetCreeper extends JavaPlugin {
     public ArrayList<Integer> petNoItemDrop = new ArrayList<Integer>();
     static final Logger log = Logger.getLogger("Minecraft");
     public boolean configLoaded = false;
-    private static PetConfig config;
+    public PetConfig config;
     private PetFile petFile = new PetFile(this);
     int taskID;
     public ArrayList<String> bigNamesList = new ArrayList<String>();
     private EpicBoss epicboss;
+    private static PetCreeper instance;
 
     @Override
     public void onEnable() {
+        instance = this;
         loadConfig();
         petFile.loadNames();
         
@@ -83,19 +85,19 @@ public class PetCreeper extends JavaPlugin {
 
         petFollowTask();
 
-        getCommand(PetConfig.commandPrefix).setExecutor(new PetCommand(this));
-        getCommand(PetConfig.commandPrefix + "age").setExecutor(new PetAgeCommand(this));
-        getCommand(PetConfig.commandPrefix + "free").setExecutor(new PetFreeCommand(this));
-        getCommand(PetConfig.commandPrefix + "give").setExecutor(new PetGiveCommand(this));
-        getCommand(PetConfig.commandPrefix + "info").setExecutor(new PetInfoCommand(this));
-        getCommand(PetConfig.commandPrefix + "kill").setExecutor(new PetKillCommand(this));
-        getCommand(PetConfig.commandPrefix + "list").setExecutor(new PetListCommand(this));
-        getCommand(PetConfig.commandPrefix + "mode").setExecutor(new PetModeCommand(this));
-        getCommand(PetConfig.commandPrefix + "name").setExecutor(new PetNameCommand(this));
-        getCommand(PetConfig.commandPrefix + "color").setExecutor(new PetColorCommand(this));
-        getCommand(PetConfig.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
-        getCommand(PetConfig.commandPrefix + "saddle").setExecutor(new PetSaddleCommand(this));
-        getCommand(PetConfig.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
+        getCommand(config.commandPrefix).setExecutor(new PetCommand(this));
+        getCommand(config.commandPrefix + "age").setExecutor(new PetAgeCommand(this));
+        getCommand(config.commandPrefix + "free").setExecutor(new PetFreeCommand(this));
+        getCommand(config.commandPrefix + "give").setExecutor(new PetGiveCommand(this));
+        getCommand(config.commandPrefix + "info").setExecutor(new PetInfoCommand(this));
+        getCommand(config.commandPrefix + "kill").setExecutor(new PetKillCommand(this));
+        getCommand(config.commandPrefix + "list").setExecutor(new PetListCommand(this));
+        getCommand(config.commandPrefix + "mode").setExecutor(new PetModeCommand(this));
+        getCommand(config.commandPrefix + "name").setExecutor(new PetNameCommand(this));
+        getCommand(config.commandPrefix + "color").setExecutor(new PetColorCommand(this));
+        getCommand(config.commandPrefix + "reload").setExecutor(new PetReloadCommand(this));
+        getCommand(config.commandPrefix + "saddle").setExecutor(new PetSaddleCommand(this));
+        getCommand(config.commandPrefix + "spawn").setExecutor(new PetSpawnCommand(this));
     }
 
     private void petFollowTask() {
@@ -109,7 +111,7 @@ public class PetCreeper extends JavaPlugin {
                             Entity e = getEntityOfPet(pet);
                             if (e != null) {
                                 if (p.getWorld() == e.getWorld()) {
-                                    if (p.getLocation().distance(e.getLocation()) > PetConfig.idleDistance
+                                    if (p.getLocation().distance(e.getLocation()) > config.idleDistance
                                             && isFollowing(e)) {
                                         walkToPlayer(e, p);
                                     } else {
@@ -126,6 +128,12 @@ public class PetCreeper extends JavaPlugin {
 
     public void logInfo(String s) {
         log.log(Level.INFO, String.format("%s %s", LOG_HEADER, s));
+    }
+    
+    public void logDebug(String _message) {
+        if (config.debugEnabled) {
+            log.log(Level.INFO, String.format("%s [DEBUG] %s", LOG_HEADER, _message));
+        }
     }
 
     public void logError(String s) {
@@ -159,8 +167,8 @@ public class PetCreeper extends JavaPlugin {
 
     public boolean hasPerm(Player p, String s) {
         if ((p.hasPermission(s)) || (p.hasPermission("petcreeper.*"))
-                || (p.isOp() && PetConfig.opsBypassPerms)
-                || PetConfig.disablePermissions) {
+                || (p.isOp() && config.opsBypassPerms)
+                || config.disablePermissions) {
             return true;
         } else {
             return false;
@@ -200,7 +208,7 @@ public class PetCreeper extends JavaPlugin {
             for (Iterator<Pet> iterator = getPetsOf(p).iterator(); iterator.hasNext();) {
                 Pet pet = iterator.next();
                 Location loc;
-                if (PetConfig.rememberPetLocation && !pet.followed) {
+                if (config.rememberPetLocation && !pet.followed) {
                     loc = new Location(getServer().getWorld(pet.world), pet.x, pet.y, pet.z);
                 } else {
                     loc = p.getLocation();
@@ -293,9 +301,9 @@ public class PetCreeper extends JavaPlugin {
             petName = ChatColor.translateAlternateColorCodes('&', petName);
         } else if (!petName.startsWith("§")) {
             try {
-                petName = ChatColor.valueOf(PetConfig.namePlateColor) + petName;
+                petName = ChatColor.valueOf(config.namePlateColor) + petName;
             } catch (Exception ex) {
-                logInfo("Invalid NamePlateColor: " + PetConfig.namePlateColor);
+                logInfo("Invalid NamePlateColor: " + config.namePlateColor);
             }
         }
         return petName;
@@ -311,26 +319,38 @@ public class PetCreeper extends JavaPlugin {
         }
         if (pos instanceof Location) {
             try {
+                logDebug("Spawning pet: " + pet.type);
                 Entity e = p.getWorld().spawnEntity(pos, pet.type);
+                logDebug("EID: " + e.getEntityId());
                 if (e instanceof Entity) {
+                    logDebug("1");
                     pet.entityId = e.getEntityId();
+                    logDebug("2 => " + p.getName() + " : " + pet.entityId + " : " + pet.toString());
                     pet.initEntity(e, p);
-
+                    logDebug("3");
                     petList.put(e, p.getName());
+                    logDebug("4");
                     petNameList.put(e, pet.petName);
+                    logDebug("5");
                     petFollowList.put(e, pet.followed);
+                    logDebug("6");
                     entityIds.put(e.getEntityId(), e);
-
+                    logDebug("7");
                     if (msg) {
+                        logDebug("8");
                         p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " greets you!");
                     }
+                    logDebug("9");
                     spawned = true;
-                }
+                    logDebug("10");
+                }            
             } catch (Exception ex) {
+                ex.printStackTrace();
                 logInfo(ex.getMessage());
                 return false;
             }
         }
+        logInfo("HELLO2");
         return spawned;
     }
 
@@ -508,7 +528,7 @@ public class PetCreeper extends JavaPlugin {
         //logInfo("C2");
         List<Entity> ne;
         try {
-            ne = p.getNearbyEntities(PetConfig.attackDistance, PetConfig.attackDistance, PetConfig.attackDistance);
+            ne = p.getNearbyEntities(config.attackDistance, config.attackDistance, config.attackDistance);
             //logInfo("C3");
             if (ne != null) {
                 //logInfo("C3");
@@ -553,7 +573,7 @@ public class PetCreeper extends JavaPlugin {
                             continue;
                         }
                         // Globally we check if pets don't attack pets
-                        if (!PetConfig.petsAttackPets) {
+                        if (!config.petsAttackPets) {
                             //logInfo("C10");
                             continue;
                         }
@@ -566,7 +586,7 @@ public class PetCreeper extends JavaPlugin {
                             continue;
                         }
                         // Globally we check if pets can attack players
-                        if (!PetConfig.PetsAttackPlayers) {
+                        if (!config.PetsAttackPlayers) {
                             //logInfo("C12");
                             continue;
                         }
@@ -645,9 +665,9 @@ public class PetCreeper extends JavaPlugin {
             ItemStack bait = p.getItemInHand();
             int amt = bait.getAmount();
 
-            if (((bait.getType().equals(PetConfig.getBait(et).getType())) && (amt > 0)) || spawned) {
+            if (((bait.getType().equals(config.getBait(et).getType())) && (amt > 0)) || spawned) {
                 if (isPetOwner(p)) {
-                    if (getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
+                    if (getPetsOf(p).size() >= config.maxPetsPerPlayer) {
                         p.sendMessage(ChatColor.RED + "You already have the maximum number of pets!");
                         return false;
                     }
@@ -673,7 +693,7 @@ public class PetCreeper extends JavaPlugin {
                 } else {
                     pe = e;
                 }
-                Pet pet = new Pet(this, pe);
+                Pet pet = new Pet(pe);
                 this.playersWithPets.get(p.getName()).add(pet);
                 tamed = true;
                 pe.setFireTicks(0);
@@ -699,20 +719,20 @@ public class PetCreeper extends JavaPlugin {
                 petNameList.put(pe, pet.petName);
                 petFollowList.put(pe, pet.followed);
                 petList.put(pe, p.getName());
-                if (PetConfig.defaultPetMode.equals("D")) {
+                if (config.defaultPetMode.equals("D")) {
                     pet.mode = Pet.modes.DEFENSIVE;
                     if (pe instanceof Wolf) {
                         ((Wolf) pe).setOwner(p);
                     }
                 }
-                if (PetConfig.defaultPetMode.equals("P")) {
+                if (config.defaultPetMode.equals("P")) {
                     pet.mode = Pet.modes.PASSIVE;
                     if (pe instanceof Wolf) {
                         ((Wolf) pe).setOwner(null);
                         ((Wolf) pe).setAngry(false);
                     }
                 }
-                if (PetConfig.defaultPetMode.equals("A")) {
+                if (config.defaultPetMode.equals("A")) {
                     pet.mode = Pet.modes.AGGRESSIVE;
                     if (pe instanceof Wolf) {
                         ((Wolf) pe).setOwner(null);
@@ -726,12 +746,12 @@ public class PetCreeper extends JavaPlugin {
     }
 
     public void mcMMOXP(Entity e, Player p) {
-        if (PetConfig.mcMMOSuport) {
+        if (config.mcMMOSuport) {
             Plugin plmc = getServer().getPluginManager().getPlugin("mcMMO");
             if (plmc != null) {
-                if (!e.hasMetadata("mcmmoSummoned") && PetConfig.mcMMOSuport) {
-                    //ExperienceAPI.addXP(p, SkillType.TAMING, PetConfig.getTamingXP(e.getType()));
-                    ExperienceAPI.addXP(p, "TAMING", PetConfig.getTamingXP(e.getType()));
+                if (!e.hasMetadata("mcmmoSummoned") && config.mcMMOSuport) {
+                    //ExperienceAPI.addXP(p, SkillType.TAMING, config.getTamingXP(e.getType()));
+                    ExperienceAPI.addXP(p, "TAMING", config.getTamingXP(e.getType()));
                 }
             }
         }
@@ -756,7 +776,7 @@ public class PetCreeper extends JavaPlugin {
     }
 
     public Pet getPet(Entity e) {
-        Pet returnPet = new Pet(this);
+        Pet returnPet = new Pet();
         if (petList.containsKey(e)) {
             for (Pet pet : getPetsOf(getServer().getPlayer(petList.get(e)))) {
                 if (pet.entityId == e.getEntityId()) {
@@ -795,7 +815,7 @@ public class PetCreeper extends JavaPlugin {
                     if (e instanceof Wolf) {
                         ((Wolf) e).setAngry(false);
                     }
-                    if (PetConfig.customNamePlates) {
+                    if (config.customNamePlates) {
                         ((LivingEntity) e).setCustomName(null);
                         ((LivingEntity) e).setCustomNameVisible(false);
                     }
@@ -849,4 +869,9 @@ public class PetCreeper extends JavaPlugin {
         }
         return "";
     }
+    
+    public static PetCreeper get() {
+        return instance;
+    }
+    
 }

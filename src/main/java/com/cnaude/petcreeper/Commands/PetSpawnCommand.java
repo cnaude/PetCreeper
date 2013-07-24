@@ -4,7 +4,6 @@
  */
 package com.cnaude.petcreeper.Commands;
 
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -42,8 +41,8 @@ public class PetSpawnCommand implements CommandExecutor {
                     spawnCount = Integer.parseInt(args[1]);
                 }
             }
-            if (spawnCount > PetConfig.maxSpawnCount) {
-                spawnCount = PetConfig.maxSpawnCount;
+            if (spawnCount > plugin.config.maxSpawnCount) {
+                spawnCount = plugin.config.maxSpawnCount;
             }
             if (args.length >= 1) {
                 String petType = args[0];
@@ -84,7 +83,7 @@ public class PetSpawnCommand implements CommandExecutor {
                     }
                     for (int x = 1; x <= spawnCount; x++) {
                         if (plugin.isPetOwner(p)) {
-                            if (plugin.getPetsOf(p).size() >= PetConfig.maxPetsPerPlayer) {
+                            if (plugin.getPetsOf(p).size() >= plugin.config.maxPetsPerPlayer) {
                                 p.sendMessage(ChatColor.RED + "You have too many pets!");
                                 return true;
                             }
@@ -97,10 +96,10 @@ public class PetSpawnCommand implements CommandExecutor {
                         }
                         Entity e = p.getWorld().spawnEntity(pos, et);
                         if (e instanceof Ageable) {
-                            if (PetConfig.defaultPetAge.equalsIgnoreCase("baby")) {
+                            if (plugin.config.defaultPetAge.equalsIgnoreCase("baby")) {
                                 ((Ageable)e).setBaby();
-                                ((Ageable)e).setAgeLock(PetConfig.lockSpawnedBabies);
-                            } else if (PetConfig.defaultPetAge.equalsIgnoreCase("adult")) {
+                                ((Ageable)e).setAgeLock(plugin.config.lockSpawnedBabies);
+                            } else if (plugin.config.defaultPetAge.equalsIgnoreCase("adult")) {
                                 ((Ageable)e).setAdult();
                             } 
                         }
@@ -113,7 +112,7 @@ public class PetSpawnCommand implements CommandExecutor {
                             if (subType.equalsIgnoreCase("villager")) {
                                 ((Zombie)e).setVillager(true);
                             }
-                            if (PetConfig.defaultPetAge.equalsIgnoreCase("baby")) {
+                            if (plugin.config.defaultPetAge.equalsIgnoreCase("baby")) {
                                 ((Zombie)e).setBaby(true);                                
                             }
                         }
@@ -138,7 +137,7 @@ public class PetSpawnCommand implements CommandExecutor {
                     plugin.message(p, ChatColor.RED + "Invalid pet type.");
                 }
             } else {
-                plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "spawn [pet type] ([count])");
+                plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "spawn [pet type] ([count])");
             }
         }
         return true;

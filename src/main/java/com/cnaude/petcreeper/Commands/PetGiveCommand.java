@@ -5,7 +5,6 @@
 package com.cnaude.petcreeper.Commands;
 
 import com.cnaude.petcreeper.Pet;
-import com.cnaude.petcreeper.PetConfig;
 import com.cnaude.petcreeper.PetCreeper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -43,7 +42,7 @@ public class PetGiveCommand implements CommandExecutor {
                             Player rec = plugin.getServer().getPlayer(args[1]);
                             if (rec != null && rec instanceof Player) {
                                 if (plugin.isPetOwner(rec)) {
-                                    if (plugin.getPetsOf(rec).size() >= PetConfig.maxPetsPerPlayer) {
+                                    if (plugin.getPetsOf(rec).size() >= plugin.config.maxPetsPerPlayer) {
                                         plugin.message(p, ChatColor.RED + "Player " + rec.getName() + " already has maximum number of pets!");
                                         return true;
                                     }
@@ -63,7 +62,7 @@ public class PetGiveCommand implements CommandExecutor {
                             plugin.message(p, ChatColor.RED + "Invalid pet ID.");
                         }
                     } else {
-                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + PetConfig.commandPrefix + "give [id] [player]");
+                        plugin.message(p, ChatColor.YELLOW + "Usage: " + ChatColor.WHITE + "/" + plugin.config.commandPrefix + "give [id] [player]");
                     }
                 } else {
                     plugin.message(p, ChatColor.RED + "You have no pets. :(");
