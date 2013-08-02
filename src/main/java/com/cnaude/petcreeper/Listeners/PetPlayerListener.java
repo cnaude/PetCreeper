@@ -159,7 +159,16 @@ public class PetPlayerListener implements Listener {
         if (event.getPlayer().isInsideVehicle()) {
             return;
         }
-        this.plugin.teleportPetsOf(event.getPlayer(), event.getTo(), false, true);
+        String fromWorld = event.getFrom().getWorld().getName();
+        String toWorld = event.getTo().getWorld().getName();
+        if (fromWorld.equals(toWorld)) {
+            this.plugin.teleportPetsOf(event.getPlayer(), event.getTo(), false, true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {       
+        this.plugin.teleportPetsOf(event.getPlayer(), event.getPlayer().getLocation(), false, true);
     }
 
     @EventHandler

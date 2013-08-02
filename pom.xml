@@ -5,7 +5,7 @@
 
     <groupId>com.cnaude</groupId>
     <artifactId>PetCreeper</artifactId>
-    <version>1.13.6</version>
+    <version>1.13.7</version>
     <name>PetCreeper</name>
     <description>CraftBukkit plugin that allows players to get any mob as a pet.</description>
     <url>http://dev.bukkit.org/server-mods/petcreeper/</url>
@@ -122,8 +122,12 @@
                     <execution>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>                                                                
+                            <tasks>                                                                                               
                                 <copy file="../PetCreeper/target/PetCreeper-${project.version}.jar" tofile="../PetCreeper/target/PetCreeper.jar"/>
+                                <exec dir="../PetCreeper/target" executable="scp">
+                                    <arg line="PetCreeper.jar cnaude@giraffe.lan:minetest/plugins/"/>
+                                </exec>
+                                <copy file="../PetCreeper/target/PetCreeper.jar" tofile="../../../../Dropbox/Public/dist/PetCreeper.jar"/>
                             </tasks>
                         </configuration>
                         <goals>

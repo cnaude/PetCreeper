@@ -24,24 +24,15 @@ import com.cnaude.petcreeper.Commands.PetSaddleCommand;
 import com.cnaude.petcreeper.Commands.PetSpawnCommand;
 import com.cnaude.petcreeper.Listeners.PetEntityListener;
 import com.cnaude.petcreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.v1_6_R2.EntityCow;
-import net.minecraft.server.v1_6_R2.EntityHorse;
 import net.minecraft.server.v1_6_R2.EntityInsentient;
-import net.minecraft.server.v1_6_R2.EntityIronGolem;
-import net.minecraft.server.v1_6_R2.EntityOcelot;
-import net.minecraft.server.v1_6_R2.EntityPig;
-import net.minecraft.server.v1_6_R2.EntitySheep;
-import net.minecraft.server.v1_6_R2.EntitySnowman;
-import net.minecraft.server.v1_6_R2.EntityVillager;
-import net.minecraft.server.v1_6_R2.EntityWither;
-import net.minecraft.server.v1_6_R2.EntityWolf;
-import net.minecraft.server.v1_6_R2.EntityZombie;
 import net.minecraft.server.v1_6_R2.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -318,39 +309,25 @@ public class PetCreeper extends JavaPlugin {
             pos.setY(pos.getY() + 1.0D);
         }
         if (pos instanceof Location) {
-            try {
-                logDebug("Spawning pet: " + pet.type);
+            try {                
                 Entity e = p.getWorld().spawnEntity(pos, pet.type);
-                logDebug("EID: " + e.getEntityId());
                 if (e instanceof Entity) {
-                    logDebug("1");
                     pet.entityId = e.getEntityId();
-                    logDebug("2 => " + p.getName() + " : " + pet.entityId + " : " + pet.toString());
                     pet.initEntity(e, p);
-                    logDebug("3");
                     petList.put(e, p.getName());
-                    logDebug("4");
                     petNameList.put(e, pet.petName);
-                    logDebug("5");
                     petFollowList.put(e, pet.followed);
-                    logDebug("6");
                     entityIds.put(e.getEntityId(), e);
-                    logDebug("7");
                     if (msg) {
-                        logDebug("8");
                         p.sendMessage(ChatColor.GREEN + "Your pet " + ChatColor.YELLOW + pet.petName + ChatColor.GREEN + " greets you!");
                     }
-                    logDebug("9");
                     spawned = true;
-                    logDebug("10");
                 }            
             } catch (Exception ex) {
-                ex.printStackTrace();
                 logInfo(ex.getMessage());
                 return false;
             }
         }
-        logInfo("HELLO2");
         return spawned;
     }
 
@@ -372,13 +349,14 @@ public class PetCreeper extends JavaPlugin {
     }
 
     public void despawnPet(Pet pet) {
-        if (entityIds.containsKey(pet.entityId)) {
+        if (entityIds.containsKey(pet.entityId)) {            
             Entity e = entityIds.get(pet.entityId);
             pet.initPet(e);
             pet.petName = getNameOfPet(e);
             pet.entityId = -1;
             cleanUpLists(e);
             e.remove();
+            PetCreeper.get().logDebug("Despawning pet " + pet.type.getName());
         }
     }
 
@@ -480,37 +458,15 @@ public class PetCreeper extends JavaPlugin {
         if (e.getLocation().distance(p.getLocation()) > 15) {
             e.teleport(p);
         } else {
-            Navigation n;
-            if (e instanceof EntityCow) {
-                n = ((EntityCow) e).getNavigation();
-            } else if (e instanceof EntityHorse) {
-                n = ((EntityHorse) e).getNavigation();
-            } else if (e instanceof EntityInsentient) {
-                n = ((EntityInsentient) e).getNavigation();
-            } else if (e instanceof EntityIronGolem) {
-                n = ((EntityIronGolem) e).getNavigation();
-            } else if (e instanceof EntityOcelot) {
-                n = ((EntityOcelot) e).getNavigation();
-            }else if (e instanceof EntityOcelot) {
-                n = ((EntityOcelot) e).getNavigation();
-            }else if (e instanceof EntityPig) {
-                n = ((EntityPig) e).getNavigation();
-            }else if (e instanceof EntitySheep) {
-                n = ((EntitySheep) e).getNavigation();
-            }else if (e instanceof EntitySnowman) {
-                n = ((EntitySnowman) e).getNavigation();
-            }else if (e instanceof EntityVillager) {
-                n = ((EntityVillager) e).getNavigation();
-            }else if (e instanceof EntityWither) {
-                n = ((EntityWither) e).getNavigation();
-            }else if (e instanceof EntityWolf) {
-                n = ((EntityWolf) e).getNavigation();
-            }else if (e instanceof EntityZombie) {
-                n = ((EntityZombie) e).getNavigation();
-            }else {
+            net.minecraft.server.v1_6_R2.Entity ei = ((CraftEntity)e).getHandle();
+            //Navigation n;
+            if (ei instanceof EntityInsentient) {  
+                ((EntityInsentient) ei).setGoalTarget(((CraftPlayer)p).getHandle());                
+                //n = ((EntityInsentient) ei).getNavigation();            
+            } else {
                 return;
             }
-            n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.5f);
+            //n.a(p.getLocation().getX() + 2, p.getLocation().getY(), p.getLocation().getZ() + 2, 0.5f);
         }
     }
 
