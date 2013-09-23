@@ -5,7 +5,7 @@
 
     <groupId>com.cnaude</groupId>
     <artifactId>PetCreeper</artifactId>
-    <version>1.13.7</version>
+    <version>1.13.8</version>
     <name>PetCreeper</name>
     <description>CraftBukkit plugin that allows players to get any mob as a pet.</description>
     <url>http://dev.bukkit.org/server-mods/petcreeper/</url>
@@ -13,15 +13,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Bukkit API Version, change if out dated -->
-        <bukkit.version>1.6.2-R0.1</bukkit.version>
+        <bukkit.version>1.6.4-R0.1-SNAPSHOT</bukkit.version>
     </properties>
 
     <repositories>
-        <!-- Bukkit 
+        <!-- Bukkit -->
         <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository> -->
+        </repository>
 
         <!-- For JUnitBenchmarks -->
         <repository>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.gmail.nossr50</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>1.4.06-beta2</version>
+            <version>1.4.07-beta1</version>
         </dependency>         
            
         <!-- Testing only -->
