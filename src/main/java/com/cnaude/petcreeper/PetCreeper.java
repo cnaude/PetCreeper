@@ -24,15 +24,15 @@ import com.cnaude.petcreeper.Commands.PetSaddleCommand;
 import com.cnaude.petcreeper.Commands.PetSpawnCommand;
 import com.cnaude.petcreeper.Listeners.PetEntityListener;
 import com.cnaude.petcreeper.Listeners.PetPlayerListener;
-import net.minecraft.server.v1_6_R2.EntityInsentient;
-import net.minecraft.server.v1_6_R2.Navigation;
+import net.minecraft.server.v1_6_R3.EntityInsentient;
+import net.minecraft.server.v1_6_R3.Navigation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -458,7 +458,7 @@ public class PetCreeper extends JavaPlugin {
         if (e.getLocation().distance(p.getLocation()) > 15) {
             e.teleport(p);
         } else {
-            net.minecraft.server.v1_6_R2.Entity ei = ((CraftEntity)e).getHandle();
+            net.minecraft.server.v1_6_R3.Entity ei = ((CraftEntity)e).getHandle();
             //Navigation n;
             if (ei instanceof EntityInsentient) {  
                 ((EntityInsentient) ei).setGoalTarget(((CraftPlayer)p).getHandle());                
